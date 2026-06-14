@@ -2020,6 +2020,31 @@ export default function App() {
               <button type="submit" style={{ display: 'none' }}></button>
             </form>
           )}
+          
+          <a 
+            href="https://paypal.me/p_estor" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="dpm-nav-donate-btn"
+            style={{
+              padding: '0.4rem 0.8rem',
+              borderRadius: '6px',
+              background: 'linear-gradient(135deg, #0079c1 0%, #00457c 100%)',
+              color: '#ffffff',
+              fontWeight: 600,
+              fontSize: '0.8rem',
+              textDecoration: 'none',
+              border: '1px solid rgba(255,255,255,0.1)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 2px 8px rgba(0, 121, 193, 0.3)',
+              cursor: 'pointer'
+            }}
+          >
+            ☕ Donar
+          </a>
         </div>
       </nav>
 
