@@ -2022,7 +2022,7 @@ export default function App() {
           )}
           
           <a 
-            href="https://paypal.me/p_estor" 
+            href="https://paypal.me/pestordev" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="dpm-nav-donate-btn"
