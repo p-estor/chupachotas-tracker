@@ -280,13 +280,15 @@ export default function App() {
         if (gameName.trim() && tagLine.trim()) {
           setRegion(pathRegion);
           setSearch(`${gameName}#${tagLine}`);
-          performSearch(gameName, tagLine, pathRegion);
+          const urlParams = new URLSearchParams(window.location.search);
+          const matchId = urlParams.get('match');
+          performSearch(gameName, tagLine, pathRegion, false, matchId);
         }
       }
     }
   }, []);
 
-  const performSearch = async (gameName, tagLine, searchRegion, forceRefresh = false) => {
+  const performSearch = async (gameName, tagLine, searchRegion, forceRefresh = false, autoExpandMatchId = null) => {
     setLoading(true);
     setError('');
     // On hard refresh, we don't nullify summoner state immediately to prevent visual flashing, or we can, but let's keep UX smooth.
@@ -312,6 +314,16 @@ export default function App() {
         `${BACKEND_URL}/matches/${searchRegion}/${summonerRes.data.puuid}?count=8&queue=${queueFilter}${forceRefresh ? '&refresh=true' : ''}`
       );
       setMatches(matchesRes.data);
+
+      if (autoExpandMatchId) {
+        setExpandedMatchId(autoExpandMatchId);
+        setTimeout(() => {
+          const element = document.getElementById(`match-${autoExpandMatchId}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 800);
+      }
 
       // Update browser URL to match current search
       window.history.pushState({}, '', `/${searchRegion}/${gameName.trim()}-${tagLine.trim()}`);
@@ -2302,6 +2314,7 @@ export default function App() {
                             return (
                               <div
                                 key={match.matchId}
+                                id={`match-${match.matchId}`}
                                 className={`dpm-match-card ${match.playerStats.win ? 'win' : 'loss'} ${isExpanded ? 'expanded' : ''}`}
                               >
                                 <div 
