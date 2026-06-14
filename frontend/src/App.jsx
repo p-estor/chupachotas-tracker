@@ -1984,7 +1984,7 @@ export default function App() {
               <div className="search-box-wrapper" style={{ position: 'relative', width: '260px' }}>
                 <input
                   type="text"
-                  placeholder="Search Player#TAG... (Ctrl+K)"
+                  placeholder="Buscar Invocador#TAG... (Ctrl+K)"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -2052,14 +2052,14 @@ export default function App() {
         <div className="dpm-landing-grid">
           <div className="dpm-landing-left">
             <div className="dpm-landing-hero">
-              <h1 className="dpm-landing-title">Find Summoner Stats</h1>
-              <p className="dpm-landing-subtitle">Real-time League of Legends player analytics, LP trends and MVP scores</p>
+              <h1 className="dpm-landing-title">Buscar Estadísticas de Invocador</h1>
+              <p className="dpm-landing-subtitle">Análisis en tiempo real de jugadores de League of Legends, tendencias de LP y puntuaciones MVP</p>
             </div>
             <form onSubmit={handleSearch} className="dpm-landing-search-box">
               <div className="search-box-wrapper" style={{ position: 'relative', flex: 1 }}>
                 <input
                   type="text"
-                  placeholder="Search Summoner Name#TAG (e.g. xKai#UwU)..."
+                  placeholder="Buscar Invocador Nombre#TAG (ej. Faker#KR1)..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -2178,14 +2178,14 @@ export default function App() {
                   className="dpm-profile-refresh-btn"
                   onClick={() => performSearch(summoner.gameName, summoner.tagLine, region, true)}
                 >
-                  Update now
+                  Actualizar
                 </button>
               </div>
             </div>
             
             <div className="dpm-profile-tabs">
-              <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Overview</span>
-              <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>Champions</span>
+              <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Resumen</span>
+              <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>Campeones</span>
             </div>
           </div>
 
@@ -2200,7 +2200,7 @@ export default function App() {
                   {summoner.ranks.solo ? (
                     <span className="dpm-rank-card-level">{summoner.ranks.solo.tier} {summoner.ranks.solo.rank}</span>
                   ) : (
-                    <span className="dpm-rank-card-level unranked">Unranked</span>
+                    <span className="dpm-rank-card-level unranked">Sin clasificar</span>
                   )}
                 </div>
                 {summoner.ranks.solo && (
@@ -2209,7 +2209,7 @@ export default function App() {
                       <span className="dpm-rank-badge-symbol" style={{ color: getRankBadgeColor(summoner.ranks.solo.tier) }}>🛡️</span>
                       <div className="dpm-rank-stats-details">
                         <span className="dpm-rank-lp">{summoner.ranks.solo.leaguePoints} LP</span>
-                        <span className="dpm-rank-wl">{summoner.ranks.solo.wins}W - {summoner.ranks.solo.losses}L ({summoner.ranks.solo.winRate}% WR)</span>
+                        <span className="dpm-rank-wl">{summoner.ranks.solo.wins}V - {summoner.ranks.solo.losses}D ({summoner.ranks.solo.winRate}% WR)</span>
                       </div>
                     </div>
                     {renderSidebarLpTrend(summoner.ranks.solo)}
@@ -2224,7 +2224,7 @@ export default function App() {
                   {summoner.ranks.flex ? (
                     <span className="dpm-rank-card-level">{summoner.ranks.flex.tier} {summoner.ranks.flex.rank}</span>
                   ) : (
-                    <span className="dpm-rank-card-level unranked">Unranked</span>
+                    <span className="dpm-rank-card-level unranked">Sin clasificar</span>
                   )}
                 </div>
                 {summoner.ranks.flex && (
@@ -2233,7 +2233,7 @@ export default function App() {
                       <span className="dpm-rank-badge-symbol" style={{ color: getRankBadgeColor(summoner.ranks.flex.tier) }}>⚔️</span>
                       <div className="dpm-rank-stats-details">
                         <span className="dpm-rank-lp">{summoner.ranks.flex.leaguePoints} LP</span>
-                        <span className="dpm-rank-wl">{summoner.ranks.flex.wins}W - {summoner.ranks.flex.losses}L ({summoner.ranks.flex.winRate}% WR)</span>
+                        <span className="dpm-rank-wl">{summoner.ranks.flex.wins}V - {summoner.ranks.flex.losses}D ({summoner.ranks.flex.winRate}% WR)</span>
                       </div>
                     </div>
                   </div>
@@ -2321,8 +2321,8 @@ export default function App() {
                           <span className="dpm-day-date">{dateKey}</span>
                           <div className="dpm-day-summary">
                             <span className="dpm-day-score-badge">DPM Score: {avgScore}</span>
-                            <span className="dpm-day-wl win">{dayWins} win</span>
-                            <span className="dpm-day-wl loss">{dayLosses} loss{dayLosses > 1 ? 'es' : ''}</span>
+                            <span className="dpm-day-wl win">{dayWins} V</span>
+                            <span className="dpm-day-wl loss">{dayLosses} D</span>
                           </div>
                         </div>
 
