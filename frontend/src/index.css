@@ -3816,7 +3816,14 @@ header p {
   box-shadow: 0 4px 12px rgba(0, 121, 193, 0.5) !important;
 }
 
+.dpm-load-more-btn:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+}
 
-
-
-
+.dpm-load-more-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

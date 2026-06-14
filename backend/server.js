@@ -367,13 +367,14 @@ function calculateAverageElo(participantsRanks) {
 app.get('/api/matches/:region/:puuid', async (req, res) => {
   const { region, puuid } = req.params;
   const { route } = getRegionSettings(region);
+  const start = req.query.start || 0; // Support pagination start index
   const count = req.query.count || 8; // Default to 8 matches for speed
   const queue = req.query.queue; // 'ranked_solo', 'ranked_flex', 'aram', 'normal', 'all'
   const forceRefresh = req.query.refresh === 'true';
 
   try {
     // Step A: Get match IDs from Riot API
-    let matchIdsUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${count}`;
+    let matchIdsUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`;
     
     if (queue === 'ranked_solo') {
       matchIdsUrl += '&queue=420';

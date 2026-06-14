@@ -123,6 +123,7 @@ export default function App() {
 
   // Queue filter state
   const [queueFilter, setQueueFilter] = useState('all');
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Fetch champion list from DDragon on mount to resolve championIds to names
   useEffect(() => {
@@ -341,6 +342,26 @@ export default function App() {
       setError(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMoreMatches = async () => {
+    if (!summoner || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const currentCount = matches ? matches.length : 0;
+      const res = await axios.get(
+        `${BACKEND_URL}/matches/${region}/${summoner.puuid}?start=${currentCount}&count=8&queue=${queueFilter}`
+      );
+      if (res.data && res.data.length > 0) {
+        setMatches((prevMatches) => [...(prevMatches || []), ...res.data]);
+      } else {
+        alert("No se encontraron más partidas.");
+      }
+    } catch (err) {
+      console.error('Failed to load more matches', err);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -2469,6 +2490,32 @@ export default function App() {
                   })
                 ) : (
                   <p style={{ color: 'var(--text-muted)' }}>No se encontraron partidas recientes.</p>
+                )}
+
+                {matches && matches.length > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', marginBottom: '2rem' }}>
+                    <button
+                      onClick={loadMoreMatches}
+                      disabled={loadingMore}
+                      className="dpm-load-more-btn"
+                      style={{
+                        padding: '0.6rem 1.8rem',
+                        borderRadius: '6px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        color: 'var(--text-primary)',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      {loadingMore ? 'Cargando...' : 'Cargar más partidas'}
+                    </button>
+                  </div>
                 )}
               </div>
             </main>
