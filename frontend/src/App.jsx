@@ -96,6 +96,62 @@ const getMatchPerformanceData = (match) => {
   return ratings;
 };
 
+const getPerformanceLabel = (match, userPuuid, ratings) => {
+  if (!match || !userPuuid || !ratings || !ratings[userPuuid]) {
+    return { label: 'Calculando...', key: 'neutral' };
+  }
+
+  const userRating = ratings[userPuuid];
+  const userParticipant = match.participants.find(p => p.puuid === userPuuid);
+  if (!userParticipant) return { label: 'Calculando...', key: 'neutral' };
+
+  // 1. Check MVP / ACE
+  if (userRating.badge === 'MVP') return { label: 'MVP', key: 'mvp' };
+  if (userRating.badge === 'ACE') return { label: 'ACE', key: 'ace' };
+
+  // 2. Check Perfect KDA (0 deaths)
+  const deaths = userParticipant.deaths || 0;
+  if (deaths === 0) return { label: 'KDA Perfecto', key: 'perfect-kda' };
+
+  // 3. Check High KDA (KDA >= 5.0)
+  const kills = userParticipant.kills || 0;
+  const assists = userParticipant.assists || 0;
+  const kda = deaths > 0 ? (kills + assists) / deaths : 10;
+  
+  // 4. Calculate Teammates average score
+  const teammates = match.participants.filter(p => p.teamId === userParticipant.teamId && p.puuid !== userPuuid);
+  const teammatesScores = teammates.map(p => ratings[p.puuid]?.score || 60);
+  const avgTeammatesScore = teammatesScores.reduce((acc, s) => acc + s, 0) / (teammatesScores.length || 1);
+
+  // 5. Carry (Your score is >= 75 and team score is < 55)
+  if (userRating.score >= 75 && avgTeammatesScore < 55) {
+    return { label: 'Carrito', key: 'carry' };
+  }
+
+  // 6. Carried (Won, but your score is < 50)
+  if (userParticipant.win && userRating.score < 50) {
+    return { label: 'Carreado', key: 'carried' };
+  }
+
+  // 7. Solid KDA
+  if (kda >= 5.0) {
+    return { label: 'KDA Alto', key: 'high-kda' };
+  }
+
+  // 8. Good Team / Poor Team based on teammates
+  if (avgTeammatesScore >= 68) {
+    return { label: 'Buen equipo', key: 'good-team' };
+  }
+  if (avgTeammatesScore < 55) {
+    return { label: 'Equipo flojo', key: 'poor-team' };
+  }
+
+  // 9. Default: fallback to generic good/poor performance depending on player score
+  return userRating.score >= 70 
+    ? { label: 'Buen juego', key: 'good' } 
+    : { label: 'Mal juego', key: 'poor' };
+};
+
 export default function App() {
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('euw');
@@ -2420,9 +2476,14 @@ export default function App() {
                                     </span>
                                     <span className="dpm-kda-ratio">{match.playerStats.kda}:1 KDA</span>
                                     {/* Evaluation pill */}
-                                    <span className={`dpm-kda-perf-pill ${userRating.score >= 70 ? 'good' : 'poor'}`}>
-                                      {userRating.score >= 70 ? 'Good team' : 'Poor team'}
-                                    </span>
+                                    {(() => {
+                                      const ratingObj = getPerformanceLabel(match, summoner?.puuid, performanceRatings);
+                                      return (
+                                        <span className={`dpm-kda-perf-pill ${ratingObj.key}`}>
+                                          {ratingObj.label}
+                                        </span>
+                                      );
+                                    })()}
                                   </div>
 
                                   {/* Stats */}
