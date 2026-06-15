@@ -72,6 +72,7 @@ Inicia el backend en desarrollo:
 ```bash
 npm run dev
 ```
+El servidor de API local se levantará en `http://localhost:3001`.
 
 ### 3. Configurar el Frontend
 En una nueva terminal, accede a `/frontend`, instala las dependencias e inicia el servidor de desarrollo de Vite:
@@ -80,6 +81,7 @@ cd ../frontend
 npm install
 npm run dev
 ```
+Abre `http://localhost:5173` en tu navegador para ver la aplicación web local de desarrollo e interactuar con ella.
 
 ---
 
@@ -96,7 +98,7 @@ server {
     server_name tracker.chupachotas.es;
 
     location / {
-        proxy_pass http://localhost:3000; # Puerto de la app
+        proxy_pass http://localhost:3001; # Puerto del backend de la app
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
