@@ -169,6 +169,8 @@ export default function App() {
   const [championsRoleFilter, setChampionsRoleFilter] = useState('all');
   const [championsQueueFilter, setChampionsQueueFilter] = useState('all');
   const [challengePlayers, setChallengePlayers] = useState([]);
+  const [statsMatches, setStatsMatches] = useState(null);
+  const [loadingStatsMatches, setLoadingStatsMatches] = useState(false);
 
   const getRuneIcon = (id) => runeMap[id] ? `https://ddragon.leagueoflegends.com/cdn/img/${runeMap[id]}` : null;
 
@@ -268,6 +270,27 @@ export default function App() {
     fetchAramMatches();
   }, [activeTab, summoner, region]);
 
+  // Fetch up to 150 matches for statistics calculation when Champions tab is selected
+  useEffect(() => {
+    if (!summoner || activeTab !== 'champions' || statsMatches !== null) return;
+
+    const fetchStatsMatches = async () => {
+      setLoadingStatsMatches(true);
+      try {
+        const res = await axios.get(
+          `${BACKEND_URL}/matches/${region}/${summoner.puuid}?count=150&queue=all`
+        );
+        setStatsMatches(res.data);
+      } catch (err) {
+        console.error('Failed to fetch stats matches', err);
+      } finally {
+        setLoadingStatsMatches(false);
+      }
+    };
+
+    fetchStatsMatches();
+  }, [activeTab, summoner, region, statsMatches]);
+
   // Debounced API call for player autocomplete search
   useEffect(() => {
     const query = search.trim();
@@ -358,6 +381,7 @@ export default function App() {
       setChampionsQueueFilter('all');
       setChampionsSubTab('champions');
     }
+    setStatsMatches(null);
     setShowSuggestions(false);
 
     try {
@@ -1290,13 +1314,15 @@ export default function App() {
 
   const getChampionStats = () => {
     const champStats = {};
-    const allGames = [...(matches || [])];
-    
-    (aramMatches || []).forEach(am => {
-      if (!allGames.some(g => g.matchId === am.matchId)) {
-        allGames.push(am);
-      }
-    });
+    const allGames = statsMatches ? [...statsMatches] : (() => {
+      const list = [...(matches || [])];
+      (aramMatches || []).forEach(am => {
+        if (!list.some(g => g.matchId === am.matchId)) {
+          list.push(am);
+        }
+      });
+      return list;
+    })();
 
     allGames.forEach(m => {
       const stats = m.playerStats;
@@ -1378,12 +1404,159 @@ export default function App() {
       .sort((a, b) => b.games - a.games);
   };
 
+  const getTeammatesOrOpponentsStats = (type) => {
+    const stats = {};
+    const allGames = statsMatches ? [...statsMatches] : (() => {
+      const list = [...(matches || [])];
+      (aramMatches || []).forEach(am => {
+        if (!list.some(g => g.matchId === am.matchId)) {
+          list.push(am);
+        }
+      });
+      return list;
+    })();
+
+    allGames.forEach(m => {
+      // Find the user's participant info to know their team
+      const userParticipant = m.participants?.find(p => p.puuid === summoner.puuid) || m.playerStats;
+      const userTeam = userParticipant.teamId;
+
+      // Queue filter
+      if (championsQueueFilter === 'solo' && m.queueId !== 420) return;
+      if (championsQueueFilter === 'flex' && m.queueId !== 440) return;
+      if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.gameMode !== 'ARAM') return;
+
+      const participants = m.participants || [];
+      const targets = participants.filter(p => {
+        if (p.puuid === summoner.puuid) return false; // Exclude user
+        if (type === 'teammates') {
+          return p.teamId === userTeam;
+        } else {
+          return p.teamId !== userTeam;
+        }
+      });
+
+      const ratings = getMatchPerformanceData(m);
+
+      targets.forEach(p => {
+        const pName = p.gameName ? `${p.gameName}#${p.tagLine}` : p.summonerName || 'Invocador';
+        const pRole = p.role || 'UTILITY';
+
+        // Role filter - apply to target's role
+        const cleanRole = pRole.toUpperCase();
+        if (championsRoleFilter === 'top' && !cleanRole.includes('TOP')) return;
+        if (championsRoleFilter === 'jungle' && !cleanRole.includes('JUG') && !cleanRole.includes('JUNGLE')) return;
+        if (championsRoleFilter === 'mid' && !cleanRole.includes('MID') && !cleanRole.includes('MIDDLE')) return;
+        if (championsRoleFilter === 'adc' && !cleanRole.includes('BOT') && !cleanRole.includes('BOTTOM') && !cleanRole.includes('ADC')) return;
+        if (championsRoleFilter === 'support' && !cleanRole.includes('UTILITY') && !cleanRole.includes('SUP') && !cleanRole.includes('SUPPORT')) return;
+
+        if (!stats[pName]) {
+          stats[pName] = {
+            name: pName,
+            championName: p.championName,
+            games: 0,
+            wins: 0,
+            kills: 0,
+            deaths: 0,
+            assists: 0,
+            cs: 0,
+            duration: 0,
+            scores: [],
+            results: []
+          };
+        }
+
+        const win = p.win;
+        const kills = p.kills || 0;
+        const deaths = p.deaths || 0;
+        const assists = p.assists || 0;
+        const cs = p.cs || 0;
+        const duration = m.gameDuration || 0;
+        const pRating = ratings[p.puuid] || { score: 65 };
+
+        stats[pName].games++;
+        if (win) stats[pName].wins++;
+        stats[pName].kills += kills;
+        stats[pName].deaths += deaths;
+        stats[pName].assists += assists;
+        stats[pName].cs += cs;
+        stats[pName].duration += duration;
+        stats[pName].scores.push(pRating.score);
+        stats[pName].results.push(win ? 'W' : 'L');
+        
+        // Use most recent champion played
+        stats[pName].championName = p.championName;
+      });
+    });
+
+    return Object.values(stats)
+      .map(s => {
+        const avgKills = (s.kills / s.games).toFixed(1);
+        const avgDeaths = (s.deaths / s.games).toFixed(1);
+        const avgAssists = (s.assists / s.games).toFixed(1);
+        const kdaRatio = s.deaths === 0 ? (s.kills + s.assists).toFixed(1) : ((s.kills + s.assists) / s.deaths).toFixed(1);
+        const wr = Math.round((s.wins / s.games) * 100);
+        const csMin = s.duration > 0 ? (s.cs / (s.duration / 60)).toFixed(1) : '0.0';
+        const avgScore = Math.round(s.scores.reduce((a, b) => a + b, 0) / s.games);
+        const last5 = s.results.slice(-5).reverse();
+
+        return {
+          name: s.name,
+          championName: s.championName,
+          games: s.games,
+          wins: s.wins,
+          losses: s.games - s.wins,
+          wr,
+          kda: `${avgKills} / ${avgDeaths} / ${avgAssists}`,
+          kdaRatio,
+          csMin,
+          avgScore,
+          last5
+        };
+      })
+      .sort((a, b) => b.games - a.games);
+  };
+
   const renderChampionsTab = () => {
-    const champList = getChampionStats();
-    const totalGamesAgg = champList.reduce((acc, c) => acc + c.games, 0);
-    const totalWinsAgg = champList.reduce((acc, c) => acc + c.wins, 0);
+    if (loadingStatsMatches) {
+      return (
+        <div className="dpm-champions-tab-container">
+          <div className="dpm-stats-loading" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '5rem 2rem',
+            textAlign: 'center',
+            color: 'var(--text-secondary)'
+          }}>
+            <div className="loading-pulse" style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'var(--accent-cyan)',
+              animation: 'pulse 1.5s infinite ease-in-out',
+              marginBottom: '1rem'
+            }}></div>
+            <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>Cargando y analizando estadísticas de las últimas 150 partidas...</p>
+            <span style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '0.5rem' }}>Esto puede tomar unos segundos debido a la recopilación de datos de Riot y SQLite</span>
+          </div>
+        </div>
+      );
+    }
+
+    const isChampions = championsSubTab === 'champions';
+    const list = isChampions ? getChampionStats() : getTeammatesOrOpponentsStats(championsSubTab);
+    const totalGamesAgg = list.reduce((acc, c) => acc + c.games, 0);
+    const totalWinsAgg = list.reduce((acc, c) => acc + c.wins, 0);
     const totalLossesAgg = totalGamesAgg - totalWinsAgg;
     const totalWrAgg = totalGamesAgg > 0 ? Math.round((totalWinsAgg / totalGamesAgg) * 100) : 0;
+
+    const handlePlayerClick = (riotId) => {
+      if (!riotId || !riotId.includes('#')) return;
+      const [name, tag] = riotId.split('#');
+      performSearch(name, tag, region);
+    };
 
     return (
       <div className="dpm-champions-tab-container">
@@ -1456,7 +1629,7 @@ export default function App() {
             <thead>
               <tr>
                 <th style={{ width: '40px' }}>#</th>
-                <th>Champion</th>
+                <th>{isChampions ? 'Champion' : championsSubTab === 'teammates' ? 'Teammate' : 'Opponent'}</th>
                 <th style={{ textAlign: 'center' }}>Games</th>
                 <th style={{ textAlign: 'center' }}>WR</th>
                 <th style={{ textAlign: 'center' }}>KDA</th>
@@ -1468,12 +1641,12 @@ export default function App() {
             </thead>
             <tbody>
               {/* Aggregated row */}
-              {champList.length > 0 && (
+              {list.length > 0 && (
                 <tr className="dpm-champions-all-row">
                   <td></td>
                   <td className="champ-name-cell">
                     <span className="all-champs-circle">★</span>
-                    <strong>All Champions</strong>
+                    <strong>{isChampions ? 'All Champions' : championsSubTab === 'teammates' ? 'All Teammates' : 'All Opponents'}</strong>
                   </td>
                   <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{totalGamesAgg}</td>
                   <td style={{ textAlign: 'center' }}>
@@ -1482,22 +1655,31 @@ export default function App() {
                   </td>
                   <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>-</td>
                   <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>-</td>
-                  <td style={{ textAlign: 'center', color: 'var(--win-color)' }}>+310.2</td>
+                  <td style={{ textAlign: 'center', color: 'var(--win-color)' }}>
+                    {totalWrAgg >= 50 ? `+${(200 + totalWrAgg * 6.5).toFixed(1)}` : `-${(100 + (50 - totalWrAgg) * 8.5).toFixed(1)}`}
+                  </td>
                   <td style={{ textAlign: 'center', color: 'var(--accent-cyan)', fontWeight: 'bold' }}>
-                    {(champList.reduce((acc, c) => acc + c.avgScore * c.games, 0) / totalGamesAgg).toFixed(1)}
+                    {(list.reduce((acc, c) => acc + c.avgScore * c.games, 0) / totalGamesAgg).toFixed(1)}
                   </td>
                   <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>-</td>
                 </tr>
               )}
 
-              {champList.length > 0 ? (
-                champList.map((c, index) => (
+              {list.length > 0 ? (
+                list.map((c, index) => (
                   <tr key={c.name}>
                     <td className="rank-num-cell">{index + 1}</td>
-                    <td className="champ-name-cell">
-                      <img src={getChampIcon(c.name)} alt={c.name} className="table-champ-icon" />
-                      <span className="table-champ-name-text">{c.name}</span>
-                    </td>
+                    {isChampions ? (
+                      <td className="champ-name-cell">
+                        <img src={getChampIcon(c.name)} alt={c.name} className="table-champ-icon" />
+                        <span className="table-champ-name-text">{c.name}</span>
+                      </td>
+                    ) : (
+                      <td className="champ-name-cell p-name-cell" onClick={() => handlePlayerClick(c.name)}>
+                        <img src={getChampIcon(c.championName)} alt={c.championName || 'Unknown'} className="table-champ-icon" />
+                        <span className="table-champ-name-text" style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--accent-cyan)' }}>{c.name}</span>
+                      </td>
+                    )}
                     <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{c.games}</td>
                     <td style={{ textAlign: 'center' }}>
                       <span className={`wr-pct-bold ${c.wr >= 55 ? 'high-wr' : c.wr < 47 ? 'low-wr' : ''}`}>{c.wr}%</span>
@@ -1526,7 +1708,7 @@ export default function App() {
               ) : (
                 <tr>
                   <td colSpan="9" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                    No se encontraron campeones con los filtros actuales.
+                    No se encontraron registros con los filtros actuales.
                   </td>
                 </tr>
               )}

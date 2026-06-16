@@ -367,28 +367,46 @@ function calculateAverageElo(participantsRanks) {
 app.get('/api/matches/:region/:puuid', async (req, res) => {
   const { region, puuid } = req.params;
   const { route } = getRegionSettings(region);
-  const start = req.query.start || 0; // Support pagination start index
-  const count = req.query.count || 8; // Default to 8 matches for speed
+  const start = parseInt(req.query.start || 0, 10); // Support pagination start index
+  const count = parseInt(req.query.count || 8, 10); // Default to 8 matches for speed
   const queue = req.query.queue; // 'ranked_solo', 'ranked_flex', 'aram', 'normal', 'all'
   const forceRefresh = req.query.refresh === 'true';
 
   try {
-    // Step A: Get match IDs from Riot API
-    let matchIdsUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`;
-    
-    if (queue === 'ranked_solo') {
-      matchIdsUrl += '&queue=420';
-    } else if (queue === 'ranked_flex') {
-      matchIdsUrl += '&queue=440';
-    } else if (queue === 'aram') {
-      matchIdsUrl += '&queue=450';
-    } else if (queue === 'normal') {
-      matchIdsUrl += '&type=normal';
-    }
+    // Step A: Get match IDs from Riot API (chunked if count > 100)
+    let matchIds = [];
+    let currentStart = start;
+    let remaining = count;
 
-    console.log(`Calling Riot Matches by PUUID API: ${matchIdsUrl}`);
-    const matchIdsResponse = await axios.get(matchIdsUrl, getRiotHeaders());
-    const matchIds = matchIdsResponse.data;
+    while (remaining > 0) {
+      const fetchCount = Math.min(remaining, 100);
+      let matchIdsUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${currentStart}&count=${fetchCount}`;
+      
+      if (queue === 'ranked_solo') {
+        matchIdsUrl += '&queue=420';
+      } else if (queue === 'ranked_flex') {
+        matchIdsUrl += '&queue=440';
+      } else if (queue === 'aram') {
+        matchIdsUrl += '&queue=450';
+      } else if (queue === 'normal') {
+        matchIdsUrl += '&type=normal';
+      }
+
+      console.log(`Calling Riot Matches by PUUID API: ${matchIdsUrl}`);
+      const matchIdsResponse = await axios.get(matchIdsUrl, getRiotHeaders());
+      const chunk = matchIdsResponse.data;
+      
+      if (!chunk || chunk.length === 0) {
+        break;
+      }
+
+      matchIds = matchIds.concat(chunk);
+      if (chunk.length < fetchCount) {
+        break; // No more matches available from Riot
+      }
+      currentStart += chunk.length;
+      remaining -= chunk.length;
+    }
 
     if (matchIds.length === 0) {
       return res.json([]);
