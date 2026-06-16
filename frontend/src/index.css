@@ -2226,7 +2226,7 @@ header p {
 
 /* Card columns layout */
 .dpm-match-meta-col {
-  width: 90px;
+  width: 100px;
   display: flex;
   flex-direction: column;
   padding-left: 0.5rem;
@@ -2237,10 +2237,7 @@ header p {
   font-size: 0.72rem;
   font-weight: 800;
   color: #fff;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .dpm-match-duration {
