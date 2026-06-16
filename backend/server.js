@@ -93,11 +93,42 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
 
     console.log(`[Cache Miss] Fetching summoner data from Riot for ${cacheKey}`);
 
-    // Step A: Get PUUID from Riot Account-v1
-    const accountUrl = `https://${route}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
-    console.log(`Calling Riot Account API: ${accountUrl}`);
-    const accountResponse = await axios.get(accountUrl, getRiotHeaders());
-    const { puuid, gameName: officialName, tagLine: officialTag } = accountResponse.data;
+    let puuid = null;
+    let officialName = gameName;
+    let officialTag = tagLine;
+
+    // Try to resolve PUUID from the SoloQ Challenge database first to save API calls
+    try {
+      const challengePlayer = await new Promise((resolve, reject) => {
+        challengeDb.get(
+          'SELECT puuid, gameName, tagLine FROM Player WHERE LOWER(gameName) = ? AND LOWER(tagLine) = ?',
+          [normalizedGameName, normalizedTagLine],
+          (err, row) => {
+            if (err) reject(err);
+            else resolve(row);
+          }
+        );
+      });
+      
+      if (challengePlayer && challengePlayer.puuid) {
+        console.log(`[Challenge DB Hit] Resolved PUUID for ${gameName}#${tagLine} from SoloQ Challenge DB`);
+        puuid = challengePlayer.puuid;
+        officialName = challengePlayer.gameName;
+        officialTag = challengePlayer.tagLine;
+      }
+    } catch (dbErr) {
+      console.error('Failed to query challenge Player table:', dbErr.message);
+    }
+
+    if (!puuid) {
+      // Step A: Get PUUID from Riot Account-v1
+      const accountUrl = `https://${route}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
+      console.log(`Calling Riot Account API: ${accountUrl}`);
+      const accountResponse = await axios.get(accountUrl, getRiotHeaders());
+      puuid = accountResponse.data.puuid;
+      officialName = accountResponse.data.gameName;
+      officialTag = accountResponse.data.tagLine;
+    }
 
     // Step B: Get Summoner-v4 data using PUUID
     const summonerUrl = `https://${platform}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`;
