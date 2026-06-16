@@ -152,6 +152,25 @@ const getPerformanceLabel = (match, userPuuid, ratings) => {
     : { label: 'Mal juego', key: 'poor' };
 };
 
+const getQueueDisplayName = (match) => {
+  const qId = match.queueId;
+  if (qId === 420) return 'Clasificatoria Solo/Dúo';
+  if (qId === 440) return 'Clasificatoria Flexible';
+  if (qId === 450) return 'ARAM';
+  
+  // Normal queues: 400 (5v5 Draft Pick), 430 (5v5 Blind Pick), 490 (Quickplay)
+  if ([400, 430, 490].includes(qId)) return 'Normal';
+  
+  // Fallbacks based on gameMode
+  const mode = (match.gameMode || '').toUpperCase();
+  if (mode === 'ARAM') return 'ARAM';
+  if (mode === 'CLASSIC') return 'Normal';
+  
+  // Capitalize/clean gameMode if unknown
+  return match.gameMode || 'Normal';
+};
+
+
 export default function App() {
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('euw');
@@ -2610,7 +2629,7 @@ export default function App() {
                                   
                                   {/* Meta */}
                                   <div className="dpm-match-meta-col">
-                                    <span className="dpm-match-mode">{match.gameMode}</span>
+                                    <span className="dpm-match-mode">{getQueueDisplayName(match)}</span>
                                     <span className="dpm-match-duration">{formatDuration(match.gameDuration)}</span>
                                     {match.averageElo && <span className="dpm-match-elo-badge">{match.averageElo}</span>}
                                   </div>
