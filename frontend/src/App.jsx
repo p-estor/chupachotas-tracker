@@ -1304,9 +1304,9 @@ export default function App() {
       if (!champName) return;
 
       // Queue filter
-      if (championsQueueFilter === 'solo' && m.gameMode !== 'CLASSIC') return;
-      if (championsQueueFilter === 'flex' && m.gameMode !== 'CLASSIC') return; // approximate
-      if (championsQueueFilter === 'aram' && m.gameMode !== 'ARAM') return;
+      if (championsQueueFilter === 'solo' && m.queueId !== 420) return;
+      if (championsQueueFilter === 'flex' && m.queueId !== 440) return;
+      if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.gameMode !== 'ARAM') return;
 
       // Role filter
       const cleanRole = (stats.role || '').toUpperCase();
