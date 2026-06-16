@@ -1555,7 +1555,7 @@ header p {
 }
 
 /* ==========================================================================
-   DPM.LOL Premium Redesign Styles
+   Chupachotas Tracker Premium Styles
    ========================================================================== */
 
 .dpm-app-container {
@@ -2185,7 +2185,7 @@ header p {
   gap: 0.4rem;
 }
 
-/* 10. Flat Match Card Layout (DPM Style) */
+/* 10. Flat Match Card Layout (Flat Style) */
 .dpm-match-card {
   background-color: #12151e;
   border: 1px solid rgba(255, 255, 255, 0.04);
@@ -2602,10 +2602,10 @@ header p {
 }
 
 /* ==========================================================================
-   PROFILE TABS: DPM LENS, CHAMPIONS, ARAM, LIVE
+   PROFILE TABS: TRACKER LENS, CHAMPIONS, ARAM, LIVE
    ========================================================================== */
 
-/* 1. DPM Lens Tab & Mockup Blur */
+/* 1. Tracker Lens Tab & Mockup Blur */
 .dpm-lens-tab-container {
   position: relative;
   width: 100%;
