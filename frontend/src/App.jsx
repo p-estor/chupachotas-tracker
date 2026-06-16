@@ -608,6 +608,7 @@ export default function App() {
 
   const renderTeamTable = (match, teamId, maxDamage) => {
     const teamPlayers = match.participants.filter(p => p.teamId === teamId);
+    const ratings = getMatchPerformanceData(match);
     const isWin = teamPlayers[0]?.win;
     const totalKills = teamPlayers.reduce((sum, p) => sum + p.kills, 0);
     const totalDeaths = teamPlayers.reduce((sum, p) => sum + p.deaths, 0);
@@ -641,6 +642,7 @@ export default function App() {
             const isCurrent = p.puuid === summoner?.puuid;
             const champName = championMap[p.championId] || p.championName;
             const damagePercent = maxDamage > 0 ? (p.damageDealt / maxDamage) * 100 : 0;
+            const playerRating = ratings[p.puuid] || { score: 60, badge: '-' };
             return (
               <div key={idx} className={`expanded-row ${isCurrent ? 'current-player-row' : ''}`}>
                 {/* Champ Icon */}
@@ -657,7 +659,7 @@ export default function App() {
                   onClick={() => handleSelectSuggestion({ game_name: p.gameName, tag_line: p.tagLine })}
                   style={{ cursor: 'pointer' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                     {p.rank && (
                       <span 
                         className="rank-badge-pill" 
@@ -672,6 +674,20 @@ export default function App() {
                     )}
                     <span className={`player-name-text ${isCurrent ? 'current' : ''}`} title={`${p.gameName}#${p.tagLine}`}>
                       {p.gameName}
+                    </span>
+                    <span 
+                      className="rank-badge-pill rating-badge-pill" 
+                      style={{ 
+                        backgroundColor: playerRating.badge === 'MVP' ? 'rgba(241, 196, 15, 0.15)' : playerRating.badge === 'ACE' ? 'rgba(168, 85, 247, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                        color: playerRating.badge === 'MVP' ? '#f1c40f' : playerRating.badge === 'ACE' ? '#a855f7' : 'var(--text-secondary)',
+                        borderColor: playerRating.badge === 'MVP' ? 'rgba(241, 196, 15, 0.3)' : playerRating.badge === 'ACE' ? 'rgba(168, 85, 247, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                        fontWeight: 'bold',
+                        fontSize: '0.62rem',
+                        padding: '0.05rem 0.25rem'
+                      }}
+                      title={`Puntuación: ${playerRating.score}`}
+                    >
+                      {playerRating.badge}
                     </span>
                   </div>
                   <span className="player-tag-text" style={{ marginLeft: p.rank && p.rank.tier !== 'UNRANKED' ? '2.1rem' : '0' }}>#{p.tagLine}</span>
