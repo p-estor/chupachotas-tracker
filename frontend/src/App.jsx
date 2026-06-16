@@ -1073,7 +1073,7 @@ export default function App() {
     const offset = circumference - (score / 100) * circumference;
 
     return (
-      <div className="dpm-score-wrapper" title={`Puntuación DPM: ${score} - ${badge}`}>
+      <div className="dpm-score-wrapper" title={`Puntuación: ${score} - ${badge}`}>
         <svg className="dpm-score-svg" width="42" height="42" viewBox="0 0 42 42">
           <circle className="dpm-score-bg" cx="21" cy="21" r={radius} />
           <circle 
@@ -1230,14 +1230,14 @@ export default function App() {
         {/* Riot Login Lock Overlay */}
         <div className="dpm-lens-lock-overlay">
           <div className="dpm-lens-lock-content">
-            <h2 className="dpm-lens-lock-title">You need to be logged in to see your DPM Lens.</h2>
+            <h2 className="dpm-lens-lock-title">You need to be logged in to see your Tracker Lens.</h2>
             <button className="dpm-riot-login-btn">
               <span className="riot-fist-icon">✊</span> Log in with Riot
             </button>
           </div>
         </div>
 
-        {/* Blurred DPM Lens Mockup */}
+        {/* Blurred Tracker Lens Mockup */}
         <div className="dpm-lens-mockup-wrapper blurred">
           <div className="dpm-lens-mock-header">
             <div className="lens-mock-tabs">
@@ -1654,7 +1654,7 @@ export default function App() {
                 <th style={{ textAlign: 'center' }}>KDA</th>
                 <th style={{ textAlign: 'center' }}>CS/m</th>
                 <th style={{ textAlign: 'center' }}>Gold@15</th>
-                <th style={{ textAlign: 'center' }}>DPM Score</th>
+                <th style={{ textAlign: 'center' }}>Score</th>
                 <th style={{ textAlign: 'center' }}>Last 5</th>
               </tr>
             </thead>
@@ -2238,7 +2238,7 @@ export default function App() {
             {summoner.gameName}#{summoner.tagLine} is not in an active League of Legends match right now.
           </p>
           <div className="dpm-live-tip">
-            Tip: Launch the Riot Client and join a queue. Once loading starts, refresh this tab to track live DPM, skill levels and opponent history.
+            Tip: Launch the Riot Client and join a queue. Once loading starts, refresh this tab to track live stats, skill levels and opponent history.
           </div>
         </div>
       </div>
@@ -2598,7 +2598,7 @@ export default function App() {
                         <div className="dpm-day-header">
                           <span className="dpm-day-date">{dateKey}</span>
                           <div className="dpm-day-summary">
-                            <span className="dpm-day-score-badge">DPM Score: {avgScore}</span>
+                            <span className="dpm-day-score-badge">Score: {avgScore}</span>
                             <span className="dpm-day-wl win">{dayWins} V</span>
                             <span className="dpm-day-wl loss">{dayLosses} D</span>
                           </div>
