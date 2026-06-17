@@ -28,6 +28,16 @@
   --glass-effect: backdrop-filter: blur(12px);
   --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.2);
   --glow-purple: 0 0 20px rgba(138, 43, 226, 0.2);
+
+  /* Layout Tokens */
+  --app-padding: 1.5rem;
+  --card-padding: 1.25rem;
+  --sidebar-width: 260px;
+  
+  /* Typography Tokens */
+  --title-hero: 2.75rem;
+  --title-section: 1.25rem;
+  --text-base: 0.85rem;
 }
 
 * {
@@ -3873,4 +3883,163 @@ header p {
 .dpm-load-more-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --app-padding: 1rem;
+    --card-padding: 1rem;
+  }
+  .dpm-aram-vertical-records-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .dpm-aram-record-boxes {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --app-padding: 0.75rem;
+    --card-padding: 0.75rem;
+    --title-hero: 2rem;
+    --title-section: 1.1rem;
+  }
+  
+  /* Layout */
+  .dpm-dashboard-layout {
+    flex-direction: column !important;
+  }
+  .dpm-sidebar {
+    width: 100% !important;
+  }
+  
+  /* Tables with Horizontal Scroll */
+  .dpm-champions-table-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dpm-champions-table {
+    min-width: 750px !important;
+  }
+  
+  .expanded-table-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  .expanded-table-header,
+  .expanded-row {
+    min-width: 750px !important;
+  }
+  
+  /* Teammates/Opponents Tables */
+  .teammates-table-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .teammates-table {
+    min-width: 750px !important;
+  }
+  
+  /* Profile banner contents */
+  .dpm-profile-banner-content {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  
+  /* Navbar styling updates */
+  .dpm-navbar-container {
+    flex-direction: column !important;
+    height: auto !important;
+    padding: 0.5rem 1rem !important;
+    gap: 0.5rem !important;
+  }
+  .dpm-navbar {
+    height: auto !important;
+  }
+  .dpm-nav-links {
+    margin-left: 0 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 1rem !important;
+  }
+  .dpm-nav-search {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Main Landing */
+  .dpm-landing-title {
+    font-size: clamp(1.8rem, 6vw, var(--title-hero)) !important;
+  }
+  .dpm-landing-search-box {
+    flex-direction: column !important;
+    border-radius: 12px !important;
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+  .dpm-landing-region-select,
+  .dpm-landing-search-btn {
+    padding: 0.75rem !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .dpm-aram-vertical-records-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .dpm-aram-record-boxes {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  /* Match Card adaptation */
+  .dpm-match-card-main {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem !important;
+  }
+  .dpm-match-meta-col {
+    width: 45% !important;
+    padding-left: 0 !important;
+  }
+  .dpm-match-champ-block {
+    width: 45% !important;
+    justify-content: flex-end !important;
+  }
+  .dpm-match-kda-col {
+    width: 45% !important;
+  }
+  .dpm-match-stats-col {
+    width: 45% !important;
+    align-items: flex-end !important;
+    text-align: right !important;
+  }
+  .dpm-match-items-col {
+    width: 100% !important;
+    order: 5 !important;
+    margin-top: 0.25rem !important;
+  }
+  .dpm-match-vs-col {
+    width: 45% !important;
+  }
+  .dpm-match-score-col {
+    width: 45% !important;
+    justify-content: flex-end !important;
+    display: flex !important;
+  }
+  .dpm-match-expand-chevron {
+    width: 100% !important;
+    order: 6 !important;
+    text-align: center !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-top: 0.5rem !important;
+    margin-top: 0.25rem !important;
+  }
+  .dpm-match-strip {
+    height: 100% !important;
+  }
 }

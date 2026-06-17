@@ -626,119 +626,121 @@ export default function App() {
           </span>
         </div>
         
-        <div className="expanded-table-header">
-          <span>Campeón</span>
-          <span>Invocador</span>
-          <span>KDA</span>
-          <span>Daño</span>
-          <span>Oro</span>
-          <span>CS</span>
-          <span>Visión</span>
-          <span>Objetos</span>
-        </div>
+        <div className="expanded-table-wrapper">
+          <div className="expanded-table-header">
+            <span>Campeón</span>
+            <span>Invocador</span>
+            <span>KDA</span>
+            <span>Daño</span>
+            <span>Oro</span>
+            <span>CS</span>
+            <span>Visión</span>
+            <span>Objetos</span>
+          </div>
 
-        <div className="expanded-table-rows">
-          {teamPlayers.map((p, idx) => {
-            const isCurrent = p.puuid === summoner?.puuid;
-            const champName = championMap[p.championId] || p.championName;
-            const damagePercent = maxDamage > 0 ? (p.damageDealt / maxDamage) * 100 : 0;
-            const playerRating = ratings[p.puuid] || { score: 60, badge: '-' };
-            return (
-              <div key={idx} className={`expanded-row ${isCurrent ? 'current-player-row' : ''}`}>
-                {/* Champ Icon */}
-                <div className="expanded-cell champ-cell">
-                  <div className="champ-avatar-wrapper">
-                    <img src={getChampIcon(champName)} alt={champName} className="expanded-champ-img" />
-                    <span className="expanded-champ-level">{p.champLevel}</span>
+          <div className="expanded-table-rows">
+            {teamPlayers.map((p, idx) => {
+              const isCurrent = p.puuid === summoner?.puuid;
+              const champName = championMap[p.championId] || p.championName;
+              const damagePercent = maxDamage > 0 ? (p.damageDealt / maxDamage) * 100 : 0;
+              const playerRating = ratings[p.puuid] || { score: 60, badge: '-' };
+              return (
+                <div key={idx} className={`expanded-row ${isCurrent ? 'current-player-row' : ''}`}>
+                  {/* Champ Icon */}
+                  <div className="expanded-cell champ-cell">
+                    <div className="champ-avatar-wrapper">
+                      <img src={getChampIcon(champName)} alt={champName} className="expanded-champ-img" />
+                      <span className="expanded-champ-level">{p.champLevel}</span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Summoner Name */}
-                <div 
-                  className="expanded-cell name-cell" 
-                  onClick={() => handleSelectSuggestion({ game_name: p.gameName, tag_line: p.tagLine })}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    {p.rank && (
-                      <span 
-                        className="rank-badge-pill" 
-                        style={{ 
-                          backgroundColor: `${getRankBadgeColor(p.rank.tier)}15`,
-                          color: getRankBadgeColor(p.rank.tier),
-                          borderColor: `${getRankBadgeColor(p.rank.tier)}30`
-                        }}
-                      >
-                        {getRankAbbreviation(p.rank)}
+                  {/* Summoner Name */}
+                  <div 
+                    className="expanded-cell name-cell" 
+                    onClick={() => handleSelectSuggestion({ game_name: p.gameName, tag_line: p.tagLine })}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      {p.rank && (
+                        <span 
+                          className="rank-badge-pill" 
+                          style={{ 
+                            backgroundColor: `${getRankBadgeColor(p.rank.tier)}15`,
+                            color: getRankBadgeColor(p.rank.tier),
+                            borderColor: `${getRankBadgeColor(p.rank.tier)}30`
+                          }}
+                        >
+                          {getRankAbbreviation(p.rank)}
+                        </span>
+                      )}
+                      <span className={`player-name-text ${isCurrent ? 'current' : ''}`} title={`${p.gameName}#${p.tagLine}`}>
+                        {p.gameName}
                       </span>
-                    )}
-                    <span className={`player-name-text ${isCurrent ? 'current' : ''}`} title={`${p.gameName}#${p.tagLine}`}>
-                      {p.gameName}
-                    </span>
-                    <span 
-                      className="rank-badge-pill rating-badge-pill" 
-                      style={{ 
-                        backgroundColor: playerRating.badge === 'MVP' ? 'rgba(241, 196, 15, 0.15)' : playerRating.badge === 'ACE' ? 'rgba(168, 85, 247, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                        color: playerRating.badge === 'MVP' ? '#f1c40f' : playerRating.badge === 'ACE' ? '#a855f7' : 'var(--text-secondary)',
-                        borderColor: playerRating.badge === 'MVP' ? 'rgba(241, 196, 15, 0.3)' : playerRating.badge === 'ACE' ? 'rgba(168, 85, 247, 0.3)' : 'rgba(255, 255, 255, 0.1)',
-                        fontWeight: 'bold',
-                        fontSize: '0.62rem',
-                        padding: '0.05rem 0.25rem'
-                      }}
-                      title={`Puntuación: ${playerRating.score}`}
-                    >
-                      {playerRating.badge}
-                    </span>
+                      <span 
+                        className="rank-badge-pill rating-badge-pill" 
+                        style={{ 
+                          backgroundColor: playerRating.badge === 'MVP' ? 'rgba(241, 196, 15, 0.15)' : playerRating.badge === 'ACE' ? 'rgba(168, 85, 247, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                          color: playerRating.badge === 'MVP' ? '#f1c40f' : playerRating.badge === 'ACE' ? '#a855f7' : 'var(--text-secondary)',
+                          borderColor: playerRating.badge === 'MVP' ? 'rgba(241, 196, 15, 0.3)' : playerRating.badge === 'ACE' ? 'rgba(168, 85, 247, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                          fontWeight: 'bold',
+                          fontSize: '0.62rem',
+                          padding: '0.05rem 0.25rem'
+                        }}
+                        title={`Puntuación: ${playerRating.score}`}
+                      >
+                        {playerRating.badge}
+                      </span>
+                    </div>
+                    <span className="player-tag-text" style={{ marginLeft: p.rank && p.rank.tier !== 'UNRANKED' ? '2.1rem' : '0' }}>#{p.tagLine}</span>
                   </div>
-                  <span className="player-tag-text" style={{ marginLeft: p.rank && p.rank.tier !== 'UNRANKED' ? '2.1rem' : '0' }}>#{p.tagLine}</span>
-                </div>
 
-                {/* KDA */}
-                <div className="expanded-cell kda-cell">
-                  <div className="kda-vals">{p.kills} / {p.deaths} / {p.assists}</div>
-                  <div className="kda-ratio-text">{p.kda}:1 KDA</div>
-                </div>
-
-                {/* Damage */}
-                <div className="expanded-cell damage-cell">
-                  <div className="damage-num">{p.damageDealt.toLocaleString()}</div>
-                  <div className="damage-bar-container">
-                    <div className="damage-bar-fill" style={{ width: `${damagePercent}%` }}></div>
+                  {/* KDA */}
+                  <div className="expanded-cell kda-cell">
+                    <div className="kda-vals">{p.kills} / {p.deaths} / {p.assists}</div>
+                    <div className="kda-ratio-text">{p.kda}:1 KDA</div>
                   </div>
-                </div>
 
-                {/* Gold */}
-                <div className="expanded-cell gold-cell">
-                  {(p.goldEarned / 1000).toFixed(1)}k
-                </div>
+                  {/* Damage */}
+                  <div className="expanded-cell damage-cell">
+                    <div className="damage-num">{p.damageDealt.toLocaleString()}</div>
+                    <div className="damage-bar-container">
+                      <div className="damage-bar-fill" style={{ width: `${damagePercent}%` }}></div>
+                    </div>
+                  </div>
 
-                {/* CS */}
-                <div className="expanded-cell cs-cell">
-                  <div>{p.cs}</div>
-                  <div className="cs-min-text">{p.csPerMin}/min</div>
-                </div>
+                  {/* Gold */}
+                  <div className="expanded-cell gold-cell">
+                    {(p.goldEarned / 1000).toFixed(1)}k
+                  </div>
 
-                {/* Vision (Wards) */}
-                <div className="expanded-cell vision-cell">
-                  🔍 {p.visionScore}
-                </div>
+                  {/* CS */}
+                  <div className="expanded-cell cs-cell">
+                    <div>{p.cs}</div>
+                    <div className="cs-min-text">{p.csPerMin}/min</div>
+                  </div>
 
-                {/* Items */}
-                <div className="expanded-cell items-cell">
-                  <div className="expanded-items-grid">
-                    {p.items.map((itemId, iIdx) => {
-                      const icon = getItemIcon(itemId);
-                      return (
-                        <div key={iIdx} className="expanded-item-slot">
-                          {icon && <img src={icon} alt="Item" className="expanded-item-img" />}
-                        </div>
-                      );
-                    })}
+                  {/* Vision (Wards) */}
+                  <div className="expanded-cell vision-cell">
+                    🔍 {p.visionScore}
+                  </div>
+
+                  {/* Items */}
+                  <div className="expanded-cell items-cell">
+                    <div className="expanded-items-grid">
+                      {p.items.map((itemId, iIdx) => {
+                        const icon = getItemIcon(itemId);
+                        return (
+                          <div key={iIdx} className="expanded-item-slot">
+                            {icon && <img src={icon} alt="Item" className="expanded-item-img" />}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     );

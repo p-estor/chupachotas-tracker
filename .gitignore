@@ -12,3 +12,6 @@ backend/database.sqlite
 
 # agent documentation
 agent.md
+AGENTS.md
+memoria.md
+claude.md
