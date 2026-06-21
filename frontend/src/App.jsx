@@ -2614,7 +2614,23 @@ export default function App() {
               </div>
 
               {/* Champion Performance List */}
-              {(() => {
+              {loadingStatsMatches && !statsMatches ? (
+                <div className="dpm-champ-perf-card">
+                  <h3 className="dpm-sidebar-title">Champion Performance</h3>
+                  <div className="sidebar-champ-loading">
+                    {[70, 85, 60, 75, 65].map((w, i) => (
+                      <div key={i} className="dpm-champ-perf-row">
+                        <div className="skeleton-circle" />
+                        <div className="dpm-champ-perf-info" style={{ flex: 1 }}>
+                          <div className="skeleton-line" style={{ width: `${w}%` }} />
+                          <div className="skeleton-line" style={{ width: `${w - 15}%`, marginTop: '4px' }} />
+                        </div>
+                      </div>
+                    ))}
+                    <span className="sidebar-champ-loading-label">Analizando 150 partidas…</span>
+                  </div>
+                </div>
+              ) : (() => {
                 const sidebarChamps = getSidebarChampionStats().slice(0, 5);
                 if (sidebarChamps.length === 0) return null;
                 return (

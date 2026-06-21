@@ -2053,6 +2053,47 @@ header p {
   gap: 0.75rem;
 }
 
+/* Skeleton Loading styles for Champion Performance */
+.sidebar-champ-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-champ-loading-label {
+  font-size: 0.65rem;
+  color: #64748b;
+  text-align: center;
+  margin-top: 0.25rem;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1b1e28 25%, #252936 50%, #1b1e28 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1b1e28 25%, #252936 50%, #1b1e28 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .dpm-sidebar-title {
   font-size: 0.72rem;
   font-weight: 700;

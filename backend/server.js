@@ -475,7 +475,7 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
     });
 
     // Luego descargamos secuencialmente las partidas no cacheadas
-    // ponytail: secuencial con delay de 50ms para evitar picos de rate limit de 20/s en la clave de Riot
+    // ponytail: secuencial con delay de 1200ms para no superar el límite de 100 req/2min de la API key de desarrollo
     let rateLimited = false;
     for (const matchId of missMatchIds) {
       if (rateLimited) {
@@ -487,8 +487,8 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
         const matchUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
         console.log(`[Cache Miss] Fetching match details from Riot: ${matchUrl}`);
         
-        // Delay de 50ms anti-saturación de hilos
-        await new Promise(resolve => setTimeout(resolve, 50));
+        // Delay de 1200ms para mantenerse bajo el límite de 100 peticiones/2min
+        await new Promise(resolve => setTimeout(resolve, 1200));
         
         const detailRes = await axios.get(matchUrl, getRiotHeaders());
         const info = detailRes.data.info;
