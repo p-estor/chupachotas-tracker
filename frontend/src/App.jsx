@@ -1441,6 +1441,64 @@ export default function App() {
       .sort((a, b) => b.games - a.games);
   };
 
+  const getSidebarChampionStats = () => {
+    const champStats = {};
+    // ponytail: usa statsMatches (150 partidas) si está disponible para evitar depender de la paginación de la vista principal
+    const allGames = statsMatches ? [...statsMatches] : (matches || []);
+
+    allGames.forEach(m => {
+      const stats = m.playerStats;
+      const champName = stats.championName;
+      if (!champName) return;
+
+      // Filtrar según queueFilter del sidebar
+      if (queueFilter === 'ranked_solo' && m.queueId !== 420) return;
+      if (queueFilter === 'ranked_flex' && m.queueId !== 440) return;
+      if (queueFilter === 'aram' && m.queueId !== 450 && m.gameMode !== 'ARAM') return;
+      if (queueFilter === 'normal' && (m.queueId === 420 || m.queueId === 440 || m.queueId === 450)) return;
+
+      if (!champStats[champName]) {
+        champStats[champName] = {
+          name: champName,
+          games: 0,
+          wins: 0,
+          kills: 0,
+          deaths: 0,
+          assists: 0,
+          cs: 0,
+          duration: 0
+        };
+      }
+
+      champStats[champName].games++;
+      if (stats.win) champStats[champName].wins++;
+      champStats[champName].kills += stats.kills || 0;
+      champStats[champName].deaths += stats.deaths || 0;
+      champStats[champName].assists += stats.assists || 0;
+      champStats[champName].cs += stats.cs || 0;
+      champStats[champName].duration += m.gameDuration || 0;
+    });
+
+    return Object.values(champStats)
+      .map(c => {
+        const avgKills = (c.kills / c.games).toFixed(1);
+        const avgDeaths = (c.deaths / c.games).toFixed(1);
+        const avgAssists = (c.assists / c.games).toFixed(1);
+        const kdaRatio = c.deaths === 0 ? (c.kills + c.assists).toFixed(1) : ((c.kills + c.assists) / c.deaths).toFixed(1);
+        const wr = Math.round((c.wins / c.games) * 100);
+        const csMin = c.duration > 0 ? (c.cs / (c.duration / 60)).toFixed(1) : '0.0';
+
+        return {
+          name: c.name,
+          games: c.games,
+          wr,
+          kdaRatio,
+          csMin
+        };
+      })
+      .sort((a, b) => b.games - a.games);
+  };
+
   const getTeammatesOrOpponentsStats = (type) => {
     const stats = {};
     const allGames = statsMatches ? [...statsMatches] : (() => {
@@ -2556,41 +2614,37 @@ export default function App() {
               </div>
 
               {/* Champion Performance List */}
-              {summoner.masteries && summoner.masteries.length > 0 && (
-                <div className="dpm-champ-perf-card">
-                  <h3 className="dpm-sidebar-title">Champion Performance</h3>
-                  <div className="dpm-champ-perf-list">
-                    {summoner.masteries.map((m) => {
-                      const champName = championMap[m.championId] || 'Unknown';
-                      // Generate simulated WR & stats for layout completeness
-                      const seed = m.championPoints % 15;
-                      const wr = 45 + (seed % 20);
-                      const games = 20 + (seed % 100);
-                      const csVal = (7.0 + (seed % 20) / 10).toFixed(1);
-                      const kdaVal = (2.0 + (seed % 20) / 10).toFixed(1);
-
-                      return (
-                        <div key={m.championId} className="dpm-champ-perf-row">
-                          <img
-                            src={champName !== 'Unknown' ? getChampIcon(champName) : 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg'}
-                            alt={champName}
-                            className="dpm-champ-perf-img"
-                          />
-                          <div className="dpm-champ-perf-info">
-                            <span className="dpm-champ-perf-name">{champName !== 'Unknown' ? champName : `Champ ${m.championId}`}</span>
-                            <span className="dpm-champ-perf-sub">{kdaVal} KDA</span>
+              {(() => {
+                const sidebarChamps = getSidebarChampionStats().slice(0, 5);
+                if (sidebarChamps.length === 0) return null;
+                return (
+                  <div className="dpm-champ-perf-card">
+                    <h3 className="dpm-sidebar-title">Champion Performance</h3>
+                    <div className="dpm-champ-perf-list">
+                      {sidebarChamps.map((c) => {
+                        return (
+                          <div key={c.name} className="dpm-champ-perf-row">
+                            <img
+                              src={getChampIcon(c.name)}
+                              alt={c.name}
+                              className="dpm-champ-perf-img"
+                            />
+                            <div className="dpm-champ-perf-info">
+                              <span className="dpm-champ-perf-name">{c.name}</span>
+                              <span className="dpm-champ-perf-sub">{c.kdaRatio} KDA</span>
+                            </div>
+                            <div className="dpm-champ-perf-stats">
+                              <span className="dpm-champ-perf-cs">{c.csMin} CS/m</span>
+                              <span className="dpm-champ-perf-games">{c.games} {c.games === 1 ? 'partida' : 'partidas'}</span>
+                            </div>
+                            <span className={`dpm-champ-perf-wr ${c.wr >= 55 ? 'high' : c.wr >= 48 ? 'med' : 'low'}`}>{c.wr}%</span>
                           </div>
-                          <div className="dpm-champ-perf-stats">
-                            <span className="dpm-champ-perf-cs">{csVal} CS/m</span>
-                            <span className="dpm-champ-perf-games">{games} games</span>
-                          </div>
-                          <span className={`dpm-champ-perf-wr ${wr >= 55 ? 'high' : wr >= 48 ? 'med' : 'low'}`}>{wr}%</span>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </aside>
 
             {/* Main Content Column */}
