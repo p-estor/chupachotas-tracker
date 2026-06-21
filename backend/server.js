@@ -458,17 +458,33 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
     }
 
     // Step C: Fetch details for each match ID (either from SQLite or Riot API)
-    const matchDetailsPromises = matchIds.map(async (matchId) => {
-      // If match is cached, return it directly
+    const neutralMatches = [];
+    const missMatchIds = matchIds.filter(id => !cachedMatchesMap[id]);
+
+    // Primero agregamos todas las partidas que ya están en caché (para una respuesta rápida)
+    matchIds.forEach(matchId => {
       if (cachedMatchesMap[matchId]) {
         console.log(`[Cache Hit] Match data for ${matchId}`);
-        return cachedMatchesMap[matchId];
+        neutralMatches.push(cachedMatchesMap[matchId]);
+      }
+    });
+
+    // Luego descargamos secuencialmente las partidas no cacheadas
+    // ponytail: secuencial con delay de 50ms para evitar picos de rate limit de 20/s en la clave de Riot
+    let rateLimited = false;
+    for (const matchId of missMatchIds) {
+      if (rateLimited) {
+        console.log(`[Skipping Match] ${matchId} due to active 429 rate limit`);
+        continue;
       }
 
-      // If not cached, fetch from Riot API
       try {
         const matchUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
         console.log(`[Cache Miss] Fetching match details from Riot: ${matchUrl}`);
+        
+        // Delay de 50ms anti-saturación de hilos
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
         const detailRes = await axios.get(matchUrl, getRiotHeaders());
         const info = detailRes.data.info;
 
@@ -519,15 +535,16 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
           console.error(`Failed to cache match ${matchId}:`, dbErr.message);
         }
 
-        return neutralMatchData;
+        neutralMatches.push(neutralMatchData);
 
       } catch (err) {
         console.error(`Error fetching match ${matchId} from Riot:`, err.message);
-        return null;
+        if (err.response && err.response.status === 429) {
+          console.warn(`[Rate Limit Alert] Riot API returned a 429 status. Breaking sequence loop.`);
+          rateLimited = true;
+        }
       }
-    });
-
-    const neutralMatches = (await Promise.all(matchDetailsPromises)).filter(m => m !== null);
+    }
 
     // Fetch ranks for all participants across matches to calculate average Elo
     let ranksMap = {};
