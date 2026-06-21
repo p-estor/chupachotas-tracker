@@ -300,16 +300,19 @@ async function resolvePlayerRanks(puuids, platform) {
   const missingPuuids = puuids.filter(puuid => !cachedMap[puuid]);
 
   if (missingPuuids.length > 0) {
-    console.log(`[Elo Resolver] Querying Riot API for ${missingPuuids.length} player ranks...`);
+    // ponytail: limitamos a un máximo de 3 consultas reales a Riot para proteger la cuota de la API Key. El resto se devuelven como UNRANKED.
+    const limitedPuuids = missingPuuids.slice(0, 3);
+    console.log(`[Elo Resolver] Querying Riot API for ${limitedPuuids.length} of ${missingPuuids.length} missing player ranks...`);
     
-    // Process them in parallel
-    const fetchPromises = missingPuuids.map(async (puuid) => {
+    // Procesar de forma secuencial controlada con delay de 50ms
+    for (const puuid of limitedPuuids) {
       try {
         const leagueUrl = `https://${platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
+        
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
         const res = await axios.get(leagueUrl, getRiotHeaders());
-        
         let soloEntry = res.data.find(entry => entry.queueType === 'RANKED_SOLO_5x5');
-        
         const tier = soloEntry ? soloEntry.tier : 'UNRANKED';
         const division = soloEntry ? soloEntry.rank : '';
 
@@ -319,16 +322,18 @@ async function resolvePlayerRanks(puuids, platform) {
           [puuid, tier, division, now]
         );
 
-        return { puuid, rank: { tier, rank: division } };
+        cachedMap[puuid] = { tier, rank: division };
       } catch (err) {
         console.error(`[Elo Resolver] Failed to fetch rank for ${puuid}:`, err.message);
-        return { puuid, rank: { tier: 'UNRANKED', rank: '' } };
+        cachedMap[puuid] = { tier: 'UNRANKED', rank: '' };
       }
-    });
+    }
 
-    const fetchedResults = await Promise.all(fetchPromises);
-    fetchedResults.forEach(item => {
-      cachedMap[item.puuid] = item.rank;
+    // El resto de los que no pudimos consultar los marcamos como UNRANKED temporalmente
+    missingPuuids.forEach(puuid => {
+      if (!cachedMap[puuid]) {
+        cachedMap[puuid] = { tier: 'UNRANKED', rank: '' };
+      }
     });
   }
 
