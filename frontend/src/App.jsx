@@ -289,9 +289,9 @@ export default function App() {
     fetchAramMatches();
   }, [activeTab, summoner, region]);
 
-  // Fetch up to 150 matches for statistics calculation when Champions tab is selected
+  // Fetch up to 150 matches for statistics calculation in the background when a summoner is loaded
   useEffect(() => {
-    if (!summoner || activeTab !== 'champions' || statsMatches !== null) return;
+    if (!summoner || statsMatches !== null) return;
 
     const fetchStatsMatches = async () => {
       setLoadingStatsMatches(true);
@@ -308,7 +308,7 @@ export default function App() {
     };
 
     fetchStatsMatches();
-  }, [activeTab, summoner, region, statsMatches]);
+  }, [summoner, region, statsMatches]);
 
   // Debounced API call for player autocomplete search
   useEffect(() => {
