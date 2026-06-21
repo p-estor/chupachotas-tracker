@@ -2,26 +2,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg-primary: var(--bg-primary);
   --bg-secondary: var(--bg-deep);
   --bg-tertiary: #171d31; /* ponytail: se mantiene ya que no hay equivalente exacto en tokens-tracker.css */
-  --bg-card: var(--bg-card);
-  
-  --accent-cyan: var(--accent-cyan);
-  --accent-purple: var(--accent-purple);
   --accent-blue: var(--accent-blue);
   
-  --win-color: var(--win-color);
   --win-bg: rgba(16, 185, 129, 0.08); /* ponytail: adaptado al win-color del token (#10b981) */
   --win-border: rgba(16, 185, 129, 0.2);
   
-  --loss-color: var(--loss-color);
   --loss-bg: rgba(239, 68, 68, 0.08); /* ponytail: adaptado al loss-color del token (#ef4444) */
   --loss-border: rgba(239, 68, 68, 0.2);
-  
-  --text-primary: var(--text-primary);
-  --text-secondary: var(--text-secondary);
-  --text-muted: var(--text-muted);
   
   --border-color: var(--border-normal);
   --border-hover: var(--border-glow);
