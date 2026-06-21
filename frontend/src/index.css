@@ -1610,6 +1610,12 @@ header p {
   text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
 
+.logo-mark {
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin-right: 8px; /* ponytail: margen discreto para separar el SVG del texto */
+}
+
 .dpm-nav-links {
   display: flex;
   gap: 1.5rem;

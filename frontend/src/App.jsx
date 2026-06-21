@@ -2329,6 +2329,10 @@ export default function App() {
       <nav className="dpm-navbar">
         <div className="dpm-navbar-container">
           <div className="dpm-logo" onClick={() => { setSummoner(null); setMatches([]); window.history.pushState({}, '', '/'); }}>
+            <svg viewBox="0 0 40 42" fill="none" xmlns="http://www.w3.org/2000/svg" className="logo-mark" aria-hidden="true" width="18" height="19">
+              <polygon points="20,2 38,20 20,20 2,20" fill="var(--accent-cyan)"/>
+              <polygon points="20,22 38,22 20,40 2,22" fill="var(--accent-purple)"/>
+            </svg>
             <span className="logo-accent">chupachotas</span>.tracker
           </div>
 
