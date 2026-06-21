@@ -4088,3 +4088,30 @@ header p {
     height: 100% !important;
   }
 }
+
+/* ── Tipografía mono: datos numéricos ───────────────────────────────────── */
+.dpm-rank-lp,
+.dpm-rank-wl,
+.dpm-rank-card-level,
+.dpm-kda-vals,
+.dpm-kda-ratio,
+.dpm-score-num,
+.dpm-profile-level,
+.winrate-percent,
+.winrate-badge,
+.kda-vals,
+.kda-ratio-text,
+.kda-num-row,
+.rank-details .rank-stats,
+.summoner-level,
+.table-kda-numbers,
+.table-kda-ratio,
+.role-percent-text,
+.challenge-rank-lp,
+.rank-num-cell,
+.aram-teammate-time {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
