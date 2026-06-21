@@ -4,7 +4,7 @@
 :root {
   --bg-secondary: var(--bg-deep);
   --bg-tertiary: #171d31; /* ponytail: se mantiene ya que no hay equivalente exacto en tokens-tracker.css */
-  --accent-blue: var(--accent-blue);
+  
   
   --win-bg: rgba(16, 185, 129, 0.08); /* ponytail: adaptado al win-color del token (#10b981) */
   --win-border: rgba(16, 185, 129, 0.2);
