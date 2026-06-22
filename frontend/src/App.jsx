@@ -2537,6 +2537,7 @@ export default function App() {
             <div className="dpm-profile-tabs">
               <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Resumen</span>
               <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>Campeones</span>
+              <span className={`dpm-profile-tab ${activeTab === 'aram' ? 'active' : ''}`} onClick={() => setActiveTab('aram')}>ARAM</span>
             </div>
           </div>
 
@@ -2868,7 +2869,8 @@ export default function App() {
             </main>
           </div>
           )}
-
+          {activeTab === 'champions' && renderChampionsTab()}
+          {activeTab === 'aram' && renderAramTab()}
           </div>
 
           <div className="dpm-pro-wrapper">
