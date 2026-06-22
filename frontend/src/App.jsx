@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const BACKEND_URL = import.meta.env.MODE === 'production'
   ? '/api'
@@ -2378,6 +2379,8 @@ export default function App() {
               <button type="submit" style={{ display: 'none' }}></button>
             </form>
           )}
+          
+          <ThemeSwitcher />
           
           <a
             href="https://paypal.me/pestordev"

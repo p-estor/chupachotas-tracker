@@ -1,0 +1,129 @@
+/* ============================================================
+   Sobrescrituras Globales de UI — Modo Pro (Terminal Analytics)
+   ============================================================ */
+
+/* Tokens de Pro Mode */
+:root[data-theme="pro"] {
+  --bg-primary: #000000;
+  --bg-secondary: #0A0A0A;
+  --bg-tertiary: #121212;
+  --bg-card: #0A0A0A;
+  --bg-card-hover: #171717;
+  
+  --border-normal: #1f1f1f;
+  --border-glow: #2a2a2a;
+  
+  --blur-glass: blur(0px);
+  --shadow-neon: none;
+  
+  --text-primary: #E5E5E5;
+  --text-secondary: #A3A3A3;
+  --text-muted: #525252;
+}
+
+/* Quitar gradientes de fondo global */
+[data-theme="pro"] body {
+  background-image: none !important;
+  background-color: var(--bg-primary) !important;
+}
+
+/* Eliminar sombras y bordes brillantes de la Navbar */
+[data-theme="pro"] .dpm-navbar {
+  background: var(--bg-primary) !important;
+  border-bottom: 1px solid var(--border-normal) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Flatten cards global */
+[data-theme="pro"] .dpm-profile-header,
+[data-theme="pro"] .dpm-player-stats-card,
+[data-theme="pro"] .dpm-match-card,
+[data-theme="pro"] .dpm-champ-stat-card {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid var(--border-normal) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Terminal Analytics Layout Classes */
+.pro-terminal-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.pro-terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--border-normal);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pro-terminal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pro-terminal-grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 1rem;
+}
+
+.pro-terminal-panel {
+  border: 1px solid var(--border-normal);
+  background: var(--bg-secondary);
+}
+
+.pro-terminal-panel-title {
+  padding: 0.5rem 1rem;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-normal);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+/* Tablas compactas estilo Terminal */
+.pro-data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pro-data-table th,
+.pro-data-table td {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-normal);
+}
+
+.pro-data-table th {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.pro-data-table tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.pro-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.pro-data-val-win { color: var(--win-color); }
+.pro-data-val-loss { color: var(--loss-color); }
+.pro-data-val-accent { color: var(--accent-cyan); }

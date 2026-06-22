@@ -1,4 +1,5 @@
 @import './tokens-tracker.css';
+@import './pro-theme.css';
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 
 :root {
@@ -4152,6 +4153,11 @@ header p {
   box-shadow: var(--shadow-gold);
   transform: translateY(-1px);
 }
+
+/* Dual Render Wrappers */
+.dpm-pro-wrapper { display: none; }
+[data-theme="pro"] .dpm-classic-wrapper { display: none !important; }
+[data-theme="pro"] .dpm-pro-wrapper { display: block; }
 
 
 
