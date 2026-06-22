@@ -1406,7 +1406,7 @@ header p {
 }
 
 .summoner-tag {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 1.1rem;
   font-weight: 500;
 }
@@ -1572,7 +1572,7 @@ header p {
 
 .dpm-app-container {
   min-height: 100vh;
-  background-color: #0b0d12;
+  background-color: var(--bg-primary);
   color: #f8fafc;
   display: flex;
   flex-direction: column;
@@ -1583,7 +1583,7 @@ header p {
 .dpm-navbar {
   width: 100%;
   height: 56px;
-  background-color: #12151e;
+  background-color: var(--bg-secondary);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   justify-content: center;
@@ -1630,7 +1630,7 @@ header p {
 .dpm-nav-link {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: color 0.2s ease;
 }
@@ -1647,7 +1647,7 @@ header p {
 }
 
 .dpm-nav-search-input {
-  background: #1e2330;
+  background: var(--bg-tertiary);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 0.45rem 0.85rem;
@@ -1665,11 +1665,11 @@ header p {
 }
 
 .dpm-nav-region-select {
-  background: #1e2330;
+  background: var(--bg-tertiary);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 0.45rem 0.5rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -1715,7 +1715,7 @@ header p {
 .dpm-landing-search-box {
   display: flex;
   width: 100%;
-  background: #12151e;
+  background: var(--bg-secondary);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 0.5rem;
@@ -1737,11 +1737,11 @@ header p {
 }
 
 .dpm-landing-region-select {
-  background: #1e2330;
+  background: var(--bg-tertiary);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   padding: 0 1rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
@@ -1782,7 +1782,7 @@ header p {
 
 /* 4. Profile Banner */
 .dpm-profile-banner {
-  background-color: #12151e;
+  background-color: var(--bg-secondary);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 1.5rem 1.5rem 0 1.5rem;
@@ -1816,7 +1816,7 @@ header p {
   bottom: -4px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #0b0d12;
+  background-color: var(--bg-primary);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   font-size: 0.65rem;
@@ -1845,7 +1845,7 @@ header p {
 
 .dpm-profile-tag {
   font-size: 1.1rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -1863,7 +1863,7 @@ header p {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.35rem 0.75rem;
@@ -1886,7 +1886,7 @@ header p {
 .dpm-profile-tab {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: pointer;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid transparent;
@@ -1924,7 +1924,7 @@ header p {
 
 /* 6. Sidebar Rank Cards */
 .dpm-rank-card {
-  background: #12151e;
+  background: var(--bg-secondary);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 1rem;
@@ -1949,7 +1949,7 @@ header p {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--text-muted);
   letter-spacing: 0.05em;
 }
 
@@ -1960,7 +1960,7 @@ header p {
 }
 
 .dpm-rank-card-level.unranked {
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -1987,7 +1987,7 @@ header p {
 
 .dpm-rank-wl {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -2007,7 +2007,7 @@ header p {
   justify-content: space-between;
   font-size: 0.65rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .sidebar-lp-trend-chart {
@@ -2031,7 +2031,7 @@ header p {
 .dpm-sidebar-filter-btn {
   background: transparent;
   border: none;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.72rem;
   font-weight: 700;
   padding: 0.45rem 0;
@@ -2048,13 +2048,13 @@ header p {
 
 .dpm-sidebar-filter-btn.active {
   color: #fff;
-  background: #1e2330;
+  background: var(--bg-tertiary);
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 /* 8. Champion Performance (Sidebar) */
 .dpm-champ-perf-card {
-  background: #12151e;
+  background: var(--bg-secondary);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 1rem;
@@ -2072,7 +2072,7 @@ header p {
 
 .sidebar-champ-loading-label {
   font-size: 0.65rem;
-  color: #64748b;
+  color: var(--text-muted);
   text-align: center;
   margin-top: 0.25rem;
   animation: pulse 1.5s infinite ease-in-out;
@@ -2108,7 +2108,7 @@ header p {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--text-muted);
   letter-spacing: 0.05em;
   margin-bottom: 0.25rem;
 }
@@ -2154,7 +2154,7 @@ header p {
 
 .dpm-champ-perf-sub {
   font-size: 0.65rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .dpm-champ-perf-stats {
@@ -2166,13 +2166,13 @@ header p {
 
 .dpm-champ-perf-cs {
   font-size: 0.72rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .dpm-champ-perf-games {
   font-size: 0.65rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .dpm-champ-perf-wr {
@@ -2184,7 +2184,7 @@ header p {
 
 .dpm-champ-perf-wr.high { color: #f1c40f; }
 .dpm-champ-perf-wr.med { color: var(--win-color); }
-.dpm-champ-perf-wr.low { color: #64748b; }
+.dpm-champ-perf-wr.low { color: var(--text-muted); }
 
 /* 9. Day grouped matches */
 .dpm-day-group {
@@ -2217,7 +2217,7 @@ header p {
   font-size: 0.68rem;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.04);
-  color: #94a3b8;
+  color: var(--text-secondary);
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
 }
@@ -2248,7 +2248,7 @@ header p {
 
 /* 10. Flat Match Card Layout (Flat Style) */
 .dpm-match-card {
-  background-color: #12151e;
+  background-color: var(--bg-secondary);
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 8px;
   overflow: hidden;
@@ -2303,7 +2303,7 @@ header p {
 
 .dpm-match-duration {
   font-size: 0.68rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -2387,7 +2387,7 @@ header p {
 
 .dpm-kda-ratio {
   font-size: 0.72rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -2439,8 +2439,8 @@ header p {
 }
 
 .dpm-kda-perf-pill.high-kda {
-  background: rgba(59, 130, 246, 0.12);
-  color: #60a5fa;
+  background: rgba(0, 210, 255, 0.08);
+  color: var(--accent-cyan);
 }
 
 .dpm-kda-perf-pill.good-team {
@@ -2474,13 +2474,13 @@ header p {
 
 .dpm-stats-cs-min {
   font-size: 0.68rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
 .dpm-stats-kp {
   font-size: 0.72rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -2526,7 +2526,7 @@ header p {
 .dpm-vs-label {
   font-size: 0.62rem;
   font-weight: 800;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
@@ -2593,7 +2593,7 @@ header p {
 .dpm-score-badge-text {
   font-size: 0.55rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   margin-top: 1px;
 }
@@ -2603,7 +2603,7 @@ header p {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .dpm-chevron-span {
@@ -2650,7 +2650,7 @@ header p {
   width: 17px;
   height: 17px;
   border-radius: 50%;
-  background-color: #0b0d12;
+  background-color: var(--bg-primary);
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 1px;
 }
