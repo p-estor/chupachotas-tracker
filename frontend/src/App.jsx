@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ThemeSwitcher from './ThemeSwitcher';
+import TrackerProfilePro from './TrackerProfilePro';
 
 const BACKEND_URL = import.meta.env.MODE === 'production'
   ? '/api'
