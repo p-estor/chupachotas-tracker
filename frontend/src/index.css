@@ -4133,4 +4133,25 @@ header p {
 }
 .glass-card:hover::before { opacity: 1; }
 
+/* ── Botón Donar ─────────────────────────────────────────────────────────── */
+.nav-donate-btn {
+  margin-left: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(200, 170, 110, 0.15) 0%, rgba(200, 170, 110, 0.05) 100%);
+  color: var(--accent-gold);
+  font-weight: 600;
+  font-size: 0.8rem;
+  border: 1px solid rgba(200, 170, 110, 0.25);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.nav-donate-btn:hover {
+  background: linear-gradient(135deg, rgba(200, 170, 110, 0.25) 0%, rgba(200, 170, 110, 0.1) 100%);
+  border-color: var(--accent-gold);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-1px);
+}
+
+
 
