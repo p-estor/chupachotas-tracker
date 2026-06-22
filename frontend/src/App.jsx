@@ -2379,27 +2379,11 @@ export default function App() {
             </form>
           )}
           
-          <a 
-            href="https://paypal.me/pestordev" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="dpm-nav-donate-btn"
-            style={{
-              padding: '0.4rem 0.8rem',
-              borderRadius: '6px',
-              background: 'linear-gradient(135deg, #0079c1 0%, #00457c 100%)',
-              color: '#ffffff',
-              fontWeight: 600,
-              fontSize: '0.8rem',
-              textDecoration: 'none',
-              border: '1px solid rgba(255,255,255,0.1)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 2px 8px rgba(0, 121, 193, 0.3)',
-              cursor: 'pointer'
-            }}
+          <a
+            href="https://paypal.me/pestordev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link nav-donate-btn"
           >
             ☕ Donar
           </a>
@@ -2459,7 +2443,11 @@ export default function App() {
           {challengePlayers && challengePlayers.length > 0 && (
             <aside className="dpm-landing-sidebar">
               <div className="challenge-sidebar-header">
-                <span className="challenge-sidebar-trophy">🏆</span>
+                <svg className="challenge-sidebar-trophy" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" aria-hidden="true">
+                  <path d="M6 9H4a2 2 0 01-2-2V5h4M18 9h2a2 2 0 002-2V5h-4"/>
+                  <path d="M12 17v4M8 21h8"/>
+                  <path d="M6 9a6 6 0 0012 0V3H6v6z"/>
+                </svg>
                 <h3 className="challenge-sidebar-title">SoloQ Challenge Standings</h3>
               </div>
               <div className="challenge-sidebar-list">

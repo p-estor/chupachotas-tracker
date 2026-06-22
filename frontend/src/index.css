@@ -1700,14 +1700,14 @@ header p {
 .dpm-landing-title {
   font-size: 2.75rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #fff 40%, #3b82f6 100%);
+  background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-purple) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.75rem;
 }
 
 .dpm-landing-subtitle {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 1.5;
 }
@@ -1748,19 +1748,21 @@ header p {
 }
 
 .dpm-landing-search-btn {
-  background: #3b82f6;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
   border: none;
-  color: #fff;
+  color: var(--bg-primary);
   font-weight: 700;
   padding: 0 1.5rem;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.15);
 }
 
 .dpm-landing-search-btn:hover {
-  background: #2563eb;
+  filter: brightness(1.1);
   transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 210, 255, 0.35);
 }
 
 .landing-dropdown {
@@ -1850,8 +1852,8 @@ header p {
 .dpm-profile-region-badge {
   font-size: 0.72rem;
   font-weight: 800;
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background: rgba(0, 210, 255, 0.1);
+  color: var(--accent-cyan);
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
   text-transform: uppercase;
@@ -1893,8 +1895,8 @@ header p {
 
 .dpm-profile-tab:hover,
 .dpm-profile-tab.active {
-  color: #fff;
-  border-bottom-color: #3b82f6;
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-cyan);
 }
 
 /* 5. Split Dashboard Layout */
