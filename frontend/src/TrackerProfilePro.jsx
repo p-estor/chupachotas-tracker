@@ -10,7 +10,7 @@ export default function TrackerProfilePro({
   getProfileIcon,
   getSpellIcon,
   getPerformanceLabel,
-  performanceRatings
+  getMatchPerformanceData
 }) {
   if (!summoner) return null;
 
@@ -70,10 +70,12 @@ export default function TrackerProfilePro({
                   ? ((participant.kills + participant.assists) / participant.deaths).toFixed(2) 
                   : 'Perfect';
                 
-                const ratings = match.participants.reduce((acc, p) => {
-                  acc[p.puuid] = { score: p.performanceScore || 60, badge: p.win ? 'MVP' : 'ACE' };
-                  return acc;
-                }, {});
+                const ratings = getMatchPerformanceData 
+                  ? getMatchPerformanceData(match)
+                  : match.participants.reduce((acc, p) => {
+                      acc[p.puuid] = { score: p.performanceScore || 60, badge: p.win ? 'MVP' : 'ACE' };
+                      return acc;
+                    }, {});
                 const rating = getPerformanceLabel(match, summoner.puuid, ratings);
 
                 return (
