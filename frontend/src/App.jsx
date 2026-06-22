@@ -2882,6 +2882,7 @@ export default function App() {
               getProfileIcon={getProfileIcon}
               getSpellIcon={getSpellIcon}
               getPerformanceLabel={getPerformanceLabel}
+              performanceRatings={performanceRatings}
             />
           </div>
         </div>
