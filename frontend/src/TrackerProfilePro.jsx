@@ -10,7 +10,9 @@ export default function TrackerProfilePro({
   getProfileIcon,
   getSpellIcon,
   getPerformanceLabel,
-  getMatchPerformanceData
+  getMatchPerformanceData,
+  activeTab,
+  setActiveTab
 }) {
   if (!summoner) return null;
 
@@ -26,7 +28,7 @@ export default function TrackerProfilePro({
   return (
     <div className="pro-terminal-container">
       
-      {/* CABECERA */}
+      {/* CABECERA (GLOBAL) */}
       <div className="pro-terminal-header">
         <div>
           <div className="pro-terminal-title">
@@ -44,98 +46,128 @@ export default function TrackerProfilePro({
         </div>
       </div>
 
-      {/* GRID PRINCIPAL */}
-      <div className="pro-terminal-grid">
-        
-        {/* COLUMNA IZQUIERDA: PARTIDAS */}
-        <div className="pro-terminal-panel">
-          <div className="pro-terminal-panel-title">MATCH_LOG (RECENT_{totalMatches})</div>
-          <table className="pro-data-table">
-            <thead>
-              <tr>
-                <th>RESULT</th>
-                <th>CHAMPION</th>
-                <th>KDA</th>
-                <th>CS</th>
-                <th>RATING</th>
-              </tr>
-            </thead>
-            <tbody>
-              {matches?.map((match, idx) => {
-                const participant = match.participants.find(p => p.puuid === summoner.puuid);
-                if (!participant) return null;
-                
-                const isWin = participant.win;
-                const kda = participant.deaths > 0 
-                  ? ((participant.kills + participant.assists) / participant.deaths).toFixed(2) 
-                  : 'Perfect';
-                
-                const ratings = getMatchPerformanceData 
-                  ? getMatchPerformanceData(match)
-                  : match.participants.reduce((acc, p) => {
-                      acc[p.puuid] = { score: p.performanceScore || 60, badge: p.win ? 'MVP' : 'ACE' };
-                      return acc;
-                    }, {});
-                const rating = getPerformanceLabel(match, summoner.puuid, ratings);
+      {/* TERMINAL NAV */}
+      <div className="pro-terminal-nav">
+        <button 
+          className={`pro-terminal-tab ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          OVERVIEW
+        </button>
+        <button 
+          className={`pro-terminal-tab ${activeTab === 'champions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('champions')}
+        >
+          CHAMPIONS
+        </button>
+      </div>
 
-                return (
-                  <tr key={match.matchId || idx}>
-                    <td className={isWin ? 'pro-data-val-win' : 'pro-data-val-loss'} style={{fontWeight: 600}}>
-                      {isWin ? 'VICTORY' : 'DEFEAT'}
-                    </td>
-                    <td>
-                      <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-                        <img src={getChampIcon(participant.championName)} alt="" style={{width: '20px', height: '20px', borderRadius: '2px'}} />
-                        {participant.championName}
-                      </div>
-                    </td>
-                    <td className="mono">
-                      {participant.kills}/{participant.deaths}/{participant.assists} <span style={{color: 'var(--text-muted)', fontSize: '0.7rem'}}>({kda})</span>
-                    </td>
-                    <td className="mono">{participant.cs || (participant.totalMinionsKilled + participant.neutralMinionsKilled || 0)}</td>
-                    <td>
-                      {rating && rating.key !== 'neutral' && (
-                        <span style={{
-                          background: rating.key === 'mvp' ? 'var(--accent-gold)' : (rating.key === 'ace' ? 'var(--loss-color)' : 'var(--border-normal)'),
-                          color: '#000',
-                          padding: '0.1rem 0.3rem',
-                          borderRadius: '2px',
-                          fontSize: '0.65rem',
-                          fontWeight: 600
-                        }}>
-                          {rating.label.toUpperCase()}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {/* RENDERIZADO CONDICIONAL DE PESTAÑAS */}
+      {activeTab === 'overview' && (
+        <div className="pro-terminal-grid">
+          
+          {/* COLUMNA IZQUIERDA: PARTIDAS */}
+          <div className="pro-terminal-panel">
+            <div className="pro-terminal-panel-title">MATCH_LOG (RECENT)</div>
+            <table className="pro-data-table">
+              <thead>
+                <tr>
+                  <th>RESULT</th>
+                  <th>CHAMPION</th>
+                  <th>KDA</th>
+                  <th>CS</th>
+                  <th>RATING</th>
+                </tr>
+              </thead>
+              <tbody>
+                {matches?.map((match, idx) => {
+                  const participant = match.participants.find(p => p.puuid === summoner.puuid);
+                  if (!participant) return null;
+                  
+                  const isWin = participant.win;
+                  const kda = participant.deaths > 0 
+                    ? ((participant.kills + participant.assists) / participant.deaths).toFixed(2) 
+                    : 'Perfect';
+                  
+                  const ratings = getMatchPerformanceData 
+                    ? getMatchPerformanceData(match)
+                    : match.participants.reduce((acc, p) => {
+                        acc[p.puuid] = { score: p.performanceScore || 60, badge: p.win ? 'MVP' : 'ACE' };
+                        return acc;
+                      }, {});
+                  const rating = getPerformanceLabel(match, summoner.puuid, ratings);
+
+                  return (
+                    <tr key={match.metadata?.matchId || match.matchId || idx}>
+                      <td className={isWin ? 'pro-data-val-win' : 'pro-data-val-loss'} style={{fontWeight: 600}}>
+                        {isWin ? 'VICTORY' : 'DEFEAT'}
+                      </td>
+                      <td>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                          <img src={getChampIcon(participant.championName)} alt="" style={{width: '20px', height: '20px', borderRadius: '2px'}} />
+                          {participant.championName}
+                        </div>
+                      </td>
+                      <td className="mono">
+                        {participant.kills}/{participant.deaths}/{participant.assists} <span style={{color: 'var(--text-muted)', fontSize: '0.7rem'}}>({kda})</span>
+                      </td>
+                      <td className="mono">{participant.cs || (participant.totalMinionsKilled + participant.neutralMinionsKilled || 0)}</td>
+                      <td>
+                        {rating && rating.key !== 'neutral' && (
+                          <span style={{
+                            background: rating.key === 'mvp' ? 'var(--accent-gold)' : (rating.key === 'ace' ? 'var(--loss-color)' : 'var(--border-normal)'),
+                            color: '#000',
+                            padding: '0.1rem 0.3rem',
+                            borderRadius: '2px',
+                            fontSize: '0.65rem',
+                            fontWeight: 600
+                          }}>
+                            {rating.label.toUpperCase()}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* COLUMNA DERECHA: STATS (Placeholder dinámico) */}
+          <div className="pro-terminal-panel" style={{height: 'max-content'}}>
+            <div className="pro-terminal-panel-title">AGGREGATE_STATS (RECENT_150)</div>
+            <div style={{padding: '1rem', color: 'var(--text-muted)'}}>
+              {statsMatches ? (
+                <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <span>GAMES_ANALYZED:</span>
+                    <span className="mono pro-data-val-accent">{statsMatches.length}</span>
+                  </div>
+                  <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <span>DATA_INTEGRITY:</span>
+                    <span className="mono" style={{color: 'var(--win-color)'}}>100%</span>
+                  </div>
+                </div>
+              ) : (
+                <span className="animate-pulse">FETCHING_DATA_STREAM...</span>
+              )}
+            </div>
+          </div>
+
         </div>
+      )}
 
-        {/* COLUMNA DERECHA: STATS (Placeholder dinámico) */}
-        <div className="pro-terminal-panel" style={{height: 'max-content'}}>
-          <div className="pro-terminal-panel-title">AGGREGATE_STATS (RECENT_150)</div>
-          <div style={{padding: '1rem', color: 'var(--text-muted)'}}>
-            {statsMatches ? (
-              <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                  <span>GAMES_ANALYZED:</span>
-                  <span className="mono pro-data-val-accent">{statsMatches.length}</span>
-                </div>
-                <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                  <span>DATA_INTEGRITY:</span>
-                  <span className="mono" style={{color: 'var(--win-color)'}}>100%</span>
-                </div>
-              </div>
-            ) : (
-              <span className="animate-pulse">FETCHING_DATA_STREAM...</span>
-            )}
+      {activeTab === 'champions' && (
+        <div className="pro-terminal-panel">
+          <div className="pro-terminal-panel-title">CHAMPION_MASTERY_LOG</div>
+          <div style={{padding: '2rem', textAlign: 'center', color: 'var(--text-muted)'}}>
+            <span className="mono">&gt; TODO: RENDER CHAMPION_DATA_MATRIX HERE</span>
+            <p style={{fontSize: '0.8rem', marginTop: '1rem'}}>
+              El renderizado de los datos de campeones se implementará a continuación, o puede ser copiado de la vista clásica.
+            </p>
           </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 }

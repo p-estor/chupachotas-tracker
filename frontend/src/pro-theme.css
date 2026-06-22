@@ -127,3 +127,45 @@
 .pro-data-val-win { color: var(--win-color); }
 .pro-data-val-loss { color: var(--loss-color); }
 .pro-data-val-accent { color: var(--accent-cyan); }
+
+/* Terminal Tabs */
+.pro-terminal-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-normal);
+  padding-bottom: 0.5rem;
+}
+
+.pro-terminal-tab {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-transform: uppercase;
+}
+
+.pro-terminal-tab:hover {
+  color: var(--text-secondary);
+}
+
+.pro-terminal-tab.active {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+.pro-terminal-tab::before {
+  content: "[ ";
+  color: var(--text-muted);
+}
+.pro-terminal-tab::after {
+  content: " ]";
+  color: var(--text-muted);
+}
+.pro-terminal-tab.active::before,
+.pro-terminal-tab.active::after {
+  color: var(--accent-cyan);
+}

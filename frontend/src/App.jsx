@@ -2883,6 +2883,8 @@ export default function App() {
               getSpellIcon={getSpellIcon}
               getPerformanceLabel={getPerformanceLabel}
               getMatchPerformanceData={getMatchPerformanceData}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
             />
           </div>
         </div>
