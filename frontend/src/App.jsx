@@ -2505,8 +2505,9 @@ export default function App() {
       {/* Main dashboard view */}
       {summoner && !loading && (
         <div className="dpm-dashboard">
-          {/* Profile Header Banner */}
-          <div className="dpm-profile-banner">
+          <div className="dpm-classic-wrapper">
+            {/* Profile Header Banner */}
+            <div className="dpm-profile-banner">
             <div className="dpm-profile-banner-content">
               <div className="dpm-profile-avatar-wrapper">
                 <img
@@ -2867,7 +2868,21 @@ export default function App() {
           </div>
           )}
 
-          {activeTab === 'champions' && renderChampionsTab()}
+          </div>
+
+          <div className="dpm-pro-wrapper">
+            <TrackerProfilePro 
+              summoner={summoner}
+              matches={matches}
+              statsMatches={statsMatches}
+              championMap={championMap}
+              runeMap={runeMap}
+              getChampIcon={getChampIcon}
+              getProfileIcon={getProfileIcon}
+              getSpellIcon={getSpellIcon}
+              getPerformanceLabel={getPerformanceLabel}
+            />
+          </div>
         </div>
       )}
     </div>
