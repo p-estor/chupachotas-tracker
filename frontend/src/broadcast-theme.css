@@ -1,0 +1,671 @@
+/* ============================================================
+   Sobrescrituras de UI — Modo Broadcast (Esports HUD & Cinematic)
+   ============================================================ */
+
+:root[data-theme="broadcast"] {
+  --bg-primary: #05070a;
+  --bg-deep: #020305;
+  --bg-card: rgba(10, 15, 26, 0.45);
+  --bg-card-hover: rgba(18, 28, 48, 0.6);
+  --bg-tertiary: rgba(16, 28, 48, 0.5);
+
+  --border-normal: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(168, 85, 247, 0.35);
+
+  --blur-glass: blur(16px);
+  --shadow-neon: 0 0 25px rgba(168, 85, 247, 0.25);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  
+  --win-color: #10b981;
+  --loss-color: #ef4444;
+  --accent-cyan: #00d2ff;
+  --accent-purple: #a855f7;
+  --accent-gold: #f59e0b;
+}
+
+/* Background resets for Cinematic feel */
+[data-theme="broadcast"] body {
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(0, 210, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(to bottom, #05070a, #020305) !important;
+  background-color: var(--bg-deep) !important;
+  background-attachment: fixed;
+}
+
+[data-theme="broadcast"] .dpm-navbar {
+  background: rgba(5, 7, 10, 0.75) !important;
+  backdrop-filter: var(--blur-glass) !important;
+  -webkit-backdrop-filter: var(--blur-glass) !important;
+  border-bottom: 1px solid var(--border-normal) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Base structural container */
+.broadcast-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Cinematic Header HUD */
+.broadcast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-normal);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  backdrop-filter: var(--blur-glass);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.broadcast-header-profile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.broadcast-avatar-glow-wrapper {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.broadcast-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #020305;
+}
+
+.broadcast-profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.broadcast-summoner-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+.broadcast-tag {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.broadcast-level-pill {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.15rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  width: fit-content;
+}
+
+.broadcast-header-summary {
+  display: flex;
+  gap: 2rem;
+}
+
+.broadcast-summary-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.broadcast-summary-metric .metric-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.broadcast-summary-metric .metric-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.broadcast-summary-metric .metric-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Navigation tabs in Broadcast mode */
+.broadcast-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.35rem;
+  border-radius: 8px;
+  width: fit-content;
+  border: 1px solid var(--border-normal);
+}
+
+.broadcast-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.broadcast-tab-btn:hover {
+  color: var(--text-secondary);
+}
+
+.broadcast-tab-btn.active {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Grid Layout */
+.broadcast-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Broadcast Glass Cards */
+.broadcast-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-normal);
+  border-radius: 12px;
+  padding: 1.25rem;
+  backdrop-filter: var(--blur-glass);
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.25);
+  margin-bottom: 1rem;
+}
+
+.broadcast-card-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+}
+
+/* Rank Cards with reactive side neon glow */
+.broadcast-rank-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.broadcast-rank-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--rank-glow-color, var(--accent-cyan));
+  box-shadow: 0 0 15px var(--rank-glow-color, var(--accent-cyan));
+}
+
+.broadcast-rank-header {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.broadcast-rank-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+}
+
+.broadcast-rank-tier {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.broadcast-rank-lp {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.broadcast-rank-wl {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.broadcast-rank-wl .muted-ratio {
+  color: var(--text-muted);
+}
+
+/* Filters layout */
+.broadcast-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.broadcast-filters-grid button:first-child {
+  grid-column: span 2;
+}
+
+.broadcast-filter-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-normal);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.45rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.broadcast-filter-btn:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+}
+
+.broadcast-filter-btn.active {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(0, 210, 255, 0.15));
+  border-color: var(--accent-cyan);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+}
+
+/* Featured Champions performance list */
+.broadcast-perf-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.broadcast-perf-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.broadcast-perf-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.broadcast-perf-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.broadcast-perf-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.broadcast-perf-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.broadcast-perf-games {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.broadcast-perf-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.broadcast-perf-kda {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.broadcast-perf-wr {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.broadcast-perf-wr.high { color: var(--win-color); }
+.broadcast-perf-wr.med { color: var(--text-primary); }
+.broadcast-perf-wr.low { color: var(--loss-color); }
+
+.broadcast-loading-text {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  padding: 1rem 0;
+}
+
+/* Match Log List */
+.broadcast-match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Match Log Cards (Glassmorphism & Splash BG Fade) */
+.broadcast-match-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-normal);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: var(--blur-glass);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.broadcast-match-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Splash BG logic with soft gradient masking */
+.broadcast-match-splash-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-size: cover;
+  background-position: center 25%;
+  opacity: 0.15;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  /* Masking the splash art to blend cleanly into the glass background */
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);
+}
+
+.broadcast-match-card:hover .broadcast-match-splash-bg {
+  opacity: 0.25;
+}
+
+/* Match outcome specific reactive border glow */
+.broadcast-match-card.win {
+  border-left: 4px solid var(--win-color);
+}
+
+.broadcast-match-card.loss {
+  border-left: 4px solid var(--loss-color);
+}
+
+/* Neon glow for MVP / ACE players */
+.broadcast-match-card.mvp-glow {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15), 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.broadcast-match-card.ace-glow {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15), 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.broadcast-match-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 140px 180px 160px 120px 120px 1fr;
+  align-items: center;
+  padding: 1.15rem 1.5rem;
+}
+
+/* Match Meta columns */
+.broadcast-match-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.broadcast-queue-name {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.broadcast-match-outcome {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.win .broadcast-match-outcome { color: var(--win-color); }
+.loss .broadcast-match-outcome { color: var(--loss-color); }
+
+.broadcast-match-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Champion Block styling */
+.broadcast-match-champ {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.broadcast-match-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.broadcast-match-champ-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* KDA block */
+.broadcast-match-kda {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.broadcast-kda-nums {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.broadcast-kda-nums .slash {
+  color: var(--text-muted);
+  margin: 0 0.2rem;
+  font-weight: 400;
+}
+
+.broadcast-kda-nums .deaths {
+  color: var(--loss-color);
+}
+
+.broadcast-kda-ratio {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Match Stats CS / KP */
+.broadcast-match-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.broadcast-match-stats .stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.broadcast-match-stats .stat-val {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.broadcast-match-stats .stat-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Rating Badge inside card */
+.broadcast-rating-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+}
+
+.broadcast-rating-badge.mvp {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.broadcast-rating-badge.ace {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.broadcast-rating-badge.good {
+  border: 1px solid var(--win-color);
+  color: var(--win-color);
+}
+
+.broadcast-rating-badge.high-kda {
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* Chevron expand column */
+.broadcast-match-chevron {
+  display: flex;
+  justify-content: flex-end;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.chevron-icon {
+  transition: transform 0.2s ease;
+}
+
+.chevron-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Detailed Expanded Tables styling override inside data-theme="broadcast" */
+.broadcast-match-details {
+  border-top: 1px solid var(--border-normal);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.broadcast-expanded-container {
+  padding: 0.5rem 0;
+}
+
+/* Overriding global classic table elements inside theme layout to look clean/flat */
+[data-theme="broadcast"] .match-expanded-details-container,
+[data-theme="broadcast"] .broadcast-match-details {
+  /* Flatten child details */
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+[data-theme="broadcast"] .dpm-team-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+[data-theme="broadcast"] .dpm-team-table th {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-normal);
+  padding: 0.5rem 1rem;
+}
+
+[data-theme="broadcast"] .dpm-team-table td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Classic components wrapper padding reset */
+.broadcast-classic-inject-wrapper {
+  background: transparent;
+}
+
+[data-theme="broadcast"] .broadcast-classic-inject-wrapper .dpm-rank-card,
+[data-theme="broadcast"] .broadcast-classic-inject-wrapper .dpm-champ-card,
+[data-theme="broadcast"] .broadcast-classic-inject-wrapper .dpm-aram-card {
+  background: var(--bg-card) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-normal) !important;
+  backdrop-filter: var(--blur-glass) !important;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.25) !important;
+}

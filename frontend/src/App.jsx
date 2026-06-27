@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ThemeSwitcher from './ThemeSwitcher';
 import TrackerProfilePro from './TrackerProfilePro';
+import TrackerProfileBroadcast from './TrackerProfileBroadcast';
+
+import { DDRAGON_VERSION } from './constants';
 
 const BACKEND_URL = import.meta.env.MODE === 'production'
   ? '/api'
   : 'http://localhost:5000/api';
-const DDRAGON_VERSION = '16.12.1'; // Latest or stable patch version
 
 // Helper for DDragon asset URLs
 const getChampIcon = (name) => `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${name}.png`;
@@ -617,14 +619,21 @@ export default function App() {
     const totalAssists = teamPlayers.reduce((sum, p) => sum + p.assists, 0);
     const totalGold = teamPlayers.reduce((sum, p) => sum + p.goldEarned, 0);
 
+    const enemyPlayers = match.participants.filter(p => p.teamId !== teamId);
+    const enemyTotalKills = enemyPlayers.reduce((sum, p) => sum + p.kills, 0);
+    const enemyTotalGold = enemyPlayers.reduce((sum, p) => sum + p.goldEarned, 0);
+    
+    const teamData = match.teams?.find(t => t.teamId === teamId);
+    const enemyTeamData = match.teams?.find(t => t.teamId !== teamId);
+
     return (
       <div className={`expanded-team-section ${isWin ? 'win-team' : 'loss-team'}`}>
         <div className="expanded-team-header">
           <span className="team-result-text">
             {isWin ? 'Victoria' : 'Derrota'} ({teamId === 100 ? 'Equipo Azul' : 'Equipo Rojo'})
           </span>
-          <span className="team-summary-stats">
-            ⚔️ {totalKills} / {totalDeaths} / {totalAssists} | 💰 {(totalGold / 1000).toFixed(1)}k
+          <span className="team-summary-stats mono">
+            {totalKills} / {totalDeaths} / {totalAssists} <span style={{ color: 'var(--text-muted)', margin: '0 0.5rem' }}>|</span> <span style={{ color: 'var(--text-secondary)' }}>{(totalGold / 1000).toFixed(1)}k Oro</span>
           </span>
         </div>
         
@@ -722,8 +731,8 @@ export default function App() {
                   </div>
 
                   {/* Vision (Wards) */}
-                  <div className="expanded-cell vision-cell">
-                    🔍 {p.visionScore}
+                  <div className="expanded-cell vision-cell mono" style={{ color: 'var(--text-secondary)' }}>
+                    {p.visionScore}
                   </div>
 
                   {/* Items */}
@@ -744,6 +753,70 @@ export default function App() {
             })}
           </div>
         </div>
+
+        {/* NUEVO: ESPORTS BROADCAST BAR (Fallback: solo se renderiza si existen los datos 'teams') */}
+        {teamData && enemyTeamData && (
+          <div className="esports-broadcast-bar">
+            <div className="ebb-objectives">
+              <div className="ebb-obj-item" title="Torres">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '4px', opacity: 0.8 }}><path d="M5 2h4v4h2V2h4v4h2V2h4v8l-2 2v10H5V12l-2-2V2h2zm4 12v6h6v-6H9z"/></svg>
+                {teamData.objectives?.tower?.kills || 0}
+              </div>
+              <div className="ebb-obj-item" title="Dragones">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '4px', opacity: 0.8 }}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                {teamData.objectives?.dragon?.kills || 0}
+              </div>
+              <div className="ebb-obj-item" title="Barones">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '4px', opacity: 0.8 }}><path d="M12 4C7.58 4 4 7.58 4 12c0 2.06.78 3.94 2.06 5.38l1.42-1.42C6.55 14.88 6 13.5 6 12c0-3.31 2.69-6 6-6s6 2.69 6 6c0 1.5-.55 2.88-1.48 3.96l1.42 1.42C19.22 15.94 20 14.06 20 12c0-4.42-3.58-8-8-8zm-3 8h6v2H9v-2z"/></svg>
+                {teamData.objectives?.baron?.kills || 0}
+              </div>
+              <div className="ebb-obj-item" title="Larvas del Vacío">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '4px', opacity: 0.8 }}><path d="M19 8h-2V6h-2v2h-2V6h-2v2H9V6H7v2H5v10h14V8z"/></svg>
+                {teamData.objectives?.horde?.kills || 0}
+              </div>
+            </div>
+            
+            <div className="ebb-comparisons">
+              <div className="ebb-comp-row">
+                <span className="ebb-comp-val left">{totalKills}</span>
+                <div className="ebb-comp-bar-wrapper">
+                  <div className="ebb-comp-bar left-bar" style={{ width: `${(totalKills / Math.max(1, totalKills + enemyTotalKills)) * 100}%` }}></div>
+                  <div className="ebb-comp-label">TOTAL KILL</div>
+                  <div className="ebb-comp-bar right-bar" style={{ width: `${(enemyTotalKills / Math.max(1, totalKills + enemyTotalKills)) * 100}%` }}></div>
+                </div>
+                <span className="ebb-comp-val right">{enemyTotalKills}</span>
+              </div>
+              <div className="ebb-comp-row">
+                <span className="ebb-comp-val left">{(totalGold / 1000).toFixed(1)}k</span>
+                <div className="ebb-comp-bar-wrapper">
+                  <div className="ebb-comp-bar left-bar" style={{ width: `${(totalGold / Math.max(1, totalGold + enemyTotalGold)) * 100}%` }}></div>
+                  <div className="ebb-comp-label">TOTAL GOLD</div>
+                  <div className="ebb-comp-bar right-bar" style={{ width: `${(enemyTotalGold / Math.max(1, totalGold + enemyTotalGold)) * 100}%` }}></div>
+                </div>
+                <span className="ebb-comp-val right">{(enemyTotalGold / 1000).toFixed(1)}k</span>
+              </div>
+            </div>
+            
+            <div className="ebb-objectives right-side">
+              <div className="ebb-obj-item" title="Larvas del Vacío">
+                {enemyTeamData.objectives?.horde?.kills || 0}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '4px', opacity: 0.8 }}><path d="M19 8h-2V6h-2v2h-2V6h-2v2H9V6H7v2H5v10h14V8z"/></svg>
+              </div>
+              <div className="ebb-obj-item" title="Barones">
+                {enemyTeamData.objectives?.baron?.kills || 0}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '4px', opacity: 0.8 }}><path d="M12 4C7.58 4 4 7.58 4 12c0 2.06.78 3.94 2.06 5.38l1.42-1.42C6.55 14.88 6 13.5 6 12c0-3.31 2.69-6 6-6s6 2.69 6 6c0 1.5-.55 2.88-1.48 3.96l1.42 1.42C19.22 15.94 20 14.06 20 12c0-4.42-3.58-8-8-8zm-3 8h6v2H9v-2z"/></svg>
+              </div>
+              <div className="ebb-obj-item" title="Dragones">
+                {enemyTeamData.objectives?.dragon?.kills || 0}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '4px', opacity: 0.8 }}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              </div>
+              <div className="ebb-obj-item" title="Torres">
+                {enemyTeamData.objectives?.tower?.kills || 0}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '4px', opacity: 0.8 }}><path d="M5 2h4v4h2V2h4v4h2V2h4v8l-2 2v10H5V12l-2-2V2h2zm4 12v6h6v-6H9z"/></svg>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -1684,22 +1757,47 @@ export default function App() {
           <div className="dpm-champions-roles-row">
             {[
               { id: 'all', label: 'All', icon: '★' },
-              { id: 'top', label: 'Top', icon: '🛡️' },
-              { id: 'jungle', label: 'Jungle', icon: '⚔️' },
-              { id: 'mid', label: 'Mid', icon: '🔥' },
-              { id: 'adc', label: 'ADC', icon: '🏹' },
-              { id: 'support', label: 'Support', icon: '🩹' }
-            ].map(role => (
-              <button
-                key={role.id}
-                title={role.label}
-                className={`dpm-champions-role-btn ${championsRoleFilter === role.id ? 'active' : ''}`}
-                onClick={() => setChampionsRoleFilter(role.id)}
-              >
-                <span className="role-btn-icon">{role.icon}</span>
-                <span className="role-btn-label">{role.label}</span>
-              </button>
-            ))}
+              { id: 'top', label: 'Top' },
+              { id: 'jungle', label: 'Jungle' },
+              { id: 'mid', label: 'Mid' },
+              { id: 'adc', label: 'ADC' },
+              { id: 'support', label: 'Support' }
+            ].map(role => {
+              const ROLE_ICONS = {
+                top:     'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Top_icon.png',
+                jungle:  'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Jungle_icon.png',
+                mid:     'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Middle_icon.png',
+                adc:     'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Bottom_icon.png',
+                support: 'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Support_icon.png',
+              };
+
+              return (
+                <button
+                  key={role.id}
+                  title={role.label}
+                  className={`dpm-champions-role-btn ${championsRoleFilter === role.id ? 'active' : ''}`}
+                  onClick={() => setChampionsRoleFilter(role.id)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                >
+                  <span className="role-btn-icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    {role.id === 'all' ? (
+                      role.icon
+                    ) : (
+                      <img
+                        src={ROLE_ICONS[role.id]}
+                        alt={role.label}
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          filter: championsRoleFilter === role.id ? 'brightness(1)' : 'brightness(0.5)'
+                        }}
+                      />
+                    )}
+                  </span>
+                  <span className="role-btn-label">{role.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="dpm-champions-queues-row">
@@ -2887,6 +2985,55 @@ export default function App() {
               getMatchPerformanceData={getMatchPerformanceData}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
+              expandedMatchId={expandedMatchId}
+              setExpandedMatchId={setExpandedMatchId}
+              groupedMatches={groupedMatches}
+              queueFilter={queueFilter}
+              setQueueFilter={setQueueFilter}
+              getSidebarChampionStats={getSidebarChampionStats}
+              renderChampionsTab={renderChampionsTab}
+              renderAramTab={renderAramTab}
+              renderTeamTable={renderTeamTable}
+              renderHistorySummary={renderHistorySummary}
+              getRankBadgeColor={getRankBadgeColor}
+              formatDuration={formatDuration}
+              getQueueDisplayName={getQueueDisplayName}
+              getItemIcon={getItemIcon}
+              getRuneIcon={getRuneIcon}
+              loadingStatsMatches={loadingStatsMatches}
+            />
+          </div>
+
+          <div className="dpm-broadcast-wrapper">
+            <TrackerProfileBroadcast
+              summoner={summoner}
+              matches={matches}
+              statsMatches={statsMatches}
+              championMap={championMap}
+              runeMap={runeMap}
+              getChampIcon={getChampIcon}
+              getProfileIcon={getProfileIcon}
+              getSpellIcon={getSpellIcon}
+              getPerformanceLabel={getPerformanceLabel}
+              getMatchPerformanceData={getMatchPerformanceData}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              expandedMatchId={expandedMatchId}
+              setExpandedMatchId={setExpandedMatchId}
+              groupedMatches={groupedMatches}
+              queueFilter={queueFilter}
+              setQueueFilter={setQueueFilter}
+              getSidebarChampionStats={getSidebarChampionStats}
+              renderChampionsTab={renderChampionsTab}
+              renderAramTab={renderAramTab}
+              renderTeamTable={renderTeamTable}
+              renderHistorySummary={renderHistorySummary}
+              getRankBadgeColor={getRankBadgeColor}
+              formatDuration={formatDuration}
+              getQueueDisplayName={getQueueDisplayName}
+              getItemIcon={getItemIcon}
+              getRuneIcon={getRuneIcon}
+              loadingStatsMatches={loadingStatsMatches}
             />
           </div>
         </div>

@@ -526,7 +526,8 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
           gameDuration: info.gameDuration,
           gameCreation: info.gameCreation,
           queueId: info.queueId,
-          participants: teamParticipants
+          participants: teamParticipants,
+          teams: info.teams
         };
 
         // Save new match details permanently to database

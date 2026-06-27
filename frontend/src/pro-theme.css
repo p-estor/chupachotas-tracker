@@ -2,23 +2,22 @@
    Sobrescrituras Globales de UI — Modo Pro (Terminal Analytics)
    ============================================================ */
 
-/* Tokens de Pro Mode */
 :root[data-theme="pro"] {
-  --bg-primary: #000000;
-  --bg-secondary: #0A0A0A;
-  --bg-tertiary: #121212;
-  --bg-card: #0A0A0A;
-  --bg-card-hover: #171717;
-  
-  --border-normal: #1f1f1f;
-  --border-glow: #2a2a2a;
-  
+  --bg-primary: #0A0A0F;
+  --bg-secondary: #12131A;
+  --bg-tertiary: #1A1B25;
+  --bg-card: #12131A;
+  --bg-card-hover: #20212E;
+
+  --border-normal: #2D2E3D;
+  --border-glow: #3A3B4E;
+
   --blur-glass: blur(0px);
   --shadow-neon: none;
-  
-  --text-primary: #E5E5E5;
-  --text-secondary: #A3A3A3;
-  --text-muted: #525252;
+
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
 }
 
 /* Quitar gradientes de fondo global */
@@ -63,9 +62,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px dashed var(--border-normal);
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .pro-terminal-title {
@@ -78,7 +75,8 @@
 
 .pro-terminal-grid {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 260px 1fr;
+  align-items: start;
   gap: 1rem;
 }
 
@@ -104,9 +102,10 @@
 
 .pro-data-table th,
 .pro-data-table td {
-  padding: 0.5rem 1rem;
+  padding: 0.85rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-normal);
+  vertical-align: middle;
 }
 
 .pro-data-table th {
@@ -131,21 +130,23 @@
 /* Terminal Tabs */
 .pro-terminal-nav {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-normal);
-  padding-bottom: 0.5rem;
 }
 
 .pro-terminal-tab {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 0 0 0.75rem 0;
   text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  transition: color 0.2s ease;
 }
 
 .pro-terminal-tab:hover {
@@ -154,18 +155,243 @@
 
 .pro-terminal-tab.active {
   color: var(--accent-cyan);
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.pro-terminal-tab::before {
-  content: "[ ";
-  color: var(--text-muted);
-}
-.pro-terminal-tab::after {
-  content: " ]";
-  color: var(--text-muted);
-}
-.pro-terminal-tab.active::before,
+/* El indicador de la pestaña activa */
 .pro-terminal-tab.active::after {
-  color: var(--accent-cyan);
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--accent-cyan);
+  border-radius: 2px 2px 0 0;
 }
+
+/* Contenedor para pestanas Champion/ARAM heredadas del modo clasico */
+.pro-tab-classic-inject {
+  background: transparent;
+}
+
+/* Aplanar las cards internas del modo clasico cuando se inyectan en Pro */
+[data-theme='pro'] .pro-tab-classic-inject .dpm-rank-card,
+[data-theme='pro'] .pro-tab-classic-inject .dpm-champ-card,
+[data-theme='pro'] .pro-tab-classic-inject .dpm-aram-card {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border-color: var(--border-normal) !important;
+}
+
+.pro-row-win > td:first-child {
+  box-shadow: inset 4px 0 0 var(--win-color);
+}
+
+.pro-row-loss > td:first-child {
+  box-shadow: inset 4px 0 0 var(--loss-color);
+}
+
+.pro-row-win {
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.pro-row-loss {
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.pro-row-win:hover {
+  background: rgba(34, 197, 94, 0.09) !important;
+}
+
+.pro-row-loss:hover {
+  background: rgba(239, 68, 68, 0.09) !important;
+}
+
+/* Rating badges visibles */
+.pro-rating-badge {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.pro-rating-badge.mvp {
+  background: var(--accent-gold);
+  color: #000;
+}
+
+.pro-rating-badge.ace {
+  background: var(--loss-color);
+  color: #fff;
+}
+
+.pro-rating-badge.good {
+  background: transparent;
+  border: 1px solid var(--win-color);
+  color: var(--win-color);
+}
+
+/* ============================================================
+   Sobrescrituras de Landing Page y Autocomplete (Modo Pro)
+   ============================================================ */
+
+/* Aplanar la Landing Page */
+[data-theme="pro"] .dpm-landing-left,
+[data-theme="pro"] .dpm-landing-sidebar {
+  background: var(--bg-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: 1px solid var(--border-normal) !important;
+  border-radius: 0 !important;
+}
+
+/* Quitar gradiente del título de la landing */
+[data-theme="pro"] .dpm-landing-title {
+  background: none !important;
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+}
+
+/* Aplanar la barra de búsqueda en la landing */
+[data-theme="pro"] .dpm-landing-search-box {
+  background: transparent !important;
+  border: 1px solid var(--border-normal) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Aplanar el botón de búsqueda */
+[data-theme="pro"] .dpm-landing-search-btn {
+  background: var(--bg-secondary) !important;
+  color: var(--accent-cyan) !important;
+  border: 1px solid var(--border-normal) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+[data-theme="pro"] .dpm-landing-search-btn:hover {
+  background: var(--bg-card-hover) !important;
+  border-color: var(--accent-cyan) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Aplanar el Autocomplete Dropdown */
+[data-theme="pro"] .autocomplete-dropdown {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-normal) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+[data-theme="pro"] .autocomplete-item {
+  border-bottom: 1px solid var(--border-normal);
+}
+
+[data-theme="pro"] .autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+[data-theme="pro"] .autocomplete-item:hover,
+[data-theme="pro"] .autocomplete-item.active {
+  background: var(--bg-card-hover) !important;
+}
+
+/* Aplanar vistas clásicas inyectadas en Pro Mode */
+[data-theme="pro"] .pro-tab-classic-inject [class*="dpm-champ"],
+[data-theme="pro"] .pro-tab-classic-inject [class*="dpm-aram"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--border-normal) !important;
+  background: var(--bg-secondary) !important;
+}
+
+/* Jerarquía tipográfica del match log */
+.pro-match-result {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.pro-match-champ-block {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pro-match-champ-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.pro-match-champ-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.pro-match-kda-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.pro-match-kda-main {
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.pro-match-kda-ratio {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.pro-match-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pro-match-stat-main {
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.pro-match-stat-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Tabla de champ performance en sidebar — forzar layout fijo y ocultar overflow */
+.pro-terminal-panel .pro-data-table {
+  table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* En el sidebar de 260px: icono, nombre y WR — quitar columnas extra */
+.pro-champ-perf-table th:nth-child(2),
+.pro-champ-perf-table th:nth-child(3),
+.pro-champ-perf-table td:nth-child(2),
+.pro-champ-perf-table td:nth-child(3) {
+  display: none;
+}
+
+.pro-champ-perf-table th:nth-child(1) { width: 70%; }
+.pro-champ-perf-table th:nth-child(4) { width: 30%; }
