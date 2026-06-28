@@ -580,6 +580,18 @@ export default function App() {
     return '#64748b';
   };
 
+  const getRankBadgeIcon = (tier) => {
+    if (!tier) return null;
+    let t = tier.trim().toUpperCase();
+    if (t === 'UNRANKED') return null;
+    
+    // Capitalize only first letter for wiki FilePath Season_2023_-_[Tier].png
+    // e.g. Season_2023_-_Grandmaster.png, Season_2023_-_Master.png
+    let capitalized = t.charAt(0) + t.slice(1).toLowerCase();
+    // Special naming on some tiers if needed (e.g. Master, Grandmaster, etc.)
+    return `https://leagueoflegends.fandom.com/wiki/Special:FilePath/Season_2023_-_${capitalized}.png`;
+  };
+
   const getRankAbbreviation = (rankObj) => {
     if (!rankObj || !rankObj.tier || rankObj.tier === 'UNRANKED') return 'UN';
     const tierMap = {
@@ -2656,7 +2668,11 @@ export default function App() {
                 {summoner.ranks.solo && (
                   <div className="dpm-rank-card-body">
                     <div className="dpm-rank-card-row">
-                      <span className="dpm-rank-badge-symbol" style={{ color: getRankBadgeColor(summoner.ranks.solo.tier) }}>🛡️</span>
+                      <img 
+                        src={getRankBadgeIcon(summoner.ranks.solo.tier)} 
+                        alt={summoner.ranks.solo.tier} 
+                        className="dpm-rank-badge-img" 
+                      />
                       <div className="dpm-rank-stats-details">
                         <span className="dpm-rank-lp">{summoner.ranks.solo.leaguePoints} LP</span>
                         <span className="dpm-rank-wl">{summoner.ranks.solo.wins}V - {summoner.ranks.solo.losses}D ({summoner.ranks.solo.winRate}% WR)</span>
@@ -2680,7 +2696,11 @@ export default function App() {
                 {summoner.ranks.flex && (
                   <div className="dpm-rank-card-body">
                     <div className="dpm-rank-card-row">
-                      <span className="dpm-rank-badge-symbol" style={{ color: getRankBadgeColor(summoner.ranks.flex.tier) }}>⚔️</span>
+                      <img 
+                        src={getRankBadgeIcon(summoner.ranks.flex.tier)} 
+                        alt={summoner.ranks.flex.tier} 
+                        className="dpm-rank-badge-img" 
+                      />
                       <div className="dpm-rank-stats-details">
                         <span className="dpm-rank-lp">{summoner.ranks.flex.leaguePoints} LP</span>
                         <span className="dpm-rank-wl">{summoner.ranks.flex.wins}V - {summoner.ranks.flex.losses}D ({summoner.ranks.flex.winRate}% WR)</span>
@@ -3000,6 +3020,7 @@ export default function App() {
               getQueueDisplayName={getQueueDisplayName}
               getItemIcon={getItemIcon}
               getRuneIcon={getRuneIcon}
+              getRankBadgeIcon={getRankBadgeIcon}
               loadingStatsMatches={loadingStatsMatches}
             />
           </div>
@@ -3029,6 +3050,7 @@ export default function App() {
               renderTeamTable={renderTeamTable}
               renderHistorySummary={renderHistorySummary}
               getRankBadgeColor={getRankBadgeColor}
+              getRankBadgeIcon={getRankBadgeIcon}
               formatDuration={formatDuration}
               getQueueDisplayName={getQueueDisplayName}
               getItemIcon={getItemIcon}

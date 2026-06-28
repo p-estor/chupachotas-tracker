@@ -1972,8 +1972,10 @@ header p {
   gap: 0.75rem;
 }
 
-.dpm-rank-badge-symbol {
-  font-size: 1.5rem;
+.dpm-rank-badge-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .dpm-rank-stats-details {

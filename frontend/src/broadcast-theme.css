@@ -251,6 +251,22 @@
   margin-bottom: 0.5rem;
 }
 
+.broadcast-rank-body-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.broadcast-rank-badge-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.broadcast-rank-body {
+  flex-grow: 1;
+}
+
 .broadcast-rank-main {
   display: flex;
   justify-content: space-between;

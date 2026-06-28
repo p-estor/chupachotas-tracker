@@ -21,6 +21,7 @@ export default function TrackerProfileBroadcast({
   renderTeamTable,
   renderHistorySummary,
   getRankBadgeColor,
+  getRankBadgeIcon,
   formatDuration,
   getQueueDisplayName,
   getItemIcon,
@@ -97,18 +98,25 @@ export default function TrackerProfileBroadcast({
             {summoner.ranks?.solo && (
               <div className="broadcast-card broadcast-rank-card" style={{ '--rank-glow-color': getRankBadgeColor(summoner.ranks.solo.tier) }}>
                 <div className="broadcast-rank-header">Ranked Solo</div>
-                <div className="broadcast-rank-body">
-                  <div className="broadcast-rank-main">
-                    <span className="broadcast-rank-tier" style={{ color: getRankBadgeColor(summoner.ranks.solo.tier) }}>
-                      {summoner.ranks.solo.tier} {summoner.ranks.solo.rank}
-                    </span>
-                    <span className="broadcast-rank-lp mono">{summoner.ranks.solo.leaguePoints} LP</span>
-                  </div>
-                  <div className="broadcast-rank-wl mono">
-                    <span style={{ color: 'var(--win-color)' }}>{summoner.ranks.solo.wins}W</span>
-                    <span> / </span>
-                    <span style={{ color: 'var(--loss-color)' }}>{summoner.ranks.solo.losses}L</span>
-                    <span className="muted-ratio"> ({summoner.ranks.solo.winRate}%)</span>
+                <div className="broadcast-rank-body-with-icon">
+                  <img 
+                    src={getRankBadgeIcon(summoner.ranks.solo.tier)} 
+                    alt={summoner.ranks.solo.tier} 
+                    className="broadcast-rank-badge-img" 
+                  />
+                  <div className="broadcast-rank-body">
+                    <div className="broadcast-rank-main">
+                      <span className="broadcast-rank-tier" style={{ color: getRankBadgeColor(summoner.ranks.solo.tier) }}>
+                        {summoner.ranks.solo.tier} {summoner.ranks.solo.rank}
+                      </span>
+                      <span className="broadcast-rank-lp mono">{summoner.ranks.solo.leaguePoints} LP</span>
+                    </div>
+                    <div className="broadcast-rank-wl mono">
+                      <span style={{ color: 'var(--win-color)' }}>{summoner.ranks.solo.wins}W</span>
+                      <span> / </span>
+                      <span style={{ color: 'var(--loss-color)' }}>{summoner.ranks.solo.losses}L</span>
+                      <span className="muted-ratio"> ({summoner.ranks.solo.winRate}%)</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -118,18 +126,25 @@ export default function TrackerProfileBroadcast({
             {summoner.ranks?.flex && (
               <div className="broadcast-card broadcast-rank-card" style={{ '--rank-glow-color': getRankBadgeColor(summoner.ranks.flex.tier) }}>
                 <div className="broadcast-rank-header">Ranked Flex</div>
-                <div className="broadcast-rank-body">
-                  <div className="broadcast-rank-main">
-                    <span className="broadcast-rank-tier" style={{ color: getRankBadgeColor(summoner.ranks.flex.tier) }}>
-                      {summoner.ranks.flex.tier} {summoner.ranks.flex.rank}
-                    </span>
-                    <span className="broadcast-rank-lp mono">{summoner.ranks.flex.leaguePoints} LP</span>
-                  </div>
-                  <div className="broadcast-rank-wl mono">
-                    <span style={{ color: 'var(--win-color)' }}>{summoner.ranks.flex.wins}W</span>
-                    <span> / </span>
-                    <span style={{ color: 'var(--loss-color)' }}>{summoner.ranks.flex.losses}L</span>
-                    <span className="muted-ratio"> ({summoner.ranks.flex.winRate}%)</span>
+                <div className="broadcast-rank-body-with-icon">
+                  <img 
+                    src={getRankBadgeIcon(summoner.ranks.flex.tier)} 
+                    alt={summoner.ranks.flex.tier} 
+                    className="broadcast-rank-badge-img" 
+                  />
+                  <div className="broadcast-rank-body">
+                    <div className="broadcast-rank-main">
+                      <span className="broadcast-rank-tier" style={{ color: getRankBadgeColor(summoner.ranks.flex.tier) }}>
+                        {summoner.ranks.flex.tier} {summoner.ranks.flex.rank}
+                      </span>
+                      <span className="broadcast-rank-lp mono">{summoner.ranks.flex.leaguePoints} LP</span>
+                    </div>
+                    <div className="broadcast-rank-wl mono">
+                      <span style={{ color: 'var(--win-color)' }}>{summoner.ranks.flex.wins}W</span>
+                      <span> / </span>
+                      <span style={{ color: 'var(--loss-color)' }}>{summoner.ranks.flex.losses}L</span>
+                      <span className="muted-ratio"> ({summoner.ranks.flex.winRate}%)</span>
+                    </div>
                   </div>
                 </div>
               </div>
