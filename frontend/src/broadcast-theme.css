@@ -135,8 +135,8 @@
 .broadcast-summary-metric {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
+  align-items: center;
+  text-align: center;
 }
 
 .broadcast-summary-metric .metric-label {

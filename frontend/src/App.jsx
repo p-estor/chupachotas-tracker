@@ -249,6 +249,12 @@ export default function App() {
     fetchRuneData();
   }, []);
 
+  // Force Broadcast Theme on Mount
+  useEffect(() => {
+    localStorage.setItem('chupachotas-theme', 'broadcast');
+    document.documentElement.setAttribute('data-theme', 'broadcast');
+  }, []);
+
   // Fetch matches when queueFilter changes (if summoner is already loaded)
   useEffect(() => {
     if (!summoner) return;
@@ -2490,8 +2496,6 @@ export default function App() {
               <button type="submit" style={{ display: 'none' }}></button>
             </form>
           )}
-          
-          <ThemeSwitcher />
           
           <a
             href="https://paypal.me/pestordev"
