@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DDRAGON_VERSION } from './constants';
 
 export default function TrackerProfileBroadcast({
@@ -28,6 +28,7 @@ export default function TrackerProfileBroadcast({
   getRuneIcon,
   getSpellIcon,
   loadingStatsMatches,
+  renderLiveTab,
 }) {
   if (!summoner) return null;
 
@@ -39,12 +40,64 @@ export default function TrackerProfileBroadcast({
   const losses = totalMatches - wins;
   const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0;
 
+  // Calculate most played champion from the matches list to show as header splash background (Option A)
+  const getMostPlayedChamp = () => {
+    if (!matches || matches.length === 0) return null;
+    const counts = {};
+    matches.forEach(m => {
+      const p = m.participants?.find(part => part.puuid === summoner.puuid);
+      const champ = m.playerStats?.championName ?? p?.championName;
+      if (champ) counts[champ] = (counts[champ] || 0) + 1;
+    });
+    let maxChamp = null;
+    let maxCount = -1;
+    Object.keys(counts).forEach(champ => {
+      if (counts[champ] > maxCount) {
+        maxCount = counts[champ];
+        maxChamp = champ;
+      }
+    });
+    return maxChamp;
+  };
+
+  const mostPlayedChamp = getMostPlayedChamp();
+  const headerSplashUrl = mostPlayedChamp 
+    ? `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${mostPlayedChamp}_0.jpg`
+    : null;
+
+  // State to hold user-selected champion for featured details card (TFTAcademy style)
+  const [selectedChampName, setSelectedChampName] = useState(null);
+  const [sidebarActive, setSidebarActive] = useState(false);
+
   // ponytail: no metrics complex filters, simplified overview panel logic
   return (
     <div className="broadcast-container">
+      {/* Floating Mobile Toggle Button */}
+      <button 
+        className="broadcast-sidebar-toggle-btn"
+        onClick={() => setSidebarActive(true)}
+      >
+        <span>🔍</span> Mostrar Filtros y Rangos
+      </button>
+
+      {/* Mobile Drawer Overlay */}
+      {sidebarActive && (
+        <div 
+          className="broadcast-sidebar-overlay"
+          onClick={() => setSidebarActive(false)}
+        />
+      )}
       {/* HEADER: Cinematic Broadcast HUD */}
-      <header className="broadcast-header">
-        <div className="broadcast-header-profile">
+      <header className="broadcast-header" style={{ position: 'relative', overflow: 'hidden' }}>
+        {headerSplashUrl && (
+          <div 
+            className="broadcast-header-splash-bg"
+            style={{ 
+              backgroundImage: `url(${headerSplashUrl})`
+            }} 
+          />
+        )}
+        <div className="broadcast-header-profile" style={{ position: 'relative', zIndex: 2 }}>
           <div className="broadcast-avatar-glow-wrapper">
             <img 
               src={`https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/profileicon/${summoner.profileIconId}.png`} 
@@ -53,8 +106,25 @@ export default function TrackerProfileBroadcast({
             />
           </div>
           <div className="broadcast-profile-details">
-            <h1 className="broadcast-summoner-name">
+            <h1 className="broadcast-summoner-name" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               {summoner.gameName}<span className="broadcast-tag">#{summoner.tagLine}</span>
+              <span className="broadcast-live-badge" style={{
+                cursor: 'pointer',
+                fontSize: '0.65rem',
+                color: '#ff4655',
+                border: '1px solid rgba(255, 70, 85, 0.4)',
+                background: 'rgba(255, 70, 85, 0.1)',
+                padding: '0.15rem 0.45rem',
+                borderRadius: '2px',
+                fontWeight: '800',
+                letterSpacing: '0.05em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem'
+              }} onClick={() => setActiveTab('live')}>
+                <span style={{ display: 'inline-block', width: '6px', height: '6px', background: '#ff4655', borderRadius: '50%', animation: 'dpm-pulse 1.5s infinite ease-in-out' }} />
+                LIVE GAME
+              </span>
             </h1>
             <div className="broadcast-level-pill">
               NIVEL {summoner.summonerLevel}
@@ -62,7 +132,7 @@ export default function TrackerProfileBroadcast({
           </div>
         </div>
 
-        <div className="broadcast-header-summary">
+        <div className="broadcast-header-summary" style={{ position: 'relative', zIndex: 2 }}>
           <div className="broadcast-summary-metric">
             <span className="metric-label">HISTORIAL RECIENTE</span>
             <span className="metric-value winrate-color-trigger" style={{ color: winRate >= 50 ? 'var(--win-color)' : 'var(--loss-color)' }}>
@@ -79,6 +149,7 @@ export default function TrackerProfileBroadcast({
           { id: 'overview', label: 'Resumen' },
           { id: 'champions', label: 'Campeones' },
           { id: 'aram', label: 'ARAM' },
+          { id: 'live', label: 'En Vivo' },
         ].map(tab => (
           <button
             key={tab.id}
@@ -91,9 +162,89 @@ export default function TrackerProfileBroadcast({
       </nav>
 
       {activeTab === 'overview' && (
-        <div className="broadcast-grid">
+        <div className="broadcast-overview-wrapper">
+          {/* TFTAcademy style selection bar */}
+          {!loadingStatsMatches && getSidebarChampionStats().length > 0 && (() => {
+            const topChamps = getSidebarChampionStats().slice(0, 8);
+            const activeChamp = topChamps.find(c => c.name === (selectedChampName || topChamps[0].name)) || topChamps[0];
+            const activeSplashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${activeChamp.name}_0.jpg`;
+            
+            return (
+              <div className="tft-academy-container">
+                {/* Horizontal selector row */}
+                <div className="tft-selector-row">
+                  {topChamps.map(c => (
+                    <div 
+                      key={c.name} 
+                      className={`tft-selector-item ${activeChamp.name === c.name ? 'active' : ''}`}
+                      onClick={() => setSelectedChampName(c.name)}
+                      tabIndex="0"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedChampName(c.name);
+                        }
+                      }}
+                    >
+                      <div className="tft-avatar-glow">
+                        <img src={getChampIcon(c.name)} alt={c.name} className="tft-selector-avatar" />
+                      </div>
+                      <span className="tft-selector-name">{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Big Details Panel with desaturated/fade background splash */}
+                <div className="tft-showcase-panel">
+                  <div 
+                    className="tft-showcase-splash-bg"
+                    style={{ backgroundImage: `url(${activeSplashUrl})` }}
+                  />
+                  <div className="tft-showcase-content">
+                    <div className="tft-showcase-info">
+                      <h2 className="tft-showcase-champ-name">{activeChamp.name.toUpperCase()}</h2>
+                      <span className="tft-showcase-title">CAMPEÓN INSIGNIA</span>
+
+                      <div className="tft-stats-grid">
+                        <div className="tft-stat-box">
+                          <span className="tft-stat-label">PARTIDAS JUGADAS</span>
+                          <span className="tft-stat-value mono">{activeChamp.games}</span>
+                        </div>
+                        <div className="tft-stat-box">
+                          <span className="tft-stat-label">PROMEDIO KDA</span>
+                          <span className="tft-stat-value mono">{activeChamp.kdaRatio}</span>
+                        </div>
+                        <div className="tft-stat-box">
+                          <span className="tft-stat-label">TASA DE VICTORIAS</span>
+                          <span className="tft-stat-value mono" style={{ color: activeChamp.wr >= 55 ? 'var(--win-color)' : activeChamp.wr >= 48 ? '#fff' : 'var(--loss-color)' }}>
+                            {activeChamp.wr}%
+                          </span>
+                        </div>
+                        <div className="tft-stat-box">
+                          <span className="tft-stat-label">FARMEO MINUTO</span>
+                          <span className="tft-stat-value mono">{activeChamp.csMin} <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>CS/m</span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div className="broadcast-grid">
           {/* SIDEBAR */}
-          <aside className="broadcast-sidebar">
+          <aside className={`broadcast-sidebar ${sidebarActive ? 'active' : ''}`}>
+            <div className="broadcast-sidebar-mobile-header">
+              <span>Filtros y Rangos</span>
+              <button 
+                className="broadcast-sidebar-close-btn" 
+                onClick={() => setSidebarActive(false)}
+                aria-label="Cerrar"
+              >
+                &times;
+              </button>
+            </div>
             {/* SOLOQ CARD */}
             {summoner.ranks?.solo && (
               <div className="broadcast-card broadcast-rank-card" style={{ '--rank-glow-color': getRankBadgeColor(summoner.ranks.solo.tier) }}>
@@ -204,7 +355,21 @@ export default function TrackerProfileBroadcast({
             {renderHistorySummary && renderHistorySummary(matches)}
 
             <div className="broadcast-match-list">
-              {matches?.map(match => {
+              {!matches || matches.length === 0 ? (
+                <div style={{
+                  padding: '3rem',
+                  textAlign: 'center',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-normal)',
+                  borderRadius: '4px',
+                  color: 'var(--text-muted)'
+                }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎮</div>
+                  <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No se encontraron partidas</h3>
+                  <p style={{ fontSize: '0.85rem' }}>Este invocador no tiene partidas recientes en la cola seleccionada.</p>
+                </div>
+              ) : (
+                matches.map(match => {
                 const participant = match.participants?.find(p => p.puuid === summoner.puuid);
                 if (!participant) return null;
 
@@ -224,15 +389,35 @@ export default function TrackerProfileBroadcast({
                 const isMvp = ratingObj.key === 'mvp';
                 const isAce = ratingObj.key === 'ace';
 
-                // DDragon Splash Art URL for background mask
-                const champSplashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champName}_0.jpg`;
+                // DDragon Loading screen cut URL for background mask (optimized, lightweight fallback)
+                const champSplashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champName}_0.jpg`;
 
                 return (
                   <div 
                     key={match.matchId}
                     className={`broadcast-match-card ${isWin ? 'win' : 'loss'} ${isExpanded ? 'expanded' : ''} ${isMvp ? 'mvp-glow' : ''} ${isAce ? 'ace-glow' : ''}`}
                     onClick={() => setExpandedMatchId(isExpanded ? null : match.matchId)}
+                    tabIndex="0"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setExpandedMatchId(isExpanded ? null : match.matchId);
+                      }
+                    }}
                   >
+                    <span className={`broadcast-daltonism-indicator ${isWin ? 'win' : 'loss'}`} style={{
+                      position: 'absolute',
+                      left: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      fontSize: '0.7rem',
+                      fontWeight: '800',
+                      zIndex: 5,
+                      pointerEvents: 'none',
+                      color: isWin ? 'var(--win-color)' : 'var(--loss-color)',
+                    }}>
+                      {isWin ? '▲' : '▼'}
+                    </span>
                     {/* Splash Art Background Mask */}
                     <div 
                       className="broadcast-match-splash-bg" 
@@ -251,9 +436,16 @@ export default function TrackerProfileBroadcast({
                       </div>
 
                       {/* Champion Block with Dynamic fading effect */}
-                      <div className="broadcast-match-champ">
-                        <img src={getChampIcon(champName)} alt={champName} className="broadcast-match-avatar" />
-                        <span className="broadcast-match-champ-name">{champName}</span>
+                      <div className="broadcast-match-champ" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+                        <img src={getChampIcon(champName)} alt={champName} className="broadcast-match-avatar" loading="lazy" />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+                          <span className="broadcast-match-champ-name">{champName}</span>
+                          {ratingObj.key && ratingObj.key !== 'neutral' && ratingObj.key !== 'normal' && (
+                            <span className={`broadcast-rating-badge ${ratingObj.key}`} style={{ width: 'fit-content' }}>
+                              {ratingObj.label.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* KDA block */}
@@ -281,14 +473,8 @@ export default function TrackerProfileBroadcast({
                         </div>
                       </div>
 
-                      {/* Badge / Rating */}
-                      <div className="broadcast-match-badge">
-                        {ratingObj.key && ratingObj.key !== 'neutral' && ratingObj.key !== 'normal' && (
-                          <span className={`broadcast-rating-badge ${ratingObj.key}`}>
-                            {ratingObj.label.toUpperCase()}
-                          </span>
-                        )}
-                      </div>
+                      {/* Spacer element replacing old badge block to preserve grid structure */}
+                      <div className="broadcast-match-badge"></div>
 
                       {/* Expand Chevron */}
                       <div className="broadcast-match-chevron">
@@ -307,9 +493,10 @@ export default function TrackerProfileBroadcast({
                     )}
                   </div>
                 );
-              })}
+              }))}
             </div>
           </main>
+          </div>
         </div>
       )}
 
@@ -322,6 +509,12 @@ export default function TrackerProfileBroadcast({
       {activeTab === 'aram' && (
         <div className="broadcast-classic-inject-wrapper">
           {renderAramTab()}
+        </div>
+      )}
+
+      {activeTab === 'live' && (
+        <div className="broadcast-classic-inject-wrapper">
+          {renderLiveTab()}
         </div>
       )}
     </div>

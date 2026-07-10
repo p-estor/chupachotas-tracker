@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-export default function ThemeSwitcher() {
-  const [theme, setTheme] = useState('classic');
+export default function ThemeSwitcher({ currentTheme, setCurrentTheme }) {
+  const [localTheme, setLocalTheme] = useState('classic');
+  const theme = currentTheme !== undefined ? currentTheme : localTheme;
+  const setTheme = setCurrentTheme !== undefined ? setCurrentTheme : setLocalTheme;
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('chupachotas-theme') || 'classic';

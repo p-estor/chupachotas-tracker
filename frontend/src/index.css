@@ -1973,8 +1973,8 @@ header p {
 }
 
 .dpm-rank-badge-img {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
@@ -4269,6 +4269,88 @@ header p {
   text-shadow: 0 1px 2px rgba(0,0,0,0.8);
   pointer-events: none;
   letter-spacing: 1px;
+}
+
+/* Accessibility focus-visible styles */
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.tft-selector-item:focus-visible,
+.broadcast-match-card:focus-visible,
+.dpm-match-card:focus-visible,
+.pro-row-win:focus-visible,
+.pro-row-loss:focus-visible,
+.dpm-profile-tab:focus-visible,
+.broadcast-tab-btn:focus-visible,
+.pro-terminal-tab:focus-visible {
+  outline: 2px solid var(--accent-cyan) !important;
+  outline-offset: 2px;
+}
+
+/* prefers-contrast: more support to saturate gold and contrast borders */
+@media (prefers-contrast: more) {
+  :root {
+    --border-normal: rgba(255, 255, 255, 0.4) !important;
+    --border-glow: rgba(0, 210, 255, 0.6) !important;
+    --accent-gold: #ffdf9e !important;
+    --accent-gold-bright: #ffffff !important;
+  }
+  :root[data-theme="broadcast"] {
+    --border-normal: #3b4f88 !important;
+    --border-glow: #5b76b8 !important;
+    --accent-gold: #ffd075 !important;
+    --win-color: #00ff00 !important;
+    --loss-color: #ff0000 !important;
+  }
+  .broadcast-match-card.win {
+    border-left-width: 6px !important;
+  }
+  .broadcast-match-card.loss {
+    border-left-width: 6px !important;
+  }
+  .dpm-match-strip {
+    width: 8px !important;
+  }
+  .pro-row-win > td:first-child {
+    box-shadow: inset 8px 0 0 #00ff00 !important;
+  }
+  .pro-row-loss > td:first-child {
+    box-shadow: inset 8px 0 0 #ff0000 !important;
+  }
+}
+
+/* Blinking dot for live indicator */
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ff4655;
+  animation: dpm-pulse 1.5s infinite ease-in-out;
+}
+
+.dpm-live-game-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(255, 70, 85, 0.1);
+  color: #ff4655;
+  border: 1px solid rgba(255, 70, 85, 0.2);
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 0.5rem;
+}
+
+@keyframes dpm-pulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
 }
 
 

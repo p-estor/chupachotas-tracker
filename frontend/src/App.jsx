@@ -205,11 +205,20 @@ export default function App() {
   // Queue filter state
   const [queueFilter, setQueueFilter] = useState('all');
   const [loadingMore, setLoadingMore] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('broadcast');
 
   // Fetch champion list from DDragon on mount to resolve championIds to names
   useEffect(() => {
     const fetchChampionData = async () => {
       try {
+        const cached = localStorage.getItem('championMapCache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed.timestamp && Date.now() - parsed.timestamp < 604800000) {
+            setChampionMap(parsed.data);
+            return;
+          }
+        }
         const response = await axios.get(
           `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/data/es_ES/champion.json`
         );
@@ -220,6 +229,10 @@ export default function App() {
           mapping[champ.key] = champ.id; // e.g. "266": "Aatrox"
         });
         setChampionMap(mapping);
+        localStorage.setItem('championMapCache', JSON.stringify({
+          timestamp: Date.now(),
+          data: mapping
+        }));
       } catch (err) {
         console.error('Failed to load champion data from Data Dragon', err);
       }
@@ -227,6 +240,14 @@ export default function App() {
 
     const fetchRuneData = async () => {
       try {
+        const cached = localStorage.getItem('runeMapCache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed.timestamp && Date.now() - parsed.timestamp < 604800000) {
+            setRuneMap(parsed.data);
+            return;
+          }
+        }
         const response = await axios.get(
           `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/data/es_ES/runesReforged.json`
         );
@@ -240,6 +261,10 @@ export default function App() {
           });
         });
         setRuneMap(mapping);
+        localStorage.setItem('runeMapCache', JSON.stringify({
+          timestamp: Date.now(),
+          data: mapping
+        }));
       } catch (err) {
         console.error('Failed to load rune data from Data Dragon', err);
       }
@@ -253,6 +278,7 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('chupachotas-theme', 'broadcast');
     document.documentElement.setAttribute('data-theme', 'broadcast');
+    setCurrentTheme('broadcast');
   }, []);
 
   // Fetch matches when queueFilter changes (if summoner is already loaded)
@@ -447,7 +473,16 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      const msg = err.response?.data?.error || 'No se pudo encontrar el invocador. Verifica el nombre, tag y región.';
+      let msg = 'No se pudo encontrar el invocador. Verifica el nombre, tag y región.';
+      if (err.response) {
+        if (err.response.status === 429) {
+          msg = 'Se ha superado el límite de peticiones (API Rate Limit) de Riot Games. Por favor, espera un momento antes de volver a intentarlo.';
+        } else if (err.response.status === 404) {
+          msg = 'Invocador no encontrado. Verifica que el nombre y el TAG sean correctos (ej: Faker#KR1).';
+        } else if (err.response.data?.error) {
+          msg = err.response.data.error;
+        }
+      }
       setError(msg);
     } finally {
       setLoading(false);
@@ -591,10 +626,8 @@ export default function App() {
     let t = tier.trim().toUpperCase();
     if (t === 'UNRANKED') return null;
     
-    // Capitalize only first letter for wiki FilePath Season_2023_-_[Tier].png
-    // e.g. Season_2023_-_Grandmaster.png, Season_2023_-_Master.png
-    let capitalized = t.charAt(0) + t.slice(1).toLowerCase();
-    // Special naming on some tiers if needed (e.g. Master, Grandmaster, etc.)
+    // Capitalize only the first letter, lowercase the rest (e.g. "DIAMOND" -> "Diamond")
+    const capitalized = t.charAt(0) + t.slice(1).toLowerCase();
     return `https://leagueoflegends.fandom.com/wiki/Special:FilePath/Season_2023_-_${capitalized}.png`;
   };
 
@@ -678,7 +711,7 @@ export default function App() {
                   {/* Champ Icon */}
                   <div className="expanded-cell champ-cell">
                     <div className="champ-avatar-wrapper">
-                      <img src={getChampIcon(champName)} alt={champName} className="expanded-champ-img" />
+                      <img src={getChampIcon(champName)} alt={champName} className="expanded-champ-img" loading="lazy" />
                       <span className="expanded-champ-level">{p.champLevel}</span>
                     </div>
                   </div>
@@ -760,7 +793,7 @@ export default function App() {
                         const icon = getItemIcon(itemId);
                         return (
                           <div key={iIdx} className="expanded-item-slot">
-                            {icon && <img src={icon} alt="Item" className="expanded-item-img" />}
+                            {icon && <img src={icon} alt="Item" className="expanded-item-img" loading="lazy" />}
                           </div>
                         );
                       })}
@@ -2190,8 +2223,12 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="poro-mascot-wrapper">
-                  <span className="poro-mascot-emoji">🍪🐹</span>
+                <div className="poro-mascot-wrapper" style={{ bottom: '0.8rem', right: '0.8rem' }}>
+                  <img 
+                    src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/588.jpg" 
+                    alt="Poro" 
+                    style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'block', border: '2px solid rgba(255, 255, 255, 0.1)', objectFit: 'cover' }} 
+                  />
                 </div>
               </div>
 
@@ -2497,14 +2534,16 @@ export default function App() {
             </form>
           )}
           
-          <a
-            href="https://paypal.me/pestordev"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="nav-link nav-donate-btn"
-          >
-            ☕ Donar
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <a
+              href="https://paypal.me/pestordev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link nav-donate-btn"
+            >
+              ☕ Donar
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -2608,13 +2647,90 @@ export default function App() {
         </div>
       )}
 
-      {error && <div className="error-message dpm-error-msg">{error}</div>}
+      {error && (
+        <div className="error-message dpm-error-msg" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          padding: '1.25rem',
+          borderRadius: '8px',
+          background: 'rgba(239, 70, 85, 0.1)',
+          border: '1px solid rgba(239, 70, 85, 0.25)',
+          color: '#ff4655',
+          maxWidth: '800px',
+          margin: '2rem auto',
+          fontSize: '0.9rem',
+          lineHeight: '1.5'
+        }}>
+          <span style={{ fontSize: '1.5rem', userSelect: 'none' }}>⚠️</span>
+          <div>
+            <strong style={{ display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              {error.includes('límite') || error.includes('Rate Limit') ? 'Límite de API Excedido' : 'Error de Conexión / Búsqueda'}
+            </strong>
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
 
       {loading && (
-        <div className="loader dpm-loader">
-          <div className="spinner"></div>
-          <p>Analizando la Grieta del Invocador...</p>
-        </div>
+        currentTheme === 'broadcast' ? (
+          <div className="broadcast-container skeleton-loading" style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
+            {/* Header Skeleton */}
+            <header className="broadcast-header skeleton-header" style={{ height: '140px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem', background: '#080c17', border: '1px solid #12192d', borderRadius: '4px', marginBottom: '1.5rem', position: 'relative', overflow: 'hidden' }}>
+              <div className="broadcast-header-profile" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <div className="broadcast-avatar-glow-wrapper skeleton-avatar pulse" />
+                <div className="broadcast-profile-details">
+                  <div className="skeleton-line skeleton-title pulse" />
+                  <div className="skeleton-line skeleton-subtitle pulse" style={{ width: '100px' }} />
+                </div>
+              </div>
+              <div className="broadcast-header-summary">
+                <div className="skeleton-line skeleton-text pulse" style={{ width: '120px', height: '16px' }} />
+                <div className="skeleton-line skeleton-text-short pulse" style={{ width: '80px', height: '12px' }} />
+              </div>
+            </header>
+
+            {/* Nav Skeleton */}
+            <nav className="broadcast-nav skeleton-nav" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div className="skeleton-nav-item pulse" style={{ width: '120px', height: '40px', borderRadius: '4px' }} />
+              <div className="skeleton-nav-item pulse" style={{ width: '120px', height: '40px', borderRadius: '4px' }} />
+              <div className="skeleton-nav-item pulse" style={{ width: '120px', height: '40px', borderRadius: '4px' }} />
+            </nav>
+
+            {/* Content Skeleton */}
+            <div className="broadcast-overview-wrapper skeleton-content" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '1.5rem' }}>
+              {/* Left Column (Stats/TFT showcase) */}
+              <div className="tft-academy-container skeleton-tft" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="tft-selector-row" style={{ display: 'flex', gap: '0.5rem', overflow: 'hidden' }}>
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="tft-selector-item skeleton-selector-item pulse" style={{ width: '60px', height: '60px', borderRadius: '8px', flexShrink: 0 }} />
+                  ))}
+                </div>
+                <div className="tft-showcase-panel skeleton-showcase pulse" style={{ height: '260px', borderRadius: '4px' }} />
+              </div>
+
+              {/* Right Column (Matches) */}
+              <div className="broadcast-matches-list skeleton-matches" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="broadcast-match-card skeleton-match-card" style={{ height: '88px', borderRadius: '4px', background: '#080c17', border: '1px solid #12192d', display: 'flex', alignItems: 'center', padding: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '2rem', width: '100%', alignItems: 'center' }}>
+                      <div className="skeleton-line pulse" style={{ width: '80px', height: '16px', borderRadius: '4px' }} />
+                      <div className="skeleton-line pulse" style={{ width: '120px', height: '20px', borderRadius: '4px' }} />
+                      <div className="skeleton-line pulse" style={{ width: '100px', height: '16px', borderRadius: '4px' }} />
+                      <div className="skeleton-line pulse" style={{ width: '60px', height: '16px', borderRadius: '4px' }} />
+                      <div className="skeleton-line pulse" style={{ width: '90px', height: '16px', borderRadius: '4px', marginLeft: 'auto' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="loader dpm-loader">
+            <div className="spinner"></div>
+            <p>Analizando la Grieta del Invocador...</p>
+          </div>
+        )
       )}
 
       {/* Main dashboard view */}
@@ -2637,6 +2753,9 @@ export default function App() {
                   <h2 className="dpm-profile-name">{summoner.gameName}</h2>
                   <span className="dpm-profile-tag">#{summoner.tagLine}</span>
                   <span className="dpm-profile-region-badge">{region.toUpperCase()}</span>
+                  <span className="dpm-live-game-badge" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('live')}>
+                    <span className="live-dot" /> LIVE
+                  </span>
                 </div>
                 <button 
                   type="button" 
@@ -2652,6 +2771,9 @@ export default function App() {
               <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Resumen</span>
               <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>Campeones</span>
               <span className={`dpm-profile-tab ${activeTab === 'aram' ? 'active' : ''}`} onClick={() => setActiveTab('aram')}>ARAM</span>
+              <span className={`dpm-profile-tab ${activeTab === 'live' ? 'active' : ''}`} onClick={() => setActiveTab('live')} tabIndex="0" onKeyDown={(e) => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setActiveTab('live'); } }}>
+                <span className="live-dot" style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Live Game
+              </span>
             </div>
           </div>
 
@@ -2831,9 +2953,29 @@ export default function App() {
                                 <div 
                                   className="dpm-match-card-main"
                                   onClick={() => setExpandedMatchId(isExpanded ? null : match.matchId)}
+                                  tabIndex="0"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      setExpandedMatchId(isExpanded ? null : match.matchId);
+                                    }
+                                  }}
                                 >
                                   {/* Strip Indicator */}
                                   <div className="dpm-match-strip"></div>
+                                  <span className="dpm-daltonism-indicator" style={{
+                                    position: 'absolute',
+                                    left: '8px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    fontSize: '0.65rem',
+                                    fontWeight: 'bold',
+                                    color: match.playerStats.win ? 'var(--win-color)' : 'var(--loss-color)',
+                                    pointerEvents: 'none',
+                                    zIndex: 2,
+                                  }}>
+                                    {match.playerStats.win ? '▲' : '▼'}
+                                  </span>
                                   
                                   {/* Meta */}
                                   <div className="dpm-match-meta-col">
@@ -2849,6 +2991,7 @@ export default function App() {
                                         src={getChampIcon(match.playerStats.championName)}
                                         alt={match.playerStats.championName}
                                         className="dpm-match-champ-img"
+                                        loading="lazy"
                                       />
                                       <span className="dpm-match-level-badge">{match.playerStats.champLevel}</span>
                                     </div>
@@ -2857,7 +3000,7 @@ export default function App() {
                                         {match.playerStats.summonerSpells && match.playerStats.summonerSpells.map((spellId, sIdx) => {
                                           const icon = getSpellIcon(spellId);
                                           return icon ? (
-                                            <img key={sIdx} src={icon} alt="Spell" className="dpm-spell-icon-img" />
+                                            <img key={sIdx} src={icon} alt="Spell" className="dpm-spell-icon-img" loading="lazy" />
                                           ) : (
                                             <div key={sIdx} className="dpm-spell-slot" />
                                           );
@@ -2865,12 +3008,12 @@ export default function App() {
                                       </div>
                                       <div className="dpm-rune-column">
                                         {match.playerStats.perks?.primary && getRuneIcon(match.playerStats.perks.primary) ? (
-                                          <img src={getRuneIcon(match.playerStats.perks.primary)} alt="Rune" className="dpm-rune-icon-img" />
+                                          <img src={getRuneIcon(match.playerStats.perks.primary)} alt="Rune" className="dpm-rune-icon-img" loading="lazy" />
                                         ) : (
                                           <div className="dpm-rune-slot" />
                                         )}
                                         {match.playerStats.perks?.style && getRuneIcon(match.playerStats.perks.style) ? (
-                                          <img src={getRuneIcon(match.playerStats.perks.style)} alt="Style" className="dpm-rune-style-img" />
+                                          <img src={getRuneIcon(match.playerStats.perks.style)} alt="Style" className="dpm-rune-style-img" loading="lazy" />
                                         ) : (
                                           <div className="dpm-rune-slot" />
                                         )}
@@ -2909,7 +3052,7 @@ export default function App() {
                                         const icon = getItemIcon(itemId);
                                         return (
                                           <div key={idx} className="dpm-item-slot-new">
-                                            {icon && <img src={icon} alt="Item" className="dpm-item-img-new" />}
+                                            {icon && <img src={icon} alt="Item" className="dpm-item-img-new" loading="lazy" />}
                                           </div>
                                         );
                                       })}
@@ -2926,6 +3069,7 @@ export default function App() {
                                           alt={opponent.championName} 
                                           className="dpm-vs-champ-img" 
                                           title={opponent.championName}
+                                          loading="lazy"
                                         />
                                       </>
                                     ) : (
@@ -2993,6 +3137,7 @@ export default function App() {
           )}
           {activeTab === 'champions' && renderChampionsTab()}
           {activeTab === 'aram' && renderAramTab()}
+          {activeTab === 'live' && renderLiveTab()}
           </div>
 
           <div className="dpm-pro-wrapper">
@@ -3026,6 +3171,7 @@ export default function App() {
               getRuneIcon={getRuneIcon}
               getRankBadgeIcon={getRankBadgeIcon}
               loadingStatsMatches={loadingStatsMatches}
+              renderLiveTab={renderLiveTab}
             />
           </div>
 
@@ -3060,6 +3206,7 @@ export default function App() {
               getItemIcon={getItemIcon}
               getRuneIcon={getRuneIcon}
               loadingStatsMatches={loadingStatsMatches}
+              renderLiveTab={renderLiveTab}
             />
           </div>
         </div>

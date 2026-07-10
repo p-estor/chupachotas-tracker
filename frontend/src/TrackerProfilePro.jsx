@@ -26,6 +26,7 @@ export default function TrackerProfilePro({
   getRuneIcon,
   getSpellIcon,
   loadingStatsMatches,
+  renderLiveTab,
 }) {
   if (!summoner) return null;
 
@@ -181,7 +182,14 @@ export default function TrackerProfilePro({
               </tr>
             </thead>
             <tbody>
-              {matches?.map((match) => {
+              {!matches || matches.length === 0 ? (
+                <tr>
+                  <td colSpan="10" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+                    NO_MATCH_HISTORY_FOUND_IN_THIS_QUEUE
+                  </td>
+                </tr>
+              ) : (
+                matches.map((match) => {
                 const participant = match.participants?.find(p => p.puuid === summoner.puuid);
                 if (!participant) return null;
 
@@ -205,9 +213,26 @@ export default function TrackerProfilePro({
                       className={isWin ? 'pro-row-win' : 'pro-row-loss'}
                       onClick={() => setExpandedMatchId(isExpanded ? null : match.matchId)}
                       style={{ cursor: 'pointer' }}
+                      tabIndex="0"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setExpandedMatchId(isExpanded ? null : match.matchId);
+                        }
+                      }}
                     >
                       {/* Celda de color — el box-shadow inset actúa de borde */}
-                      <td style={{ padding: '0', width: '8px' }}></td>
+                      <td style={{ 
+                        padding: '0 0.2rem', 
+                        width: '14px', 
+                        textAlign: 'center', 
+                        fontSize: '0.65rem', 
+                        fontWeight: 'bold', 
+                        color: isWin ? 'var(--win-color)' : 'var(--loss-color)',
+                        pointerEvents: 'none'
+                      }}>
+                        {isWin ? '▲' : '▼'}
+                      </td>
 
                       {/* Campeón + resultado */}
                       <td>
@@ -216,6 +241,7 @@ export default function TrackerProfilePro({
                             src={getChampIcon(champName)}
                             alt={champName}
                             className="pro-match-champ-img"
+                            loading="lazy"
                           />
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                             <span className="pro-match-champ-name">{champName}</span>
@@ -276,7 +302,7 @@ export default function TrackerProfilePro({
                     )}
                   </React.Fragment>
                 );
-              })}
+              }))}
             </tbody>
           </table>
         </div>
@@ -290,8 +316,22 @@ export default function TrackerProfilePro({
       {/* HEADER */}
       <div className="pro-terminal-header">
         <div>
-          <div className="pro-terminal-title">
+          <div className="pro-terminal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {summoner.gameName} <span style={{ color: 'var(--text-muted)' }}>#{summoner.tagLine}</span>
+            <span className="pro-live-badge" style={{
+              cursor: 'pointer',
+              fontSize: '0.65rem',
+              color: 'var(--accent-cyan)',
+              border: '1px solid var(--accent-cyan)',
+              padding: '0.05rem 0.3rem',
+              fontFamily: 'var(--font-mono)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.2rem'
+            }} onClick={() => setActiveTab('live')}>
+              <span style={{ display: 'inline-block', width: '6px', height: '6px', background: 'var(--accent-cyan)', borderRadius: '50%' }} />
+              [LIVE]
+            </span>
           </div>
           <div className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem', letterSpacing: '1px' }}>
             NIVEL {summoner.summonerLevel}
@@ -311,6 +351,7 @@ export default function TrackerProfilePro({
           { id: 'overview', label: 'OVERVIEW' },
           { id: 'champions', label: 'CHAMPIONS' },
           { id: 'aram', label: 'ARAM' },
+          { id: 'live', label: 'LIVE_GAME' },
         ].map(tab => (
           <button
             key={tab.id}
@@ -326,6 +367,7 @@ export default function TrackerProfilePro({
       {activeTab === 'overview' && renderProOverview()}
       {activeTab === 'champions' && <div className="pro-tab-classic-inject">{renderChampionsTab()}</div>}
       {activeTab === 'aram' && <div className="pro-tab-classic-inject">{renderAramTab()}</div>}
+      {activeTab === 'live' && <div className="pro-tab-classic-inject">{renderLiveTab()}</div>}
 
     </div>
   );

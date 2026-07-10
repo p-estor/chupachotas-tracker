@@ -3,41 +3,118 @@
    ============================================================ */
 
 :root[data-theme="broadcast"] {
-  --bg-primary: #05070a;
-  --bg-deep: #020305;
-  --bg-card: rgba(10, 15, 26, 0.45);
-  --bg-card-hover: rgba(18, 28, 48, 0.6);
-  --bg-tertiary: rgba(16, 28, 48, 0.5);
+  --bg-primary: #080c18;
+  --bg-deep: #04060c;
+  --bg-card: #0f162a;
+  --bg-card-hover: #16203c;
+  --bg-tertiary: #141c33;
 
-  --border-normal: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(168, 85, 247, 0.35);
+  --border-normal: rgba(75, 199, 228, 0.08);
+  --border-glow: rgba(75, 199, 228, 0.25);
 
   --blur-glass: blur(16px);
-  --shadow-neon: 0 0 25px rgba(168, 85, 247, 0.25);
+  --shadow-neon: 0 0 25px rgba(226, 177, 91, 0.1);
 
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
+  --text-muted: #8fa2bb;
   
-  --win-color: #10b981;
-  --loss-color: #ef4444;
-  --accent-cyan: #00d2ff;
-  --accent-purple: #a855f7;
-  --accent-gold: #f59e0b;
+  --win-color: #00ff87; /* Bright matrix green */
+  --loss-color: #ff4655; /* Valorant styled red */
+  --accent-cyan: #4bc7e4; /* TFTAcademy cyan/blue */
+  --accent-purple: #8b5cf6;
+  --accent-gold: #e2b15b; /* TFTAcademy Gold */
+}
+
+/* Skeleton loader styles for Broadcast Theme */
+.skeleton-loading .pulse {
+  background: linear-gradient(90deg, #0e1424 25%, #1a2544 50%, #0e1424 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s infinite linear;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.skeleton-title {
+  width: 200px;
+  height: 24px;
+}
+
+.skeleton-subtitle {
+  width: 100px;
+  height: 16px;
+}
+
+.skeleton-text {
+  width: 120px;
+  height: 16px;
+}
+
+.skeleton-text-short {
+  width: 80px;
+  height: 12px;
+}
+
+.skeleton-nav-item {
+  width: 100px;
+  height: 36px;
+  border-radius: 4px;
+  margin-right: 12px;
+  display: inline-block;
+}
+
+.skeleton-selector-item {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  margin-right: 12px;
+}
+
+.skeleton-showcase {
+  height: 220px;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.skeleton-match-card {
+  height: 84px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: #080c17;
+  border: 1px solid #12192d;
 }
 
 /* Background resets for Cinematic feel */
 [data-theme="broadcast"] body {
   background-image: 
-    radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(0, 210, 255, 0.1) 0%, transparent 50%),
-    linear-gradient(to bottom, #05070a, #020305) !important;
+    radial-gradient(circle at 10% 10%, rgba(226, 177, 91, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 90% 80%, rgba(75, 199, 228, 0.1) 0%, transparent 60%),
+    linear-gradient(to bottom, #080c18, #04060c) !important;
   background-color: var(--bg-deep) !important;
   background-attachment: fixed;
 }
 
 [data-theme="broadcast"] .dpm-navbar {
-  background: rgba(5, 7, 10, 0.75) !important;
+  background: rgba(8, 12, 24, 0.8) !important;
   backdrop-filter: var(--blur-glass) !important;
   -webkit-backdrop-filter: var(--blur-glass) !important;
   border-bottom: 1px solid var(--border-normal) !important;
@@ -67,6 +144,20 @@
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
+.broadcast-header-splash-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center 25%;
+  opacity: 0.25;
+  pointer-events: none;
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);
+}
+
 .broadcast-header-profile {
   display: flex;
   align-items: center;
@@ -80,7 +171,7 @@
   border-radius: 50%;
   padding: 3px;
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.2);
 }
 
 .broadcast-avatar-img {
@@ -239,7 +330,7 @@
   bottom: 0;
   width: 4px;
   background-color: var(--rank-glow-color, var(--accent-cyan));
-  box-shadow: 0 0 15px var(--rank-glow-color, var(--accent-cyan));
+  box-shadow: none;
 }
 
 .broadcast-rank-header {
@@ -254,12 +345,12 @@
 .broadcast-rank-body-with-icon {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .broadcast-rank-badge-img {
-  width: 44px;
-  height: 44px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
 }
 
@@ -329,7 +420,7 @@
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(0, 210, 255, 0.15));
   border-color: var(--accent-cyan);
   color: #fff;
-  box-shadow: 0 0 10px rgba(0, 210, 255, 0.1);
+  box-shadow: none;
 }
 
 /* Featured Champions performance list */
@@ -410,7 +501,7 @@
 .broadcast-match-list {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.5rem;
 }
 
 /* Match Log Cards (Glassmorphism & Splash BG Fade) */
@@ -418,12 +509,12 @@
   position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-normal);
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
   backdrop-filter: var(--blur-glass);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .broadcast-match-card:hover {
@@ -464,33 +555,33 @@
 
 /* Neon glow for MVP / ACE players */
 .broadcast-match-card.mvp-glow {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15), 0 4px 20px rgba(0, 0, 0, 0.2);
-  border-right: 1px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(245, 158, 11, 0.15);
 }
 
 .broadcast-match-card.ace-glow {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15), 0 4px 20px rgba(0, 0, 0, 0.2);
-  border-right: 1px solid rgba(239, 68, 68, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(239, 68, 68, 0.15);
 }
 
 .broadcast-match-content {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 140px 180px 160px 120px 120px 1fr;
+  grid-template-columns: 110px 170px 150px 110px 80px 1fr;
   align-items: center;
-  padding: 1.15rem 1.5rem;
+  padding: 0.65rem 1.25rem;
 }
 
 /* Match Meta columns */
 .broadcast-match-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.1rem;
 }
 
 .broadcast-queue-name {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.05em;
   color: var(--text-muted);
@@ -498,16 +589,16 @@
 }
 
 .broadcast-match-outcome {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .win .broadcast-match-outcome { color: var(--win-color); }
 .loss .broadcast-match-outcome { color: var(--loss-color); }
 
 .broadcast-match-time {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
 }
 
@@ -515,19 +606,19 @@
 .broadcast-match-champ {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.65rem;
 }
 
 .broadcast-match-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
   border: 1.5px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .broadcast-match-champ-name {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: #fff;
 }
@@ -536,11 +627,11 @@
 .broadcast-match-kda {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
 }
 
 .broadcast-kda-nums {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.01em;
@@ -548,7 +639,7 @@
 
 .broadcast-kda-nums .slash {
   color: var(--text-muted);
-  margin: 0 0.2rem;
+  margin: 0 0.15rem;
   font-weight: 400;
 }
 
@@ -588,23 +679,23 @@
 /* Rating Badge inside card */
 .broadcast-rating-badge {
   display: inline-block;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .broadcast-rating-badge.mvp {
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: #000;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  box-shadow: none;
 }
 
 .broadcast-rating-badge.ace {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #fff;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+  box-shadow: none;
 }
 
 .broadcast-rating-badge.good {
@@ -685,3 +776,405 @@
   backdrop-filter: var(--blur-glass) !important;
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.25) !important;
 }
+
+/* ============================================================
+   TFTAcademy Style Showcase Component (Interactive Hero Card)
+   ============================================================ */
+
+.tft-academy-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+/* Horizontal Champion Selector */
+.tft-selector-row {
+  display: flex;
+  gap: 1.25rem;
+  padding: 0.5rem 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar for clean layout */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tft-selector-row::-webkit-scrollbar {
+  display: none;
+}
+
+.tft-selector-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+  min-width: 68px;
+  scroll-snap-align: start;
+}
+
+.tft-selector-item:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.tft-selector-item.active {
+  opacity: 1;
+}
+
+.tft-avatar-glow {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-normal);
+  transition: all 0.2s ease;
+}
+
+.tft-selector-item.active .tft-avatar-glow {
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+  border-color: transparent;
+  box-shadow: 0 0 6px rgba(0, 210, 255, 0.2);
+}
+
+.tft-selector-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.tft-selector-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.tft-selector-item.active .tft-selector-name {
+  color: #fff;
+}
+
+/* Hero Showcase Card */
+.tft-showcase-panel {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 210, 255, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: var(--blur-glass);
+  box-shadow: 0 0 30px rgba(0, 210, 255, 0.25), 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Splash blended background occupying right side */
+.tft-showcase-splash-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-size: cover;
+  background-position: center 20%;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 1;
+  mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+}
+
+.tft-showcase-content {
+  position: relative;
+  z-index: 2;
+  padding: 2.25rem 2.5rem;
+  display: flex;
+  align-items: center;
+  min-height: 280px;
+  width: 50%;
+}
+
+.tft-showcase-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.tft-showcase-champ-name {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+  margin: 0;
+}
+
+.tft-showcase-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+/* Stats structure inside cards */
+.tft-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+.tft-stat-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.tft-stat-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tft-stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ============================================================
+   RESPONSIVE LAYOUT OVERRIDES (Phase 4)
+   ============================================================ */
+
+/* Base hidden components */
+.broadcast-sidebar-toggle-btn {
+  display: none;
+}
+.broadcast-sidebar-mobile-header {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .broadcast-container {
+    padding: 1rem;
+  }
+  .broadcast-grid {
+    grid-template-columns: 240px 1fr;
+    gap: 1rem;
+  }
+  .broadcast-match-content {
+    grid-template-columns: 120px 140px 140px 100px 100px 1fr;
+    padding: 1rem;
+  }
+  .tft-showcase-content {
+    padding: 1.75rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .broadcast-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Sidebar Mobile Drawer */
+  .broadcast-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 999;
+    background: #080c17;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+    padding: 1.5rem;
+    overflow-y: auto;
+    margin-bottom: 0;
+  }
+  
+  .broadcast-sidebar.active {
+    transform: translateX(0);
+  }
+  
+  .broadcast-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+  }
+  
+  .broadcast-sidebar-mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .broadcast-sidebar-mobile-header span {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+  }
+  
+  .broadcast-sidebar-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  
+  .broadcast-sidebar-close-btn:hover {
+    color: #fff;
+  }
+  
+  .broadcast-sidebar-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 90;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    border: none;
+    outline: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 50px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+  
+  .broadcast-sidebar-toggle-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  /* Adapt Header */
+  .broadcast-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .broadcast-header-profile {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .broadcast-profile-details {
+    align-items: center;
+  }
+  
+  .broadcast-summoner-name {
+    font-size: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .broadcast-header-splash-bg {
+    opacity: 0.04; /* Hide or reduce background splash opacity further */
+  }
+  
+  .broadcast-header-summary {
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1rem;
+    margin-top: 0;
+  }
+
+  /* Showcase Panel Mobile */
+  .tft-showcase-splash-bg {
+    width: 100%;
+    opacity: 0.15;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+  }
+  
+  .tft-showcase-content {
+    width: 100%;
+    padding: 1.5rem;
+    min-height: auto;
+  }
+  
+  .tft-showcase-champ-name {
+    font-size: 1.8rem;
+  }
+
+  /* Match card stack */
+  .broadcast-match-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+  
+  .broadcast-match-meta {
+    grid-column: span 2;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+  
+  .broadcast-match-champ {
+    grid-column: span 1;
+  }
+  
+  .broadcast-match-kda {
+    grid-column: span 1;
+    align-items: flex-end;
+    text-align: right;
+  }
+  
+  .broadcast-match-stats {
+    grid-column: span 1;
+  }
+  
+  .broadcast-match-badge {
+    grid-column: span 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .broadcast-match-chevron {
+    grid-column: span 2;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+  }
+}
+
+
