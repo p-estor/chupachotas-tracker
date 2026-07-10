@@ -2223,13 +2223,6 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="poro-mascot-wrapper" style={{ bottom: '0.8rem', right: '0.8rem' }}>
-                  <img 
-                    src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/588.jpg" 
-                    alt="Poro" 
-                    style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'block', border: '2px solid rgba(255, 255, 255, 0.1)', objectFit: 'cover' }} 
-                  />
-                </div>
               </div>
 
               {/* GitHub Games By Day Calendar Card */}
