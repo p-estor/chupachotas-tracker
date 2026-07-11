@@ -108,23 +108,6 @@ export default function TrackerProfileBroadcast({
           <div className="broadcast-profile-details">
             <h1 className="broadcast-summoner-name" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               {summoner.gameName}<span className="broadcast-tag">#{summoner.tagLine}</span>
-              <span className="broadcast-live-badge" style={{
-                cursor: 'pointer',
-                fontSize: '0.65rem',
-                color: '#ff4655',
-                border: '1px solid rgba(255, 70, 85, 0.4)',
-                background: 'rgba(255, 70, 85, 0.1)',
-                padding: '0.15rem 0.45rem',
-                borderRadius: '2px',
-                fontWeight: '800',
-                letterSpacing: '0.05em',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.3rem'
-              }} onClick={() => setActiveTab('live')}>
-                <span style={{ display: 'inline-block', width: '6px', height: '6px', background: '#ff4655', borderRadius: '50%', animation: 'dpm-pulse 1.5s infinite ease-in-out' }} />
-                LIVE GAME
-              </span>
             </h1>
             <div className="broadcast-level-pill">
               NIVEL {summoner.summonerLevel}
@@ -149,7 +132,6 @@ export default function TrackerProfileBroadcast({
           { id: 'overview', label: 'Resumen' },
           { id: 'champions', label: 'Campeones' },
           { id: 'aram', label: 'ARAM' },
-          { id: 'live', label: 'En Vivo' },
         ].map(tab => (
           <button
             key={tab.id}

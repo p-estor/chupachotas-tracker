@@ -2746,9 +2746,6 @@ export default function App() {
                   <h2 className="dpm-profile-name">{summoner.gameName}</h2>
                   <span className="dpm-profile-tag">#{summoner.tagLine}</span>
                   <span className="dpm-profile-region-badge">{region.toUpperCase()}</span>
-                  <span className="dpm-live-game-badge" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('live')}>
-                    <span className="live-dot" /> LIVE
-                  </span>
                 </div>
                 <button 
                   type="button" 
@@ -2764,9 +2761,6 @@ export default function App() {
               <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Resumen</span>
               <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>Campeones</span>
               <span className={`dpm-profile-tab ${activeTab === 'aram' ? 'active' : ''}`} onClick={() => setActiveTab('aram')}>ARAM</span>
-              <span className={`dpm-profile-tab ${activeTab === 'live' ? 'active' : ''}`} onClick={() => setActiveTab('live')} tabIndex="0" onKeyDown={(e) => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); setActiveTab('live'); } }}>
-                <span className="live-dot" style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Live Game
-              </span>
             </div>
           </div>
 

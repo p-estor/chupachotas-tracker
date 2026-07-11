@@ -318,20 +318,6 @@ export default function TrackerProfilePro({
         <div>
           <div className="pro-terminal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {summoner.gameName} <span style={{ color: 'var(--text-muted)' }}>#{summoner.tagLine}</span>
-            <span className="pro-live-badge" style={{
-              cursor: 'pointer',
-              fontSize: '0.65rem',
-              color: 'var(--accent-cyan)',
-              border: '1px solid var(--accent-cyan)',
-              padding: '0.05rem 0.3rem',
-              fontFamily: 'var(--font-mono)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.2rem'
-            }} onClick={() => setActiveTab('live')}>
-              <span style={{ display: 'inline-block', width: '6px', height: '6px', background: 'var(--accent-cyan)', borderRadius: '50%' }} />
-              [LIVE]
-            </span>
           </div>
           <div className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem', letterSpacing: '1px' }}>
             NIVEL {summoner.summonerLevel}
@@ -351,7 +337,6 @@ export default function TrackerProfilePro({
           { id: 'overview', label: 'OVERVIEW' },
           { id: 'champions', label: 'CHAMPIONS' },
           { id: 'aram', label: 'ARAM' },
-          { id: 'live', label: 'LIVE_GAME' },
         ].map(tab => (
           <button
             key={tab.id}

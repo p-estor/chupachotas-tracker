@@ -1,0 +1,466 @@
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Manrope:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+/* ============================================================
+   Alternative Themes Overrides for Chupachotas Tracker
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CYBER-TACTICAL (HUD military style, graphite, sharp neon orange/yellow)
+   ------------------------------------------------------------ */
+:root[data-theme="cyber-tactical"] {
+  --bg-primary: #0f1115;
+  --bg-deep: #07080a;
+  --bg-card: rgba(22, 26, 33, 0.95);
+  --bg-card-hover: rgba(30, 36, 46, 1);
+  --border-normal: #303845;
+  --border-glow: #ff6b00;
+
+  --text-primary: #e6edf3;
+  --text-secondary: #a3b3c6;
+  --text-muted: #627387;
+
+  --accent-cyan: #ff6b00;    /* neon orange */
+  --accent-purple: #dfff00;  /* neon yellow */
+  --accent-gold: #ff6b00;
+  --accent-gold-bright: #dfff00;
+
+  --blur-glass: none;
+  --shadow-neon: 0 0 10px rgba(255, 107, 0, 0.35);
+  
+  --win-color: #dfff00;
+  --loss-color: #ff6b00;
+}
+
+[data-theme="cyber-tactical"] body {
+  background-image: linear-gradient(rgba(255, 107, 0, 0.015) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 107, 0, 0.015) 1px, transparent 1px) !important;
+  background-size: 20px 20px;
+  background-color: var(--bg-primary) !important;
+  border-top: 4px solid var(--accent-cyan);
+}
+
+[data-theme="cyber-tactical"] * {
+  border-radius: 0px !important;
+}
+
+[data-theme="cyber-tactical"] .dpm-navbar,
+[data-theme="cyber-tactical"] .dpm-profile-banner,
+[data-theme="cyber-tactical"] .dpm-match-card,
+[data-theme="cyber-tactical"] .dpm-player-stats-card,
+[data-theme="cyber-tactical"] .dpm-champ-stat-card,
+[data-theme="cyber-tactical"] .live-game-panel,
+[data-theme="cyber-tactical"] .live-team-table {
+  border: 1px solid var(--border-normal) !important;
+  border-left: 4px solid var(--accent-cyan) !important;
+  box-shadow: var(--shadow-neon) !important;
+  position: relative;
+}
+
+[data-theme="cyber-tactical"] .dpm-match-card::after {
+  content: "HUD_SYS_OK";
+  position: absolute;
+  bottom: 2px;
+  right: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+
+/* ------------------------------------------------------------
+   2. GLASS-BRUTALISM (Thick solid shadows, warm gray, acidic accents, serif)
+   ------------------------------------------------------------ */
+:root[data-theme="glass-brutalism"] {
+  --bg-primary: #eae6df;
+  --bg-deep: #dedad0;
+  --bg-card: rgba(255, 255, 255, 0.45);
+  --bg-card-hover: rgba(255, 255, 255, 0.65);
+  --border-normal: #121212;
+  --border-glow: #121212;
+
+  --text-primary: #121212;
+  --text-secondary: #2d2d2d;
+  --text-muted: #5e5e5e;
+
+  --accent-cyan: #2ecc71; /* Acid green */
+  --accent-purple: #9b59b6; /* Lavender */
+  --accent-gold: #ff4757; /* Rose pastel */
+  --accent-gold-bright: #ff6b81;
+
+  --blur-glass: blur(14px);
+  --shadow-neon: none;
+  
+  --win-color: #2ecc71;
+  --loss-color: #ff4757;
+}
+
+[data-theme="glass-brutalism"] body {
+  background-color: var(--bg-primary) !important;
+  background-image: radial-gradient(#121212 1px, transparent 1px) !important;
+  background-size: 24px 24px;
+}
+
+[data-theme="glass-brutalism"] h1,
+[data-theme="glass-brutalism"] h2,
+[data-theme="glass-brutalism"] h3,
+[data-theme="glass-brutalism"] .logo-accent,
+[data-theme="glass-brutalism"] .dpm-profile-name {
+  font-family: 'Georgia', 'Playfair Display', serif !important;
+  font-weight: 900 !important;
+}
+
+[data-theme="glass-brutalism"] .dpm-navbar,
+[data-theme="glass-brutalism"] .dpm-profile-banner,
+[data-theme="glass-brutalism"] .dpm-match-card,
+[data-theme="glass-brutalism"] .dpm-player-stats-card,
+[data-theme="glass-brutalism"] .dpm-champ-stat-card,
+[data-theme="glass-brutalism"] .live-game-panel,
+[data-theme="glass-brutalism"] .live-team-table {
+  border: 3px solid #121212 !important;
+  border-radius: 4px !important;
+  background-color: var(--bg-card) !important;
+  backdrop-filter: var(--blur-glass) !important;
+  -webkit-backdrop-filter: var(--blur-glass) !important;
+  box-shadow: 6px 6px 0px #121212 !important;
+  transition: transform 0.15s, box-shadow 0.15s !important;
+}
+
+[data-theme="glass-brutalism"] .dpm-match-card:hover,
+[data-theme="glass-brutalism"] .dpm-player-stats-card:hover,
+[data-theme="glass-brutalism"] .dpm-champ-stat-card:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 8px 8px 0px #121212 !important;
+}
+
+[data-theme="glass-brutalism"] .dpm-player-stats-card {
+  transform: rotate(-0.4deg);
+}
+
+[data-theme="glass-brutalism"] .dpm-champ-stat-card {
+  transform: rotate(0.4deg);
+}
+
+
+/* ------------------------------------------------------------
+   3. DATA-DENSE (Ultra-compact monospace console, green/amber phosphor)
+   ------------------------------------------------------------ */
+:root[data-theme="data-dense"] {
+  --bg-primary: #050805;
+  --bg-deep: #010201;
+  --bg-card: #080d08;
+  --bg-card-hover: #101a11;
+  --border-normal: #1f3322;
+  --border-glow: #33ff33;
+
+  --text-primary: #99ff99;
+  --text-secondary: #55bb55;
+  --text-muted: #2f6633;
+
+  --accent-cyan: #33ff33; /* Green phosphor */
+  --accent-purple: #ffb000; /* Amber phosphor */
+  --accent-gold: #33ff33;
+  --accent-gold-bright: #ffb000;
+
+  --blur-glass: none;
+  --shadow-neon: 0 0 5px rgba(51, 255, 51, 0.3);
+  
+  --win-color: #33ff33;
+  --loss-color: #ff3333;
+}
+
+[data-theme="data-dense"] * {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+  font-size: 0.82rem !important;
+  letter-spacing: -0.02em !important;
+}
+
+[data-theme="data-dense"] body {
+  background-color: var(--bg-primary) !important;
+  background-image: linear-gradient(rgba(51, 255, 51, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(51, 255, 51, 0.02) 1px, transparent 1px) !important;
+  background-size: 16px 16px;
+}
+
+[data-theme="data-dense"] .dpm-navbar,
+[data-theme="data-dense"] .dpm-profile-banner,
+[data-theme="data-dense"] .dpm-match-card,
+[data-theme="data-dense"] .dpm-player-stats-card,
+[data-theme="data-dense"] .dpm-champ-stat-card,
+[data-theme="data-dense"] .live-game-panel,
+[data-theme="data-dense"] .live-team-table {
+  border: 1px dashed var(--border-normal) !important;
+  border-radius: 0px !important;
+  padding: 0.35rem 0.6rem !important;
+  margin-bottom: 0.3rem !important;
+  box-shadow: none !important;
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="data-dense"] .dpm-app-container {
+  padding: 0.5rem !important;
+  max-width: 100% !important;
+}
+
+[data-theme="data-dense"] .dpm-profile-avatar-wrapper {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+[data-theme="data-dense"] .dpm-profile-banner {
+  padding: 0.5rem !important;
+}
+
+[data-theme="data-dense"] .dpm-profile-name {
+  font-size: 1.1rem !important;
+}
+
+
+/* ------------------------------------------------------------
+   4. SPLIT CONTRAST (High contrast, dark/cream divided zone layout, bold ink borders)
+   ------------------------------------------------------------ */
+:root[data-theme="split-contrast"] {
+  --bg-primary: #f4ede1; /* --cream */
+  --bg-deep: #eae1d2; /* --cream-2 */
+  --bg-card: #eae1d2; /* --cream-2 */
+  --bg-card-hover: #f4ede1; /* --cream */
+  --border-normal: #1b1712; /* --ink */
+  --border-glow: #d9631f; /* --ember */
+
+  --text-primary: #1b1712; /* --ink */
+  --text-secondary: #211a14; /* --dark-2 */
+  --text-muted: #a89a86; /* --dim-on-dark or dark muted */
+
+  --accent-cyan: #d9631f; /* active highlights: --ember */
+  --accent-purple: #d9631f; /* active highlights: --ember */
+  --accent-gold: #d9631f;
+  --accent-gold-bright: #d9631f;
+
+  --blur-glass: none;
+  --shadow-neon: none;
+
+  --win-color: #3f7a3f; /* --victory */
+  --loss-color: #af3428; /* --defeat */
+}
+
+/* Zone layout: dark vs cream */
+/* Navbar, sidebar, and header banner are dark */
+[data-theme="split-contrast"] .dpm-navbar {
+  background-color: #15110d !important; /* --dark */
+  border-bottom: 2.5px solid #1b1712 !important; /* --ink */
+}
+[data-theme="split-contrast"] .dpm-navbar,
+[data-theme="split-contrast"] .dpm-navbar * {
+  color: #f4ede1 !important; /* --frost-on-dark */
+}
+[data-theme="split-contrast"] .dpm-navbar a,
+[data-theme="split-contrast"] .dpm-navbar button,
+[data-theme="split-contrast"] .dpm-navbar span {
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .dpm-navbar select {
+  background-color: #211a14 !important; /* --dark-2 */
+  color: #f4ede1 !important;
+  border: 2.5px solid #1b1712 !important;
+}
+
+[data-theme="split-contrast"] .dpm-profile-banner {
+  background-color: #15110d !important; /* --dark */
+  border: 2.5px solid #1b1712 !important;
+  border-radius: 0px !important;
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .dpm-profile-banner *,
+[data-theme="split-contrast"] .dpm-profile-banner span,
+[data-theme="split-contrast"] .dpm-profile-banner button {
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .dpm-profile-banner .dpm-profile-tag {
+  color: #a89a86 !important; /* --dim-on-dark */
+}
+
+[data-theme="split-contrast"] .dpm-sidebar {
+  background-color: #211a14 !important; /* --dark-2 */
+  border: 2.5px solid #1b1712 !important;
+  color: #f4ede1 !important;
+  padding: 1rem !important;
+}
+[data-theme="split-contrast"] .dpm-sidebar * {
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .dpm-sidebar .dpm-sidebar-title,
+[data-theme="split-contrast"] .dpm-sidebar h3 {
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .dpm-sidebar .dpm-rank-card {
+  background-color: #15110d !important; /* --dark */
+  border: 2.5px solid #1b1712 !important;
+  border-radius: 0px !important;
+}
+[data-theme="split-contrast"] .dpm-sidebar .dpm-champ-perf-card {
+  background-color: #15110d !important; /* --dark */
+  border: 2.5px solid #1b1712 !important;
+  border-radius: 0px !important;
+}
+[data-theme="split-contrast"] .dpm-sidebar .dpm-sidebar-filter-btn {
+  background-color: #15110d !important;
+  border: 2.5px solid #1b1712 !important;
+  border-radius: 0px !important;
+  color: #a89a86 !important; /* --dim-on-dark */
+}
+
+/* Cream content area */
+[data-theme="split-contrast"] body {
+  background-color: #f4ede1 !important; /* --cream */
+  background-image: none !important;
+}
+
+[data-theme="split-contrast"] .dpm-main {
+  background-color: transparent !important;
+}
+
+/* Base font-families */
+[data-theme="split-contrast"] * {
+  font-family: 'Manrope', sans-serif !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+[data-theme="split-contrast"] h1,
+[data-theme="split-contrast"] h2,
+[data-theme="split-contrast"] h3,
+[data-theme="split-contrast"] h4,
+[data-theme="split-contrast"] h5,
+[data-theme="split-contrast"] h6,
+[data-theme="split-contrast"] .logo-accent,
+[data-theme="split-contrast"] .dpm-profile-name,
+[data-theme="split-contrast"] .summoner-name,
+[data-theme="split-contrast"] .dpm-landing-title {
+  font-family: 'Big Shoulders Display', sans-serif !important;
+  font-weight: 800 !important;
+}
+
+/* Monospace fonts for numbers/KDA */
+[data-theme="split-contrast"] .mono,
+[data-theme="split-contrast"] .dpm-rank-lp,
+[data-theme="split-contrast"] .dpm-rank-wl,
+[data-theme="split-contrast"] .dpm-rank-card-level,
+[data-theme="split-contrast"] .dpm-kda-vals,
+[data-theme="split-contrast"] .dpm-kda-ratio,
+[data-theme="split-contrast"] .dpm-score-num,
+[data-theme="split-contrast"] .dpm-profile-level,
+[data-theme="split-contrast"] .winrate-percent,
+[data-theme="split-contrast"] .winrate-badge,
+[data-theme="split-contrast"] .kda-vals,
+[data-theme="split-contrast"] .kda-ratio-text,
+[data-theme="split-contrast"] .kda-num-row,
+[data-theme="split-contrast"] .rank-details .rank-stats,
+[data-theme="split-contrast"] .summoner-level,
+[data-theme="split-contrast"] .table-kda-numbers,
+[data-theme="split-contrast"] .table-kda-ratio,
+[data-theme="split-contrast"] .role-percent-text,
+[data-theme="split-contrast"] .challenge-rank-lp,
+[data-theme="split-contrast"] .rank-num-cell,
+[data-theme="split-contrast"] .aram-teammate-time {
+  font-family: 'IBM Plex Mono', monospace !important;
+}
+
+/* Solid thick borders on cards and inputs, NO box-shadows */
+[data-theme="split-contrast"] .dpm-match-card,
+[data-theme="split-contrast"] .dpm-player-stats-card,
+[data-theme="split-contrast"] .dpm-champ-stat-card,
+[data-theme="split-contrast"] .live-game-panel,
+[data-theme="split-contrast"] .live-team-table,
+[data-theme="split-contrast"] .glass-card,
+[data-theme="split-contrast"] .search-container,
+[data-theme="split-contrast"] .search-input,
+[data-theme="split-contrast"] input,
+[data-theme="split-contrast"] select,
+[data-theme="split-contrast"] button {
+  border: 2.5px solid #1b1712 !important; /* --ink */
+  border-radius: 0px !important;
+  box-shadow: none !important;
+}
+
+/* Main content cards are cream */
+[data-theme="split-contrast"] .dpm-match-card,
+[data-theme="split-contrast"] .dpm-player-stats-card,
+[data-theme="split-contrast"] .dpm-champ-stat-card,
+[data-theme="split-contrast"] .live-game-panel,
+[data-theme="split-contrast"] .live-team-table {
+  background-color: #eae1d2 !important; /* --cream-2 */
+  color: #1b1712 !important; /* --ink */
+}
+
+/* Overlapping Avatar on profile header sticking out */
+[data-theme="split-contrast"] .dpm-profile-avatar-wrapper {
+  transform: translateY(-20px) !important;
+  z-index: 10 !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+[data-theme="split-contrast"] .dpm-profile-avatar {
+  width: 90px !important;
+  height: 90px !important;
+  border: 3px solid #1b1712 !important; /* --ink */
+  border-radius: 0px !important;
+}
+[data-theme="split-contrast"] .dpm-profile-level {
+  background-color: #211a14 !important; /* --dark-2 */
+  color: #f4ede1 !important; /* --frost-on-dark */
+  border: 2.5px solid #1b1712 !important;
+  border-radius: 0px !important;
+  z-index: 12 !important;
+}
+
+/* Overlapping win/loss indicator circles popping out of match cards */
+[data-theme="split-contrast"] .dpm-match-card {
+  position: relative !important;
+  overflow: visible !important;
+}
+[data-theme="split-contrast"] .dpm-match-strip {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  position: absolute !important;
+  left: -14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  border: 2.5px solid #1b1712 !important;
+  z-index: 10 !important;
+}
+[data-theme="split-contrast"] .dpm-match-card.win .dpm-match-strip {
+  background-color: #3f7a3f !important; /* --victory */
+}
+[data-theme="split-contrast"] .dpm-match-card.loss .dpm-match-strip {
+  background-color: #af3428 !important; /* --defeat */
+}
+[data-theme="split-contrast"] .dpm-daltonism-indicator {
+  left: -9px !important;
+  color: #f4ede1 !important; /* --frost-on-dark */
+  font-size: 0.85rem !important;
+  z-index: 11 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Active highlights using --ember accent only */
+[data-theme="split-contrast"] .dpm-profile-tab.active {
+  color: #d9631f !important; /* --ember */
+  border-bottom: 3px solid #d9631f !important;
+}
+[data-theme="split-contrast"] .dpm-sidebar-filter-btn.active {
+  background-color: #d9631f !important;
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .autocomplete-item.active {
+  background-color: #d9631f !important;
+  color: #f4ede1 !important;
+}
+[data-theme="split-contrast"] .dpm-champions-role-btn.active,
+[data-theme="split-contrast"] .dpm-champions-queue-btn.active,
+[data-theme="split-contrast"] .dpm-subnav-btn.active {
+  background-color: #d9631f !important;
+  color: #f4ede1 !important;
+}
+
