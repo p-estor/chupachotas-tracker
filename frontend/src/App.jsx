@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import ThemeSwitcher from './ThemeSwitcher';
 import TrackerProfilePro from './TrackerProfilePro';
@@ -717,10 +718,14 @@ export default function App() {
                   </div>
 
                   {/* Summoner Name */}
-                  <div 
+                  <a 
+                    href={`/${region}/${encodeURIComponent(p.gameName)}-${encodeURIComponent(p.tagLine)}`}
                     className="expanded-cell name-cell" 
-                    onClick={() => handleSelectSuggestion({ game_name: p.gameName, tag_line: p.tagLine })}
-                    style={{ cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSelectSuggestion({ game_name: p.gameName, tag_line: p.tagLine });
+                    }}
+                    style={{ cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                       {p.rank && (
@@ -754,7 +759,7 @@ export default function App() {
                       </span>
                     </div>
                     <span className="player-tag-text" style={{ marginLeft: p.rank && p.rank.tier !== 'UNRANKED' ? '2.1rem' : '0' }}>#{p.tagLine}</span>
-                  </div>
+                  </a>
 
                   {/* KDA */}
                   <div className="expanded-cell kda-cell">
@@ -1921,9 +1926,18 @@ export default function App() {
                         <span className="table-champ-name-text">{c.name}</span>
                       </td>
                     ) : (
-                      <td className="champ-name-cell p-name-cell" onClick={() => handlePlayerClick(c.name)}>
-                        <img src={getChampIcon(c.championName)} alt={c.championName || 'Unknown'} className="table-champ-icon" />
-                        <span className="table-champ-name-text" style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--accent-cyan)' }}>{c.name}</span>
+                      <td className="champ-name-cell p-name-cell">
+                        <a 
+                          href={`/${region}/${c.name ? encodeURIComponent(c.name.split('#')[0]) : ''}-${c.name && c.name.includes('#') ? encodeURIComponent(c.name.split('#')[1]) : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePlayerClick(c.name);
+                          }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
+                        >
+                          <img src={getChampIcon(c.championName)} alt={c.championName || 'Unknown'} className="table-champ-icon" />
+                          <span className="table-champ-name-text" style={{ textDecoration: 'underline', color: 'var(--accent-cyan)' }}>{c.name}</span>
+                        </a>
                       </td>
                     )}
                     <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{c.games}</td>
@@ -2473,6 +2487,19 @@ export default function App() {
 
   return (
     <div className="dpm-app-container">
+      {summoner ? (
+        <Helmet>
+          <title>{`${summoner.gameName} - Estadísticas de LoL, MMR y KDA - Chupachotas Tracker`}</title>
+          <meta name="description" content={`Consulta el perfil, KDA, Win Rate y estadísticas avanzadas de ${summoner.gameName}#${summoner.tagLine} en League of Legends.`} />
+          <meta property="og:title" content={`${summoner.gameName} - LoL Stats - Chupachotas Tracker`} />
+          <meta property="og:description" content={`Mira el historial de ${summoner.gameName}#${summoner.tagLine} (Nivel ${summoner.summonerLevel}). Descubre sus mejores campeones y rank.`} />
+        </Helmet>
+      ) : (
+        <Helmet>
+          <title>Chupachotas Tracker - Estadísticas de League of Legends</title>
+          <meta name="description" content="Chupachotas Tracker es una plataforma de analíticas y estadísticas en tiempo real para jugadores de League of Legends. Consulta historiales, KDA, winrates y rendimiento." />
+        </Helmet>
+      )}
       {/* Top Navbar */}
       <nav className="dpm-navbar">
         <div className="dpm-navbar-container">
