@@ -2518,6 +2518,7 @@ export default function App() {
                 <input
                   type="text"
                   placeholder="Buscar Invocador#TAG... (Ctrl+K)"
+                  aria-label="Buscar Invocador por Nombre y Etiqueta"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -2541,6 +2542,7 @@ export default function App() {
               </div>
               <select
                 value={region}
+                aria-label="Seleccionar región"
                 onChange={(e) => setRegion(e.target.value)}
                 className="dpm-nav-region-select"
               >
@@ -2579,6 +2581,7 @@ export default function App() {
                 <input
                   type="text"
                   placeholder="Buscar Invocador Nombre#TAG (ej. Faker#KR1)..."
+                  aria-label="Buscar Invocador por Nombre y Etiqueta"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -2602,6 +2605,7 @@ export default function App() {
               </div>
               <select
                 value={region}
+                aria-label="Seleccionar región"
                 onChange={(e) => setRegion(e.target.value)}
                 className="dpm-landing-region-select"
               >
