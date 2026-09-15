@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import ThemeSwitcher from './ThemeSwitcher';
 const TrackerProfilePro = lazy(() => import('./TrackerProfilePro'));
@@ -177,6 +178,7 @@ const getQueueDisplayName = (match) => {
 
 
 export default function App() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('euw');
   const [summoner, setSummoner] = useState(null);
@@ -501,7 +503,7 @@ export default function App() {
       if (res.data && res.data.length > 0) {
         setMatches((prevMatches) => [...(prevMatches || []), ...res.data]);
       } else {
-        alert("No se encontraron más partidas.");
+        alert(t('errors.noMoreMatches'));
       }
     } catch (err) {
       console.error('Failed to load more matches', err);
@@ -516,13 +518,13 @@ export default function App() {
 
     // Check if tag is present (e.g. Name#TAG)
     if (!search.includes('#')) {
-      setError('Por favor introduce el formato Nombre#TAG (ej. Faker#KR1)');
+      setError(t('errors.invalidFormat'));
       return;
     }
 
     const [gameName, tagLine] = search.split('#');
     if (!gameName.trim() || !tagLine.trim()) {
-      setError('El nombre o el tag no pueden estar vacíos.');
+      setError(t('errors.emptyField'));
       return;
     }
 
@@ -972,7 +974,7 @@ export default function App() {
           </div>
           <div className="summary-title-col">
             <span className="summary-title-label">{totalGames} Partidas Recientes</span>
-            <span className="summary-title-value">Resumen General</span>
+            <span className="summary-title-value">{t('profile.summaryTitle', { count: matches.length })}</span>
           </div>
         </div>
 
@@ -2517,8 +2519,8 @@ export default function App() {
               <div className="search-box-wrapper" style={{ position: 'relative', width: '260px' }}>
                 <input
                   type="text"
-                  placeholder="Buscar Invocador#TAG... (Ctrl+K)"
-                  aria-label="Buscar Invocador por Nombre y Etiqueta"
+                  placeholder={t('nav.searchPlaceholder')}
+                  aria-label={t('nav.searchAria')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -2542,7 +2544,7 @@ export default function App() {
               </div>
               <select
                 value={region}
-                aria-label="Seleccionar región"
+                aria-label={t('nav.regionAria')}
                 onChange={(e) => setRegion(e.target.value)}
                 className="dpm-nav-region-select"
               >
@@ -2563,7 +2565,7 @@ export default function App() {
               rel="noopener noreferrer"
               className="nav-link nav-donate-btn"
             >
-              ☕ Donar
+              {t('nav.donate')}
             </a>
           </div>
         </div>
@@ -2573,15 +2575,15 @@ export default function App() {
         <div className="dpm-landing-grid">
           <div className="dpm-landing-left">
             <div className="dpm-landing-hero">
-              <h1 className="dpm-landing-title">Buscar Estadísticas de Invocador</h1>
-              <p className="dpm-landing-subtitle">Análisis en tiempo real de jugadores de League of Legends, tendencias de LP y puntuaciones MVP</p>
+              <h1 className="dpm-landing-title">{t('landing.title')}</h1>
+              <p className="dpm-landing-subtitle">{t('landing.subtitle')}</p>
             </div>
             <form onSubmit={handleSearch} className="dpm-landing-search-box">
               <div className="search-box-wrapper" style={{ position: 'relative', flex: 1 }}>
                 <input
                   type="text"
-                  placeholder="Buscar Invocador Nombre#TAG (ej. Faker#KR1)..."
-                  aria-label="Buscar Invocador por Nombre y Etiqueta"
+                  placeholder={t('landing.searchPlaceholder')}
+                  aria-label={t('nav.searchAria')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -2605,7 +2607,7 @@ export default function App() {
               </div>
               <select
                 value={region}
-                aria-label="Seleccionar región"
+                aria-label={t('nav.regionAria')}
                 onChange={(e) => setRegion(e.target.value)}
                 className="dpm-landing-region-select"
               >
@@ -2615,9 +2617,7 @@ export default function App() {
                   </option>
                 ))}
               </select>
-              <button type="submit" className="dpm-landing-search-btn">
-                Search
-              </button>
+              <button type="submit" className="dpm-landing-search-btn">{t('landing.searchBtn')}</button>
             </form>
           </div>
 
@@ -2742,9 +2742,9 @@ export default function App() {
             </div>
             
             <div className="dpm-profile-tabs">
-              <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Resumen</span>
-              <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>Campeones</span>
-              <span className={`dpm-profile-tab ${activeTab === 'aram' ? 'active' : ''}`} onClick={() => setActiveTab('aram')}>ARAM</span>
+              <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>{t('profile.tabs.matches')}</span>
+              <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>{t('profile.tabs.champions')}</span>
+              <span className={`dpm-profile-tab ${activeTab === 'aram' ? 'active' : ''}`} onClick={() => setActiveTab('aram')}>{t('profile.tabs.aram')}</span>
             </div>
           </div>
 

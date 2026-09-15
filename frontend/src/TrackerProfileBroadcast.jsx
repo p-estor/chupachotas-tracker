@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DDRAGON_VERSION } from './constants';
 
 export default function TrackerProfileBroadcast({
@@ -30,6 +31,8 @@ export default function TrackerProfileBroadcast({
   loadingStatsMatches,
   renderLiveTab,
 }) {
+  const { t } = useTranslation();
+
   if (!summoner) return null;
 
   const totalMatches = matches?.length || 0;

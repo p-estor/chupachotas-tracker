@@ -1,0 +1,53 @@
+﻿{
+  "theme": "TEMA:",
+  "nav": {
+    "searchPlaceholder": "Buscar Invocador#TAG... (Ctrl+K)",
+    "searchAria": "Buscar Invocador por Nombre y Etiqueta",
+    "regionAria": "Seleccionar región",
+    "donate": "☕ Donar"
+  },
+  "landing": {
+    "title": "Buscar Estadísticas de Invocador",
+    "subtitle": "Análisis en tiempo real de jugadores de League of Legends, tendencias de LP y puntuaciones MVP",
+    "searchPlaceholder": "Buscar Invocador Nombre#TAG (ej. Faker#KR1)...",
+    "searchBtn": "Buscar"
+  },
+  "errors": {
+    "noMoreMatches": "No se encontraron más partidas.",
+    "invalidFormat": "Por favor introduce el formato Nombre#TAG (ej. Faker#KR1)",
+    "emptyField": "El nombre o el tag no pueden estar vacíos."
+  },
+  "profile": {
+    "loading": "Cargando perfil...",
+    "tabs": {
+      "matches": "Partidas",
+      "champions": "Campeones",
+      "aram": "ARAM",
+      "live": "En Vivo"
+    },
+    "filter": "Filtro:",
+    "allQueues": "Todas las Colas",
+    "summaryTitle": "Resumen (Últimas {{count}} partidas)",
+    "wins": "Victorias",
+    "losses": "Derrotas",
+    "mostPlayed": "Campeones más jugados",
+    "loadMore": "Cargar más partidas",
+    "loadingMore": "Cargando...",
+    "visionScore": "Puntuación de Visión"
+  },
+  "match": {
+    "win": "Victoria",
+    "loss": "Derrota",
+    "remake": "Remake",
+    "mvp": "MVP",
+    "ace": "ACE",
+    "csMin": "CS/min",
+    "kp": "KP",
+    "wards": "Wards",
+    "showMore": "Mostrar detalles",
+    "showLess": "Ocultar detalles"
+  },
+  "champions": {
+    "winrate": "Winrate"
+  }
+}

@@ -1,6 +1,10 @@
 import React from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 export default function ThemeSwitcher({ currentTheme, setCurrentTheme }) {
+  const { t, i18n } = useTranslation();
+
   const themes = [
     { value: 'broadcast', label: 'Broadcast' },
     { value: 'cyber-tactical', label: 'Cyber-Tactical' },
@@ -15,11 +19,36 @@ export default function ThemeSwitcher({ currentTheme, setCurrentTheme }) {
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
+  const toggleLanguage = () => {
+    const nextLang = i18n.language.startsWith('es') ? 'en' : 'es';
+    i18n.changeLanguage(nextLang);
+  };
+
   return (
-    <div className="theme-switcher-container" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-      <label htmlFor="theme-select" style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-        TEMA:
-      </label>
+    <div className="theme-switcher-container" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <button 
+        onClick={toggleLanguage}
+        style={{
+          background: 'var(--bg-secondary)',
+          color: 'var(--text-primary)',
+          border: '1px solid var(--border-normal)',
+          borderRadius: '4px',
+          padding: '0.35rem 0.6rem',
+          fontSize: '0.8rem',
+          fontWeight: 700,
+          cursor: 'pointer',
+          outline: 'none',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+        }}
+      >
+        {i18n.language.startsWith('es') ? '🇪🇸 ES' : '🇬🇧 EN'}
+      </button>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <label htmlFor="theme-select" style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          {t('theme')}
+        </label>
       <select
         id="theme-select"
         value={currentTheme || 'broadcast'}
@@ -44,6 +73,7 @@ export default function ThemeSwitcher({ currentTheme, setCurrentTheme }) {
           </option>
         ))}
       </select>
+      </div>
     </div>
   );
 }

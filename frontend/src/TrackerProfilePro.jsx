@@ -28,6 +28,8 @@ export default function TrackerProfilePro({
   loadingStatsMatches,
   renderLiveTab,
 }) {
+  const { t } = useTranslation();
+
   if (!summoner) return null;
 
   const totalMatches = matches?.length || 0;

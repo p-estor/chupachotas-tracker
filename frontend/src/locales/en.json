@@ -1,0 +1,53 @@
+﻿{
+  "theme": "THEME:",
+  "nav": {
+    "searchPlaceholder": "Search Summoner#TAG... (Ctrl+K)",
+    "searchAria": "Search Summoner by Name and Tag",
+    "regionAria": "Select region",
+    "donate": "☕ Donate"
+  },
+  "landing": {
+    "title": "Search Summoner Statistics",
+    "subtitle": "Real-time League of Legends player analytics, LP trends, and MVP scores",
+    "searchPlaceholder": "Search Summoner Name#TAG (e.g., Faker#KR1)...",
+    "searchBtn": "Search"
+  },
+  "errors": {
+    "noMoreMatches": "No more matches found.",
+    "invalidFormat": "Please enter the format Name#TAG (e.g., Faker#KR1)",
+    "emptyField": "Name or tag cannot be empty."
+  },
+  "profile": {
+    "loading": "Loading profile...",
+    "tabs": {
+      "matches": "Matches",
+      "champions": "Champions",
+      "aram": "ARAM",
+      "live": "Live"
+    },
+    "filter": "Filter:",
+    "allQueues": "All Queues",
+    "summaryTitle": "Summary (Last {{count}} matches)",
+    "wins": "Wins",
+    "losses": "Losses",
+    "mostPlayed": "Most played champions",
+    "loadMore": "Load more matches",
+    "loadingMore": "Loading...",
+    "visionScore": "Vision Score"
+  },
+  "match": {
+    "win": "Victory",
+    "loss": "Defeat",
+    "remake": "Remake",
+    "mvp": "MVP",
+    "ace": "ACE",
+    "csMin": "CS/min",
+    "kp": "KP",
+    "wards": "Wards",
+    "showMore": "Show details",
+    "showLess": "Hide details"
+  },
+  "champions": {
+    "winrate": "Winrate"
+  }
+}
