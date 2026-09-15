@@ -2524,7 +2524,7 @@ export default function App() {
                   onKeyDown={handleKeyDown}
                   className="dpm-nav-search-input"
                 />
-                {showSuggestions && suggestions.length > 0 && (
+                {showSuggestions && Array.isArray(suggestions) && suggestions.length > 0 && (
                   <ul className="autocomplete-dropdown navbar-dropdown">
                     {suggestions.map((sug, index) => (
                       <li
@@ -2587,7 +2587,7 @@ export default function App() {
                   onKeyDown={handleKeyDown}
                   className="dpm-landing-search-input"
                 />
-                {showSuggestions && suggestions.length > 0 && (
+                {showSuggestions && Array.isArray(suggestions) && suggestions.length > 0 && (
                   <ul className="autocomplete-dropdown landing-dropdown">
                     {suggestions.map((sug, index) => (
                       <li
