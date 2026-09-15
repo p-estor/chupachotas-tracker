@@ -720,6 +720,49 @@ app.get('/api/challenge/players', async (req, res) => {
 });
 
 
+app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
+  const { region, gameName, tagLine } = req.params;
+  try {
+    const summonerRes = await axios.get(`http://localhost:${PORT}/api/summoner/${region}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
+    const summoner = summonerRes.data;
+
+    const title = `${summoner.gameName} - Estadísticas de LoL, MMR y KDA - Chupachotas Tracker`;
+    const desc = `Mira el historial de ${summoner.gameName}#${summoner.tagLine} (Nivel ${summoner.summonerLevel}). Descubre sus mejores campeones y rank.`;
+    const avatarUrl = `https://ddragon.leagueoflegends.com/cdn/14.11.1/img/profileicon/${summoner.profileIconId}.png`;
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <meta name="description" content="${desc}">
+  <meta property="og:title" content="${title}">
+  <meta property="og:description" content="${desc}">
+  <meta property="og:image" content="${avatarUrl}">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="${title}">
+  <meta name="twitter:description" content="${desc}">
+  <meta name="twitter:image" content="${avatarUrl}">
+</head>
+<body>
+  <h1>${title}</h1>
+  <p>${desc}</p>
+</body>
+</html>`;
+    res.send(html);
+  } catch (error) {
+    res.send(`<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Chupachotas Tracker</title>
+  <meta name="description" content="Estadísticas de League of Legends en tiempo real.">
+</head>
+<body></body>
+</html>`);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
 });
