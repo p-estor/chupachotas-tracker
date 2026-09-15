@@ -2590,53 +2590,6 @@ export default function App() {
             </form>
           </div>
 
-          {challengePlayers && challengePlayers.length > 0 && (
-            <aside className="dpm-landing-sidebar">
-              <div className="challenge-sidebar-header">
-                <svg className="challenge-sidebar-trophy" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" aria-hidden="true">
-                  <path d="M6 9H4a2 2 0 01-2-2V5h4M18 9h2a2 2 0 002-2V5h-4"/>
-                  <path d="M12 17v4M8 21h8"/>
-                  <path d="M6 9a6 6 0 0012 0V3H6v6z"/>
-                </svg>
-                <h3 className="challenge-sidebar-title">SoloQ Challenge Standings</h3>
-              </div>
-              <div className="challenge-sidebar-list">
-                {challengePlayers.map((player, idx) => {
-                  const wr = player.wins + player.losses > 0 
-                    ? Math.round((player.wins / (player.wins + player.losses)) * 100) 
-                    : 0;
-                  
-                  return (
-                    <div 
-                      key={player.id} 
-                      className="challenge-sidebar-row"
-                      onClick={() => performSearch(player.gameName, player.tagLine, 'euw')}
-                    >
-                      <span className="challenge-player-rank">{idx + 1}</span>
-                      <div className="challenge-player-avatar">
-                        <img 
-                          src={`https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/profileicon/${player.profileIconId}.png`} 
-                          alt="Icon" 
-                          className="challenge-avatar-img"
-                        />
-                      </div>
-                      <div className="challenge-player-info">
-                        <span className="challenge-player-name">{player.alias || player.gameName}</span>
-                        {!player.alias && <span className="challenge-player-tag">#{player.tagLine}</span>}
-                      </div>
-                      <div className="challenge-player-rank-detail">
-                        <span className="challenge-rank-tier" style={{ color: getRankBadgeColor(player.tier) }}>
-                          {player.tier} {player.rank}
-                        </span>
-                        <span className="challenge-rank-lp">{player.leaguePoints} LP</span>
-                      </div>
-                      <span className="challenge-player-wr">{wr}% WR</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </aside>
-          )}
         </div>
       )}
 
