@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import ThemeSwitcher from './ThemeSwitcher';
-import TrackerProfilePro from './TrackerProfilePro';
-import TrackerProfileBroadcast from './TrackerProfileBroadcast';
+const TrackerProfilePro = lazy(() => import('./TrackerProfilePro'));
+const TrackerProfileBroadcast = lazy(() => import('./TrackerProfileBroadcast'));
 
 import { DDRAGON_VERSION } from './constants';
 
@@ -3112,7 +3112,8 @@ export default function App() {
           </div>
 
           <div className="dpm-pro-wrapper">
-            <TrackerProfilePro 
+            <Suspense fallback={<div style={{ color: 'white', padding: '2rem' }}>Cargando tema...</div>}>
+              <TrackerProfilePro 
               summoner={summoner}
               matches={matches}
               statsMatches={statsMatches}
@@ -3144,10 +3145,12 @@ export default function App() {
               loadingStatsMatches={loadingStatsMatches}
               renderLiveTab={renderLiveTab}
             />
+            </Suspense>
           </div>
 
           <div className="dpm-broadcast-wrapper">
-            <TrackerProfileBroadcast
+            <Suspense fallback={<div style={{ color: 'white', padding: '2rem' }}>Cargando tema...</div>}>
+              <TrackerProfileBroadcast
               summoner={summoner}
               matches={matches}
               statsMatches={statsMatches}
@@ -3179,6 +3182,7 @@ export default function App() {
               loadingStatsMatches={loadingStatsMatches}
               renderLiveTab={renderLiveTab}
             />
+            </Suspense>
           </div>
         </div>
       )}
