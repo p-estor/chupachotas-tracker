@@ -105,7 +105,6 @@ export default function TrackerProfilePro({
               { id: 'all', label: t('profile.all') },
               { id: 'ranked_solo', label: 'SOLO' },
               { id: 'ranked_flex', label: t('profile.flex') },
-              { id: 'aram', label: 'ARAM' },
               { id: 'normal', label: 'NORM' },
             ].map(f => (
               <button
