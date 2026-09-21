@@ -62,7 +62,8 @@
     "topChamps": "Top Champions",
     "loadingStats": "LOADING STATS...",
     "overview": "Overview",
-    "champions": "Champions"
+    "champions": "Champions",
+    "loadingSubtitle": "This may take a few seconds while gathering data from Riot API."
   },
   "match": {
     "win": "Victory",

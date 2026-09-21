@@ -62,7 +62,8 @@
     "topChamps": "Campeones Destacados",
     "loadingStats": "CARGANDO ESTADÍSTICAS...",
     "overview": "Resumen",
-    "champions": "Campeones"
+    "champions": "Campeones",
+    "loadingSubtitle": "Esto puede tomar unos segundos debido a la recopilación de datos de Riot."
   },
   "match": {
     "win": "Victoria",

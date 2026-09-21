@@ -1738,7 +1738,7 @@ export default function App() {
               marginBottom: '1rem'
             }}></div>
             <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>{t('profile.loading150') || 'Loading and analyzing last 150 matches...'}</p>
-            <span style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '0.5rem' }}>Esto puede tomar unos segundos debido a la recopilación de datos de Riot y SQLite</span>
+            <span style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '0.5rem' }}>{t('profile.loadingSubtitle') || 'This may take a few seconds while gathering data from Riot.'}</span>
           </div>
         </div>
       );
@@ -2157,9 +2157,9 @@ export default function App() {
     const teammates = getAramTeammatesData();
 
     // Secondary metrics
-    const totalPoroSnax = Math.max(16, data.games * 2);
-    const totalSnowballs = Math.max(80, data.games * 5);
-    const totalPoroExplosions = Math.max(6, Math.floor(data.games / 3.5));
+    const totalPoroSnax = aramMatches.reduce((acc, m) => acc + (m.playerStats.challenges?.poroExplosions || 0) * 2, 0);
+    const totalSnowballs = aramMatches.reduce((acc, m) => acc + (m.playerStats.challenges?.snowballsHit || 0), 0);
+    const totalPoroExplosions = aramMatches.reduce((acc, m) => acc + (m.playerStats.challenges?.poroExplosions || 0), 0);
 
     // Records
     const mostKills = getAramRecord('kills');
@@ -2806,7 +2806,7 @@ export default function App() {
                   { id: 'all', label: 'All' },
                   { id: 'ranked_solo', label: 'Solo' },
                   { id: 'ranked_flex', label: 'Flex' },
-                  { id: 'aram', label: 'Aram' },
+                  
                   { id: 'normal', label: 'Normal' }
                 ].map(filter => (
                   <button
