@@ -2053,6 +2053,8 @@ export default function App() {
       else if (field === 'deaths') val = m.playerStats.deaths || 0;
       else if (field === 'assists') val = m.playerStats.assists || 0;
       else if (field === 'damage') val = m.playerStats.damageDealt || 0;
+      else if (field === 'damageTaken') val = m.playerStats.damageTaken || 0;
+      else if (field === 'ccTime') val = m.playerStats.timeCCingOthers || 0;
       else if (field === 'duration') val = m.gameDuration || 0;
       else if (field === 'cs') val = m.playerStats.cs || 0;
       
@@ -2064,8 +2066,10 @@ export default function App() {
 
     const champ = recordGame.playerStats.championName;
     let formattedVal = maxVal;
-    if (field === 'damage') {
+    if (field === 'damage' || field === 'damageTaken') {
       formattedVal = `${(maxVal / 1000).toFixed(1)}K`;
+    } else if (field === 'ccTime') {
+      formattedVal = `${maxVal}s`;
     } else if (field === 'duration') {
       formattedVal = `${Math.floor(maxVal / 60)}m ${maxVal % 60}s`;
     }
@@ -2138,10 +2142,10 @@ export default function App() {
   };
 
   const getAramPentakills = () => {
-    const pentaMatches = (aramMatches || []).filter(m => m.playerStats && m.playerStats.kills >= 18);
+    const pentaMatches = (aramMatches || []).filter(m => m.playerStats && m.playerStats.pentakills > 0);
     if (pentaMatches.length > 0) {
       return {
-        count: pentaMatches.length,
+        count: pentaMatches.reduce((acc, m) => acc + m.playerStats.pentakills, 0),
         champ: pentaMatches[0].playerStats.championName
       };
     }
@@ -2162,16 +2166,16 @@ export default function App() {
     const mostDeaths = getAramRecord('deaths');
     const mostAssists = getAramRecord('assists');
     const mostDamage = getAramRecord('damage');
-    const mostDmgTaken = { champ: mostDamage.champ, value: `${(parseFloat(mostDamage.value) * 0.7).toFixed(1)}K`, kda: mostDamage.kda };
+    const mostDmgTaken = getAramRecord('damageTaken');
     const longestMatch = getAramRecord('duration');
     const csRecord = getAramRecord('cs');
-    const ccTimeRecord = { champ: mostAssists.champ, value: `${Math.round(parseInt(mostAssists.value) * 1.8)}s`, kda: mostAssists.kda };
+    const ccTimeRecord = getAramRecord('ccTime');
 
-    const healFromMap = Math.max(63992, data.games * 3500);
-    const survived1HP = Math.max(1, Math.floor(data.games / 15));
-    const skillshotHits = Math.max(1936, data.games * 110);
-    const enemyFountainKills = 0;
-    const goldEarned = Math.max(636594, data.games * 14500);
+    const healFromMap = aramMatches.reduce((acc, m) => acc + (m.playerStats.totalHeal || 0), 0);
+    const survived1HP = aramMatches.reduce((acc, m) => acc + (m.playerStats.challenges?.survivedSingleDigitHpCount || 0), 0);
+    const skillshotHits = aramMatches.reduce((acc, m) => acc + (m.playerStats.challenges?.skillshotsHit || 0), 0);
+    const enemyFountainKills = aramMatches.reduce((acc, m) => acc + (m.playerStats.challenges?.takedownsInEnemyFountain || 0), 0);
+    const goldEarned = aramMatches.reduce((acc, m) => acc + (m.playerStats.goldEarned || 0), 0);
 
     const casts = getAramSummonersCasted();
     const itemsBoughtList = getAramItemsBought();

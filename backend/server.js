@@ -517,7 +517,12 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
             primary: p.perks?.styles[0]?.selections[0]?.perk,
             style: p.perks?.styles[0]?.style
           },
-          role: p.individualPosition || p.teamPosition || 'UTILITY'
+          role: p.individualPosition || p.teamPosition || 'UTILITY',
+          damageTaken: p.totalDamageTaken || 0,
+          pentakills: p.pentakills || 0,
+          timeCCingOthers: p.timeCCingOthers || 0,
+          totalHeal: p.totalHeal || 0,
+          challenges: p.challenges || {}
         }));
 
         const neutralMatchData = {
@@ -608,7 +613,13 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
           items: player.items,
           summonerSpells: player.summonerSpells,
           perks: player.perks,
-          role: player.role || ''
+          role: player.role || '',
+          damageDealt: player.damageDealt || 0,
+          damageTaken: player.damageTaken || 0,
+          pentakills: player.pentakills || 0,
+          timeCCingOthers: player.timeCCingOthers || 0,
+          totalHeal: player.totalHeal || 0,
+          challenges: player.challenges || {}
         },
         participants: participantsWithRanks
       };
