@@ -784,9 +784,10 @@ app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${desc}">
   <meta name="twitter:image" content="${avatarUrl}">
+  <link rel="canonical" href="https://tracker.chupachotas.es/${region}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}" />
 </head>
 <body>
-  <h1>${title}</h1>
+  <h1>${summoner.gameName}#${summoner.tagLine}</h1>
   <p>${desc}</p>
 </body>
 </html>`;
