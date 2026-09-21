@@ -1,4 +1,4 @@
-﻿{
+{
   "theme": "THEME:",
   "nav": {
     "searchPlaceholder": "Search Summoner#TAG... (Ctrl+K)",
@@ -15,7 +15,8 @@
   "errors": {
     "noMoreMatches": "No more matches found.",
     "invalidFormat": "Please enter the format Name#TAG (e.g., Faker#KR1)",
-    "emptyField": "Name or tag cannot be empty."
+    "emptyField": "Name or tag cannot be empty.",
+    "filterError": "Failed to update matches filter."
   },
   "profile": {
     "loading": "Loading profile...",
@@ -33,7 +34,17 @@
     "mostPlayed": "Most played champions",
     "loadMore": "Load more matches",
     "loadingMore": "Loading...",
-    "visionScore": "Vision Score"
+    "visionScore": "Vision Score",
+    "gamesPlayed": "GAMES PLAYED",
+    "gameSingular": "game",
+    "gamePlural": "games",
+    "noMatches": "No matches found",
+    "noMatchesDesc": "This summoner has no recent matches in the selected queue.",
+    "analyzing": "Analyzing 150 matches...",
+    "noRecent": "No recent matches found.",
+    "loadingTheme": "Loading theme...",
+    "recentGames": "Recent Matches",
+    "loading150": "Loading and analyzing stats for the last 150 matches..."
   },
   "match": {
     "win": "Victory",
@@ -49,5 +60,18 @@
   },
   "champions": {
     "winrate": "Winrate"
+  },
+  "queues": {
+    "solo": "Ranked Solo/Duo",
+    "flex": "Ranked Flex",
+    "normal": "Normal",
+    "aram": "ARAM"
+  },
+  "perf": {
+    "calculating": "Calculating...",
+    "carry": "Carrying",
+    "solid": "Solid",
+    "normal": "Average",
+    "hard": "Rough game"
   }
 }

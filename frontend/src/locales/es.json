@@ -1,4 +1,4 @@
-﻿{
+{
   "theme": "TEMA:",
   "nav": {
     "searchPlaceholder": "Buscar Invocador#TAG... (Ctrl+K)",
@@ -15,7 +15,8 @@
   "errors": {
     "noMoreMatches": "No se encontraron más partidas.",
     "invalidFormat": "Por favor introduce el formato Nombre#TAG (ej. Faker#KR1)",
-    "emptyField": "El nombre o el tag no pueden estar vacíos."
+    "emptyField": "El nombre o el tag no pueden estar vacíos.",
+    "filterError": "Error al actualizar el filtro de partidas."
   },
   "profile": {
     "loading": "Cargando perfil...",
@@ -33,7 +34,17 @@
     "mostPlayed": "Campeones más jugados",
     "loadMore": "Cargar más partidas",
     "loadingMore": "Cargando...",
-    "visionScore": "Puntuación de Visión"
+    "visionScore": "Puntuación de Visión",
+    "gamesPlayed": "PARTIDAS JUGADAS",
+    "gameSingular": "partida",
+    "gamePlural": "partidas",
+    "noMatches": "No se encontraron partidas",
+    "noMatchesDesc": "Este invocador no tiene partidas recientes en la cola seleccionada.",
+    "analyzing": "Analizando 150 partidas…",
+    "noRecent": "No se encontraron partidas recientes.",
+    "loadingTheme": "Cargando tema...",
+    "recentGames": "Partidas Recientes",
+    "loading150": "Cargando y analizando estadísticas de las últimas 150 partidas..."
   },
   "match": {
     "win": "Victoria",
@@ -49,5 +60,18 @@
   },
   "champions": {
     "winrate": "Winrate"
+  },
+  "queues": {
+    "solo": "Clasificatoria Solo/Dúo",
+    "flex": "Clasificatoria Flexible",
+    "normal": "Normal",
+    "aram": "ARAM"
+  },
+  "perf": {
+    "calculating": "Calculando...",
+    "carry": "Tirando del carro",
+    "solid": "Sólido",
+    "normal": "Partida normal",
+    "hard": "Difícil"
   }
 }

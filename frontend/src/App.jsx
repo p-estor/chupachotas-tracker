@@ -102,14 +102,15 @@ const getMatchPerformanceData = (match) => {
   return ratings;
 };
 
-const getPerformanceLabel = (match, userPuuid, ratings) => {
+const getPerformanceLabel = (match, userPuuid, ratings, t) => {
+  if (!t) t = (k) => k;
   if (!match || !userPuuid || !ratings || !ratings[userPuuid]) {
-    return { label: 'Calculando...', key: 'neutral' };
+    return { label: t('perf.calculating'), key: 'neutral' };
   }
 
   const userRating = ratings[userPuuid];
   const userParticipant = match.participants.find(p => p.puuid === userPuuid);
-  if (!userParticipant) return { label: 'Calculando...', key: 'neutral' };
+  if (!userParticipant) return { label: t('perf.calculating'), key: 'neutral' };
 
   // 1. Check MVP / ACE
   if (userRating.badge === 'MVP') return { label: 'MVP', key: 'mvp' };
@@ -158,19 +159,20 @@ const getPerformanceLabel = (match, userPuuid, ratings) => {
     : { label: 'Mal juego', key: 'poor' };
 };
 
-const getQueueDisplayName = (match) => {
+const getQueueDisplayName = (match, t) => {
+  if (!t) t = (k) => k;
   const qId = match.queueId;
-  if (qId === 420) return 'Clasificatoria Solo/Dúo';
-  if (qId === 440) return 'Clasificatoria Flexible';
-  if (qId === 450) return 'ARAM';
+  if (qId === 420) return t('queues.solo');
+  if (qId === 440) return t('queues.flex');
+  if (qId === 450) return t('queues.aram');
   
   // Normal queues: 400 (5v5 Draft Pick), 430 (5v5 Blind Pick), 490 (Quickplay)
-  if ([400, 430, 490].includes(qId)) return 'Normal';
+  if ([400, 430, 490].includes(qId)) return t('queues.normal');
   
   // Fallbacks based on gameMode
   const mode = (match.gameMode || '').toUpperCase();
-  if (mode === 'ARAM') return 'ARAM';
-  if (mode === 'CLASSIC') return 'Normal';
+  if (mode === 'ARAM') return t('queues.aram');
+  if (mode === 'CLASSIC') return t('queues.normal');
   
   // Capitalize/clean gameMode if unknown
   return match.gameMode || 'Normal';
@@ -298,7 +300,7 @@ export default function App() {
         setMatches(matchesRes.data);
       } catch (err) {
         console.error(err);
-        setError('Error al actualizar el filtro de partidas.');
+        setError(t('errors.filterError') || 'Error updating filter');
       } finally {
         setLoading(false);
       }
@@ -973,7 +975,7 @@ export default function App() {
             </div>
           </div>
           <div className="summary-title-col">
-            <span className="summary-title-label">{totalGames} Partidas Recientes</span>
+            <span className="summary-title-label">{totalGames} {t('profile.recentGames') || 'Recent Matches'}</span>
             <span className="summary-title-value">{t('profile.summaryTitle', { count: matches.length })}</span>
           </div>
         </div>
@@ -1766,7 +1768,7 @@ export default function App() {
               animation: 'pulse 1.5s infinite ease-in-out',
               marginBottom: '1rem'
             }}></div>
-            <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>Cargando y analizando estadísticas de las últimas 150 partidas...</p>
+            <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>{t('profile.loading150') || 'Loading and analyzing last 150 matches...'}</p>
             <span style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '0.5rem' }}>Esto puede tomar unos segundos debido a la recopilación de datos de Riot y SQLite</span>
           </div>
         </div>
@@ -2858,7 +2860,7 @@ export default function App() {
                         </div>
                       </div>
                     ))}
-                    <span className="sidebar-champ-loading-label">Analizando 150 partidas…</span>
+                    <span className="sidebar-champ-loading-label">{t('profile.analyzing')}</span>
                   </div>
                 </div>
               ) : (() => {
@@ -2882,7 +2884,7 @@ export default function App() {
                             </div>
                             <div className="dpm-champ-perf-stats">
                               <span className="dpm-champ-perf-cs">{c.csMin} CS/m</span>
-                              <span className="dpm-champ-perf-games">{c.games} {c.games === 1 ? 'partida' : 'partidas'}</span>
+                              <span className="dpm-champ-perf-games">{c.games} {c.games === 1 ? t('profile.gameSingular') : t('profile.gamePlural')}</span>
                             </div>
                             <span className={`dpm-champ-perf-wr ${c.wr >= 55 ? 'high' : c.wr >= 48 ? 'med' : 'low'}`}>{c.wr}%</span>
                           </div>
@@ -2968,7 +2970,7 @@ export default function App() {
                                   
                                   {/* Meta */}
                                   <div className="dpm-match-meta-col">
-                                    <span className="dpm-match-mode">{getQueueDisplayName(match)}</span>
+                                    <span className="dpm-match-mode">{getQueueDisplayName(match, t)}</span>
                                     <span className="dpm-match-duration">{formatDuration(match.gameDuration)}</span>
                                     {match.averageElo && <span className="dpm-match-elo-badge">{match.averageElo}</span>}
                                   </div>
@@ -3018,7 +3020,7 @@ export default function App() {
                                     <span className="dpm-kda-ratio">{match.playerStats.kda}:1 KDA</span>
                                     {/* Evaluation pill */}
                                     {(() => {
-                                      const ratingObj = getPerformanceLabel(match, summoner?.puuid, performanceRatings);
+                                      const ratingObj = getPerformanceLabel(match, summoner?.puuid, performanceRatings, t);
                                       return (
                                         <span className={`dpm-kda-perf-pill ${ratingObj.key}`}>
                                           {ratingObj.label}
@@ -3092,7 +3094,7 @@ export default function App() {
                     );
                   })
                 ) : (
-                  <p style={{ color: 'var(--text-muted)' }}>No se encontraron partidas recientes.</p>
+                  <p style={{ color: 'var(--text-muted)' }}>{t('profile.noRecent')}</p>
                 )}
 
                 {matches && matches.length > 0 && (
@@ -3116,7 +3118,7 @@ export default function App() {
                         gap: '0.5rem',
                       }}
                     >
-                      {loadingMore ? 'Cargando...' : 'Cargar más partidas'}
+                      {loadingMore ? t('profile.loadingMore') : t('profile.loadMore')}
                     </button>
                   </div>
                 )}
@@ -3130,7 +3132,7 @@ export default function App() {
           </div>
 
           <div className="dpm-pro-wrapper">
-            <Suspense fallback={<div style={{ color: 'white', padding: '2rem' }}>Cargando tema...</div>}>
+            <Suspense fallback={<div style={{ color: 'white', padding: '2rem' }}>{t('profile.loadingTheme')}</div>}>
               <TrackerProfilePro 
               summoner={summoner}
               matches={matches}
@@ -3167,7 +3169,7 @@ export default function App() {
           </div>
 
           <div className="dpm-broadcast-wrapper">
-            <Suspense fallback={<div style={{ color: 'white', padding: '2rem' }}>Cargando tema...</div>}>
+            <Suspense fallback={<div style={{ color: 'white', padding: '2rem' }}>{t('profile.loadingTheme')}</div>}>
               <TrackerProfileBroadcast
               summoner={summoner}
               matches={matches}

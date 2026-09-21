@@ -192,7 +192,7 @@ export default function TrackerProfileBroadcast({
 
                       <div className="tft-stats-grid">
                         <div className="tft-stat-box">
-                          <span className="tft-stat-label">PARTIDAS JUGADAS</span>
+                          <span className="tft-stat-label">{t('profile.gamesPlayed')}</span>
                           <span className="tft-stat-value mono">{activeChamp.games}</span>
                         </div>
                         <div className="tft-stat-box">
@@ -320,7 +320,7 @@ export default function TrackerProfileBroadcast({
                       <img src={getChampIcon(c.name)} alt={c.name} className="broadcast-perf-img" />
                       <div className="broadcast-perf-details">
                         <span className="broadcast-perf-name">{c.name}</span>
-                        <span className="broadcast-perf-games mono">{c.games} {c.games === 1 ? 'partida' : 'partidas'}</span>
+                        <span className="broadcast-perf-games mono">{c.games} {c.games === 1 ? t('profile.gameSingular') : t('profile.gamePlural')}</span>
                       </div>
                       <div className="broadcast-perf-stats">
                         <span className="broadcast-perf-kda mono">{c.kdaRatio} KDA</span>
@@ -350,8 +350,8 @@ export default function TrackerProfileBroadcast({
                   color: 'var(--text-muted)'
                 }}>
                   <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎮</div>
-                  <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>No se encontraron partidas</h3>
-                  <p style={{ fontSize: '0.85rem' }}>Este invocador no tiene partidas recientes en la cola seleccionada.</p>
+                  <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>{t('profile.noMatches')}</h3>
+                  <p style={{ fontSize: '0.85rem' }}>{t('profile.noMatchesDesc')}</p>
                 </div>
               ) : (
                 matches.map(match => {
@@ -413,7 +413,7 @@ export default function TrackerProfileBroadcast({
                     <div className="broadcast-match-content">
                       {/* Left Block: Game Type & Result */}
                       <div className="broadcast-match-meta">
-                        <span className="broadcast-queue-name">{getQueueDisplayName(match)}</span>
+                        <span className="broadcast-queue-name">{getQueueDisplayName(match, t)}</span>
                         <span className="broadcast-match-outcome">
                           {isWin ? 'VICTORIA' : 'DERROTA'}
                         </span>
