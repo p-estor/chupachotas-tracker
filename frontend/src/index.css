@@ -2,8 +2,6 @@
 @import './pro-theme.css';
 @import './broadcast-theme.css';
 @import './alternative-themes.css';
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-
 :root {
   --bg-secondary: var(--bg-deep);
   --bg-tertiary: #171d31; /* ponytail: se mantiene ya que no hay equivalente exacto en tokens-tracker.css */
