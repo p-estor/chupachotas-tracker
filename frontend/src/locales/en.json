@@ -74,7 +74,13 @@
     "kp": "KP",
     "wards": "Wards",
     "showMore": "Show details",
-    "showLess": "Hide details"
+    "showLess": "Hide details",
+    "victory": "VICTORY",
+    "defeat": "DEFEAT",
+    "victoryCap": "Victory",
+    "defeatCap": "Defeat",
+    "blueTeam": "Blue Team",
+    "redTeam": "Red Team"
   },
   "champions": {
     "winrate": "Winrate"
@@ -87,9 +93,16 @@
   },
   "perf": {
     "calculating": "Calculating...",
-    "carry": "Carrying",
+    "carry": "1v9 Carry",
     "solid": "Solid",
     "normal": "Average",
-    "hard": "Rough game"
+    "hard": "Rough game",
+    "perfectKda": "Perfect KDA",
+    "carried": "Carried",
+    "highKda": "High KDA",
+    "goodTeam": "Good Team",
+    "poorTeam": "Weak Team",
+    "good": "Good Game",
+    "poor": "Bad Game"
   }
 }

@@ -74,7 +74,13 @@
     "kp": "KP",
     "wards": "Wards",
     "showMore": "Mostrar detalles",
-    "showLess": "Ocultar detalles"
+    "showLess": "Ocultar detalles",
+    "victory": "VICTORIA",
+    "defeat": "DERROTA",
+    "victoryCap": "Victoria",
+    "defeatCap": "Derrota",
+    "blueTeam": "Equipo Azul",
+    "redTeam": "Equipo Rojo"
   },
   "champions": {
     "winrate": "Winrate"
@@ -87,9 +93,16 @@
   },
   "perf": {
     "calculating": "Calculando...",
-    "carry": "Tirando del carro",
+    "carry": "Carrito",
     "solid": "Sólido",
     "normal": "Partida normal",
-    "hard": "Difícil"
+    "hard": "Difícil",
+    "perfectKda": "KDA Perfecto",
+    "carried": "Carreado",
+    "highKda": "KDA Alto",
+    "goodTeam": "Buen equipo",
+    "poorTeam": "Equipo flojo",
+    "good": "Buen juego",
+    "poor": "Mal juego"
   }
 }

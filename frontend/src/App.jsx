@@ -118,7 +118,7 @@ const getPerformanceLabel = (match, userPuuid, ratings, t) => {
 
   // 2. Check Perfect KDA (0 deaths)
   const deaths = userParticipant.deaths || 0;
-  if (deaths === 0) return { label: 'KDA Perfecto', key: 'perfect-kda' };
+  if (deaths === 0) return { label: t('perf.perfectKda'), key: 'perfect-kda' };
 
   // 3. Check High KDA (KDA >= 5.0)
   const kills = userParticipant.kills || 0;
@@ -132,31 +132,29 @@ const getPerformanceLabel = (match, userPuuid, ratings, t) => {
 
   // 5. Carry (Your score is >= 75 and team score is < 55)
   if (userRating.score >= 75 && avgTeammatesScore < 55) {
-    return { label: 'Carrito', key: 'carry' };
+    return { label: t('perf.carry'), key: 'carry' };
   }
 
   // 6. Carried (Won, but your score is < 50)
   if (userParticipant.win && userRating.score < 50) {
-    return { label: 'Carreado', key: 'carried' };
+    return { label: t('perf.carried'), key: 'carried' };
   }
 
   // 7. Solid KDA
   if (kda >= 5.0) {
-    return { label: 'KDA Alto', key: 'high-kda' };
+    return { label: t('perf.highKda'), key: 'high-kda' };
   }
 
   // 8. Good Team / Poor Team based on teammates
   if (avgTeammatesScore >= 68) {
-    return { label: 'Buen equipo', key: 'good-team' };
+    return { label: t('perf.goodTeam'), key: 'good-team' };
   }
   if (avgTeammatesScore < 55) {
-    return { label: 'Equipo flojo', key: 'poor-team' };
+    return { label: t('perf.poorTeam'), key: 'poor-team' };
   }
 
   // 9. Default: fallback to generic good/poor performance depending on player score
-  return userRating.score >= 70 
-    ? { label: 'Buen juego', key: 'good' } 
-    : { label: 'Mal juego', key: 'poor' };
+  return userRating.score >= 70 ? { label: t('perf.good'), key: 'good' } : { label: t('perf.poor'), key: 'poor' };
 };
 
 const getQueueDisplayName = (match, t) => {
@@ -686,7 +684,7 @@ export default function App() {
       <div className={`expanded-team-section ${isWin ? 'win-team' : 'loss-team'}`}>
         <div className="expanded-team-header">
           <span className="team-result-text">
-            {isWin ? 'Victoria' : 'Derrota'} ({teamId === 100 ? 'Equipo Azul' : 'Equipo Rojo'})
+            {isWin ? t('match.victoryCap') : t('match.defeatCap')} ({teamId === 100 ? t('match.blueTeam') : t('match.redTeam')})
           </span>
           <span className="team-summary-stats mono">
             {totalKills} / {totalDeaths} / {totalAssists} <span style={{ color: 'var(--text-muted)', margin: '0 0.5rem' }}>|</span> <span style={{ color: 'var(--text-secondary)' }}>{(totalGold / 1000).toFixed(1)}k Oro</span>

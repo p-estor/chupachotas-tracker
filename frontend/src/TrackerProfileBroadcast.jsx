@@ -415,7 +415,7 @@ export default function TrackerProfileBroadcast({
                       <div className="broadcast-match-meta">
                         <span className="broadcast-queue-name">{getQueueDisplayName(match, t)}</span>
                         <span className="broadcast-match-outcome">
-                          {isWin ? 'VICTORIA' : 'DERROTA'}
+                          {isWin ? t('match.victory') : t('match.defeat')}
                         </span>
                         <span className="broadcast-match-time mono">{formatDuration(match.gameDuration)}</span>
                       </div>
