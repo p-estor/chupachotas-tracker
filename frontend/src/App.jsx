@@ -2807,6 +2807,7 @@ export default function App() {
                   { id: 'ranked_solo', label: 'Solo' },
                   { id: 'ranked_flex', label: 'Flex' },
                   
+                  { id: 'aram', label: 'Aram' },
                   { id: 'normal', label: 'Normal' }
                 ].map(filter => (
                   <button

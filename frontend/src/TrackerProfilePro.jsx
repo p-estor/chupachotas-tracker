@@ -105,6 +105,7 @@ export default function TrackerProfilePro({
               { id: 'all', label: t('profile.all') },
               { id: 'ranked_solo', label: 'SOLO' },
               { id: 'ranked_flex', label: t('profile.flex') },
+              { id: 'aram', label: 'ARAM' },
               { id: 'normal', label: 'NORM' },
             ].map(f => (
               <button
@@ -338,7 +339,7 @@ export default function TrackerProfilePro({
         {[
           { id: 'overview', label: t('profile.overview').toUpperCase() },
           { id: 'champions', label: t('profile.champions').toUpperCase() },
-          { id: 'aram', label: 'ARAM' },
+          
         ].map(tab => (
           <button
             key={tab.id}
