@@ -602,9 +602,7 @@ export default function App() {
     let t = tier.trim().toUpperCase();
     if (t === 'UNRANKED') return null;
     
-    // Capitalize only the first letter, lowercase the rest (e.g. "DIAMOND" -> "Diamond")
-    const capitalized = t.charAt(0) + t.slice(1).toLowerCase();
-    return `https://leagueoflegends.fandom.com/wiki/Special:FilePath/Season_2023_-_${capitalized}.png`;
+    return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-minicrests/${t.toLowerCase()}.png`;
   };
 
   const getRankAbbreviation = (rankObj) => {
