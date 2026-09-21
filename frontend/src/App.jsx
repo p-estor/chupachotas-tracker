@@ -105,56 +105,29 @@ const getMatchPerformanceData = (match) => {
 const getPerformanceLabel = (match, userPuuid, ratings, t) => {
   if (!t) t = (k) => k;
   if (!match || !userPuuid || !ratings || !ratings[userPuuid]) {
-    return { label: t('perf.calculating'), key: 'neutral' };
+    return { label: '-', key: 'neutral' };
   }
 
   const userRating = ratings[userPuuid];
   const userParticipant = match.participants.find(p => p.puuid === userPuuid);
-  if (!userParticipant) return { label: t('perf.calculating'), key: 'neutral' };
+  if (!userParticipant) return { label: '-', key: 'neutral' };
 
-  // 1. Check MVP / ACE
+  // 1. Exceptions: MVP, ACE, Perfect KDA
   if (userRating.badge === 'MVP') return { label: 'MVP', key: 'mvp' };
   if (userRating.badge === 'ACE') return { label: 'ACE', key: 'ace' };
 
-  // 2. Check Perfect KDA (0 deaths)
   const deaths = userParticipant.deaths || 0;
   if (deaths === 0) return { label: t('perf.perfectKda'), key: 'perfect-kda' };
 
-  // 3. Check High KDA (KDA >= 5.0)
-  const kills = userParticipant.kills || 0;
-  const assists = userParticipant.assists || 0;
-  const kda = deaths > 0 ? (kills + assists) / deaths : 10;
+  // 2. Default: Show numerical score (0-100)
+  const score = Math.max(0, Math.min(100, Math.round(userRating.score)));
   
-  // 4. Calculate Teammates average score
-  const teammates = match.participants.filter(p => p.teamId === userParticipant.teamId && p.puuid !== userPuuid);
-  const teammatesScores = teammates.map(p => ratings[p.puuid]?.score || 60);
-  const avgTeammatesScore = teammatesScores.reduce((acc, s) => acc + s, 0) / (teammatesScores.length || 1);
+  // Decide the pill color based on score thresholds
+  let key = 'neutral';
+  if (score >= 70) key = 'good';
+  else if (score < 50) key = 'poor';
 
-  // 5. Carry (Your score is >= 75 and team score is < 55)
-  if (userRating.score >= 75 && avgTeammatesScore < 55) {
-    return { label: t('perf.carry'), key: 'carry' };
-  }
-
-  // 6. Carried (Won, but your score is < 50)
-  if (userParticipant.win && userRating.score < 50) {
-    return { label: t('perf.carried'), key: 'carried' };
-  }
-
-  // 7. Solid KDA
-  if (kda >= 5.0) {
-    return { label: t('perf.highKda'), key: 'high-kda' };
-  }
-
-  // 8. Good Team / Poor Team based on teammates
-  if (avgTeammatesScore >= 68) {
-    return { label: t('perf.goodTeam'), key: 'good-team' };
-  }
-  if (avgTeammatesScore < 55) {
-    return { label: t('perf.poorTeam'), key: 'poor-team' };
-  }
-
-  // 9. Default: fallback to generic good/poor performance depending on player score
-  return userRating.score >= 70 ? { label: t('perf.good'), key: 'good' } : { label: t('perf.poor'), key: 'poor' };
+  return { label: 'Score ' + score, key };
 };
 
 const getQueueDisplayName = (match, t) => {
