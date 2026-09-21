@@ -281,7 +281,7 @@ export default function TrackerProfilePro({
 
                       {/* Rating */}
                       <td>
-                        {ratingObj.key && ratingObj.key !== 'neutral' && ratingObj.key !== 'normal' && (
+                        {ratingObj.key && (
                           <span className={`pro-rating-badge ${ratingObj.key}`}>
                             {ratingObj.label.toUpperCase()}
                           </span>

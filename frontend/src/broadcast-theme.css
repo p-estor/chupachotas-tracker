@@ -703,6 +703,21 @@
   color: var(--win-color);
 }
 
+.broadcast-rating-badge.poor {
+  border: 1px solid var(--loss-color);
+  color: var(--loss-color);
+}
+
+.broadcast-rating-badge.neutral {
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+}
+
+.broadcast-rating-badge.perfect-kda {
+  border: 1px solid #fb923c;
+  color: #fb923c;
+}
+
 .broadcast-rating-badge.high-kda {
   border: 1px solid var(--accent-cyan);
   color: var(--accent-cyan);

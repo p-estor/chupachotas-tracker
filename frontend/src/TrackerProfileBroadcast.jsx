@@ -425,7 +425,7 @@ export default function TrackerProfileBroadcast({
                         <img src={getChampIcon(champName)} alt={champName} className="broadcast-match-avatar" loading="lazy" />
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                           <span className="broadcast-match-champ-name">{champName}</span>
-                          {ratingObj.key && ratingObj.key !== 'neutral' && ratingObj.key !== 'normal' && (
+                          {ratingObj.key && (
                             <span className={`broadcast-rating-badge ${ratingObj.key}`} style={{ width: 'fit-content' }}>
                               {ratingObj.label.toUpperCase()}
                             </span>
