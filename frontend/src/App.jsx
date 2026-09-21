@@ -178,7 +178,7 @@ const getQueueDisplayName = (match) => {
 
 
 export default function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [search, setSearch] = useState('');
   const [region, setRegion] = useState('euw');
   const [summoner, setSummoner] = useState(null);
@@ -2559,6 +2559,24 @@ export default function App() {
           )}
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              onClick={() => i18n.changeLanguage(i18n.language.startsWith('es') ? 'en' : 'es')}
+              style={{
+                background: 'var(--bg-secondary)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-normal)',
+                borderRadius: '4px',
+                padding: '0.35rem 0.6rem',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+              }}
+            >
+              {i18n.language.startsWith('es') ? '🇪🇸 ES' : '🇬🇧 EN'}
+            </button>
             <a
               href="https://paypal.me/pestordev"
               target="_blank"
