@@ -2737,7 +2737,6 @@ export default function App() {
             <div className="dpm-profile-tabs">
               <span className={`dpm-profile-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>{t('profile.tabs.matches')}</span>
               <span className={`dpm-profile-tab ${activeTab === 'champions' ? 'active' : ''}`} onClick={() => setActiveTab('champions')}>{t('profile.tabs.champions')}</span>
-              <span className={`dpm-profile-tab ${activeTab === 'aram' ? 'active' : ''}`} onClick={() => setActiveTab('aram')}>{t('profile.tabs.aram')}</span>
             </div>
           </div>
 
