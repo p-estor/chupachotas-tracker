@@ -421,6 +421,25 @@ export default function App() {
       const summonerRes = await axios.get(summonerUrl);
       setSummoner(summonerRes.data);
 
+      // SEO: Update tags dynamically so Googlebot sees distinct titles and descriptions for each profile
+      document.title = `${summonerRes.data.gameName}#${summonerRes.data.tagLine} - Estadísticas de LoL - Chupachotas Tracker`;
+      
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.name = 'description';
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.content = `Mira el historial de ${summonerRes.data.gameName}#${summonerRes.data.tagLine} (Nivel ${summonerRes.data.summonerLevel}). Descubre sus mejores campeones, winrate y rango en League of Legends.`;
+      
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.rel = 'canonical';
+        document.head.appendChild(canonical);
+      }
+      canonical.href = `https://tracker.chupachotas.es/${searchRegion}/${encodeURIComponent(summonerRes.data.gameName)}-${encodeURIComponent(summonerRes.data.tagLine)}`;
+
       // 2. Fetch match history using their PUUID & current queue filter
       const matchesRes = await axios.get(
         `${BACKEND_URL}/matches/${searchRegion}/${summonerRes.data.puuid}?count=8&queue=${queueFilter}${forceRefresh ? '&refresh=true' : ''}`
