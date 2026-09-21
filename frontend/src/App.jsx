@@ -602,7 +602,7 @@ export default function App() {
     let t = tier.trim().toUpperCase();
     if (t === 'UNRANKED') return null;
     
-    return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-minicrests/${t.toLowerCase()}.png`;
+    return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${t.toLowerCase()}.png`;
   };
 
   const getRankAbbreviation = (rankObj) => {
