@@ -422,7 +422,7 @@ export default function App() {
       setSummoner(summonerRes.data);
 
       // SEO: Update tags dynamically so Googlebot sees distinct titles and descriptions for each profile
-      document.title = `${summonerRes.data.gameName}#${summonerRes.data.tagLine} - Estadísticas de LoL - Chupachotas Tracker`;
+      document.title = `${summonerRes.data.gameName}#${summonerRes.data.tagLine} - LoL Stats, MMR & Estadísticas - Chupachotas Tracker`;
       
       let metaDesc = document.querySelector('meta[name="description"]');
       if (!metaDesc) {
@@ -430,7 +430,7 @@ export default function App() {
         metaDesc.name = 'description';
         document.head.appendChild(metaDesc);
       }
-      metaDesc.content = `Mira el historial de ${summonerRes.data.gameName}#${summonerRes.data.tagLine} (Nivel ${summonerRes.data.summonerLevel}). Descubre sus mejores campeones, winrate y rango en League of Legends.`;
+      metaDesc.content = `Check ${summonerRes.data.gameName}#${summonerRes.data.tagLine} match history and LoL Stats (Level ${summonerRes.data.summonerLevel}). Mira su historial, winrate, mejores campeones y rango en League of Legends.`;
       
       let canonical = document.querySelector('link[rel="canonical"]');
       if (!canonical) {

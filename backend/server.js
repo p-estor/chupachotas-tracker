@@ -766,8 +766,8 @@ app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
     const summonerRes = await axios.get(`http://localhost:${PORT}/api/summoner/${region}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
     const summoner = summonerRes.data;
 
-    const title = `${summoner.gameName} - Estadísticas de LoL, MMR y KDA - Chupachotas Tracker`;
-    const desc = `Mira el historial de ${summoner.gameName}#${summoner.tagLine} (Nivel ${summoner.summonerLevel}). Descubre sus mejores campeones y rank.`;
+    const title = `${summoner.gameName} - LoL Stats, MMR & Estadísticas - Chupachotas Tracker`;
+    const desc = `Check ${summoner.gameName}#${summoner.tagLine} match history and LoL Stats (Level ${summoner.summonerLevel}). Mira su historial, winrate y rango en League of Legends.`;
     const avatarUrl = `https://ddragon.leagueoflegends.com/cdn/14.11.1/img/profileicon/${summoner.profileIconId}.png`;
 
     const html = `<!DOCTYPE html>
