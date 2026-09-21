@@ -102,9 +102,9 @@ export default function TrackerProfilePro({
           <div className="pro-terminal-panel-title">QUEUE_FILTER</div>
           <div style={{ padding: '0.75rem 1rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
             {[
-              { id: 'all', label: 'ALL' },
+              { id: 'all', label: t('profile.all') },
               { id: 'ranked_solo', label: 'SOLO' },
-              { id: 'ranked_flex', label: 'FLEX' },
+              { id: 'ranked_flex', label: t('profile.flex') },
               { id: 'aram', label: 'ARAM' },
               { id: 'normal', label: 'NORM' },
             ].map(f => (
@@ -177,7 +177,7 @@ export default function TrackerProfilePro({
             <thead>
               <tr>
                 <th style={{ width: '8px', padding: '0.5rem 0' }}></th>
-                <th>CAMPEÓN</th>
+                <th>{t('profile.champions').toUpperCase()}</th>
                 <th>KDA</th>
                 <th>CS / KP</th>
                 <th>RATING</th>
@@ -323,7 +323,7 @@ export default function TrackerProfilePro({
             {summoner.gameName} <span style={{ color: 'var(--text-muted)' }}>#{summoner.tagLine}</span>
           </div>
           <div className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem', letterSpacing: '1px' }}>
-            NIVEL {summoner.summonerLevel}
+            {t('profile.level')} {summoner.summonerLevel}
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
@@ -337,8 +337,8 @@ export default function TrackerProfilePro({
       {/* TERMINAL NAV */}
       <div className="pro-terminal-nav">
         {[
-          { id: 'overview', label: 'OVERVIEW' },
-          { id: 'champions', label: 'CHAMPIONS' },
+          { id: 'overview', label: t('profile.overview').toUpperCase() },
+          { id: 'champions', label: t('profile.champions').toUpperCase() },
           { id: 'aram', label: 'ARAM' },
         ].map(tab => (
           <button

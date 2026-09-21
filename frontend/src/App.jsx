@@ -2662,7 +2662,7 @@ export default function App() {
           <span style={{ fontSize: '1.5rem', userSelect: 'none' }}>⚠️</span>
           <div>
             <strong style={{ display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {error.includes('límite') || error.includes('Rate Limit') ? 'Límite de API Excedido' : 'Error de Conexión / Búsqueda'}
+              {error.includes('límite') || error.includes('Rate Limit') ? t('errors.apiLimit') : t('errors.connectionError')}
             </strong>
             <span>{error}</span>
           </div>

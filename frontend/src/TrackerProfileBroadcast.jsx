@@ -113,14 +113,14 @@ export default function TrackerProfileBroadcast({
               {summoner.gameName}<span className="broadcast-tag">#{summoner.tagLine}</span>
             </h1>
             <div className="broadcast-level-pill">
-              NIVEL {summoner.summonerLevel}
+              {t('profile.level')} {summoner.summonerLevel}
             </div>
           </div>
         </div>
 
         <div className="broadcast-header-summary" style={{ position: 'relative', zIndex: 2 }}>
           <div className="broadcast-summary-metric">
-            <span className="metric-label">HISTORIAL RECIENTE</span>
+            <span className="metric-label">{t('profile.recentHistory')}</span>
             <span className="metric-value winrate-color-trigger" style={{ color: winRate >= 50 ? 'var(--win-color)' : 'var(--loss-color)' }}>
               {winRate}% WR
             </span>
@@ -132,8 +132,8 @@ export default function TrackerProfileBroadcast({
       {/* BROADCAST TABS */}
       <nav className="broadcast-nav">
         {[
-          { id: 'overview', label: 'Resumen' },
-          { id: 'champions', label: 'Campeones' },
+          { id: 'overview', label: t('profile.overview') },
+          { id: 'champions', label: t('profile.champions') },
           { id: 'aram', label: 'ARAM' },
         ].map(tab => (
           <button
@@ -188,7 +188,7 @@ export default function TrackerProfileBroadcast({
                   <div className="tft-showcase-content">
                     <div className="tft-showcase-info">
                       <h2 className="tft-showcase-champ-name">{activeChamp.name.toUpperCase()}</h2>
-                      <span className="tft-showcase-title">CAMPEÓN INSIGNIA</span>
+                      <span className="tft-showcase-title">{t('profile.signatureChamp')}</span>
 
                       <div className="tft-stats-grid">
                         <div className="tft-stat-box">
@@ -196,17 +196,17 @@ export default function TrackerProfileBroadcast({
                           <span className="tft-stat-value mono">{activeChamp.games}</span>
                         </div>
                         <div className="tft-stat-box">
-                          <span className="tft-stat-label">PROMEDIO KDA</span>
+                          <span className="tft-stat-label">{t('profile.avgKda')}</span>
                           <span className="tft-stat-value mono">{activeChamp.kdaRatio}</span>
                         </div>
                         <div className="tft-stat-box">
-                          <span className="tft-stat-label">TASA DE VICTORIAS</span>
+                          <span className="tft-stat-label">{t('profile.winRate')}</span>
                           <span className="tft-stat-value mono" style={{ color: activeChamp.wr >= 55 ? 'var(--win-color)' : activeChamp.wr >= 48 ? '#fff' : 'var(--loss-color)' }}>
                             {activeChamp.wr}%
                           </span>
                         </div>
                         <div className="tft-stat-box">
-                          <span className="tft-stat-label">FARMEO MINUTO</span>
+                          <span className="tft-stat-label">{t('profile.csPerMin')}</span>
                           <span className="tft-stat-value mono">{activeChamp.csMin} <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>CS/m</span></span>
                         </div>
                       </div>
@@ -221,7 +221,7 @@ export default function TrackerProfileBroadcast({
           {/* SIDEBAR */}
           <aside className={`broadcast-sidebar ${sidebarActive ? 'active' : ''}`}>
             <div className="broadcast-sidebar-mobile-header">
-              <span>Filtros y Rangos</span>
+              <span>{t('profile.filtersAndRanks')}</span>
               <button 
                 className="broadcast-sidebar-close-btn" 
                 onClick={() => setSidebarActive(false)}
@@ -288,14 +288,14 @@ export default function TrackerProfileBroadcast({
 
             {/* QUEUE FILTERS */}
             <div className="broadcast-card broadcast-filter-card">
-              <div className="broadcast-card-title">Filtro de Cola</div>
+              <div className="broadcast-card-title">{t('profile.queueFilter')}</div>
               <div className="broadcast-filters-grid">
                 {[
-                  { id: 'all', label: 'TODAS' },
-                  { id: 'ranked_solo', label: 'SOLOQ' },
-                  { id: 'ranked_flex', label: 'FLEX' },
+                  { id: 'all', label: t('profile.all') },
+                  { id: 'ranked_solo', label: t('profile.soloq') },
+                  { id: 'ranked_flex', label: t('profile.flex') },
                   { id: 'aram', label: 'ARAM' },
-                  { id: 'normal', label: 'NORMAL' },
+                  { id: 'normal', label: t('profile.normal') },
                 ].map(f => (
                   <button
                     key={f.id}
@@ -310,9 +310,9 @@ export default function TrackerProfileBroadcast({
 
             {/* SIDEBAR CHAMPION PERFORMANCE */}
             <div className="broadcast-card broadcast-perf-card">
-              <div className="broadcast-card-title">Campeones Destacados</div>
+              <div className="broadcast-card-title">{t('profile.topChamps')}</div>
               {loadingStatsMatches ? (
-                <div className="broadcast-loading-text">CARGANDO ESTADÍSTICAS...</div>
+                <div className="broadcast-loading-text">{t('profile.loadingStats')}</div>
               ) : (
                 <div className="broadcast-perf-list">
                   {getSidebarChampionStats().slice(0, 5).map(c => (

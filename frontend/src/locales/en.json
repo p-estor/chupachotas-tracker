@@ -16,7 +16,9 @@
     "noMoreMatches": "No more matches found.",
     "invalidFormat": "Please enter the format Name#TAG (e.g., Faker#KR1)",
     "emptyField": "Name or tag cannot be empty.",
-    "filterError": "Failed to update matches filter."
+    "filterError": "Failed to update matches filter.",
+    "apiLimit": "API Rate Limit Exceeded",
+    "connectionError": "Connection / Search Error"
   },
   "profile": {
     "loading": "Loading profile...",
@@ -44,7 +46,23 @@
     "noRecent": "No recent matches found.",
     "loadingTheme": "Loading theme...",
     "recentGames": "Recent Matches",
-    "loading150": "Loading and analyzing stats for the last 150 matches..."
+    "loading150": "Loading and analyzing stats for the last 150 matches...",
+    "level": "LEVEL",
+    "recentHistory": "RECENT MATCHES",
+    "signatureChamp": "SIGNATURE CHAMPION",
+    "avgKda": "AVG KDA",
+    "winRate": "WIN RATE",
+    "csPerMin": "CS PER MINUTE",
+    "filtersAndRanks": "Filters & Ranks",
+    "queueFilter": "Queue Filter",
+    "all": "ALL",
+    "soloq": "SOLOQ",
+    "flex": "FLEX",
+    "normal": "NORMAL",
+    "topChamps": "Top Champions",
+    "loadingStats": "LOADING STATS...",
+    "overview": "Overview",
+    "champions": "Champions"
   },
   "match": {
     "win": "Victory",

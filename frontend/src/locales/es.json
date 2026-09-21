@@ -16,7 +16,9 @@
     "noMoreMatches": "No se encontraron más partidas.",
     "invalidFormat": "Por favor introduce el formato Nombre#TAG (ej. Faker#KR1)",
     "emptyField": "El nombre o el tag no pueden estar vacíos.",
-    "filterError": "Error al actualizar el filtro de partidas."
+    "filterError": "Error al actualizar el filtro de partidas.",
+    "apiLimit": "Límite de API Excedido",
+    "connectionError": "Error de Conexión / Búsqueda"
   },
   "profile": {
     "loading": "Cargando perfil...",
@@ -44,7 +46,23 @@
     "noRecent": "No se encontraron partidas recientes.",
     "loadingTheme": "Cargando tema...",
     "recentGames": "Partidas Recientes",
-    "loading150": "Cargando y analizando estadísticas de las últimas 150 partidas..."
+    "loading150": "Cargando y analizando estadísticas de las últimas 150 partidas...",
+    "level": "NIVEL",
+    "recentHistory": "HISTORIAL RECIENTE",
+    "signatureChamp": "CAMPEÓN INSIGNIA",
+    "avgKda": "PROMEDIO KDA",
+    "winRate": "TASA DE VICTORIAS",
+    "csPerMin": "FARMEO MINUTO",
+    "filtersAndRanks": "Filtros y Rangos",
+    "queueFilter": "Filtro de Cola",
+    "all": "TODAS",
+    "soloq": "SOLOQ",
+    "flex": "FLEX",
+    "normal": "NORMAL",
+    "topChamps": "Campeones Destacados",
+    "loadingStats": "CARGANDO ESTADÍSTICAS...",
+    "overview": "Resumen",
+    "champions": "Campeones"
   },
   "match": {
     "win": "Victoria",
