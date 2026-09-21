@@ -134,7 +134,7 @@ export default function TrackerProfileBroadcast({
         {[
           { id: 'overview', label: t('profile.overview') },
           { id: 'champions', label: t('profile.champions') },
-          
+          { id: 'aram', label: 'ARAM' },
         ].map(tab => (
           <button
             key={tab.id}
@@ -294,7 +294,6 @@ export default function TrackerProfileBroadcast({
                   { id: 'all', label: t('profile.all') },
                   { id: 'ranked_solo', label: t('profile.soloq') },
                   { id: 'ranked_flex', label: t('profile.flex') },
-                  { id: 'aram', label: 'ARAM' },
                   { id: 'normal', label: t('profile.normal') },
                 ].map(f => (
                   <button
