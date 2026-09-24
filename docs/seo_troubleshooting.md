@@ -23,3 +23,7 @@ Este documento registra los problemas técnicos de posicionamiento (SEO) y rendi
 * **La Solución:** 
   1. Se añadieron cabeceras en Nginx para los archivos de la carpeta \/assets/\: \Cache-Control "public, max-age=31536000, immutable"\.
   2. Se movió la carga de Google Fonts al \index.html\ utilizando \<link rel="preconnect">\, lo que permite descargarlas en paralelo y elimina el cuello de botella del CSS. (Nota: Lighthouse aún avisa de "cache lifetimes" residuales, pero pertenecen al CDN externo de Riot Games, el cual no podemos controlar).
+
+## 6. Error de GSC (Actualización): Validation Failed en "Duplicate sin canonical"
+* **El Problema:** La inyección de metadatos mediante React (desde el cliente) era demasiado lenta. Googlebot tomaba una "foto" del HTML antes de que la llamada a la API de Riot terminase, por lo que seguía viendo el título genérico.
+* **La Solución:** Se implementó *Server-Side Injection (SSI)*. Nginx ahora intercepta a Googlebot y lo envía a \/api/bot-seo\. El backend lee el \index.html\ real de React, inyecta las etiquetas SEO dinámicas directamente en el código fuente, y devuelve la app completa. Googlebot recibe los metadatos perfectos de forma instantánea.

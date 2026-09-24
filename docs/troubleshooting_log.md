@@ -12,3 +12,8 @@ Este documento registra problemas técnicos generales, bugs encontrados en produ
   1. Se modificó \ackend/server.js\ para inyectar en \playerStats\ los datos reales extraídos del objeto \challenges\ de la API de Riot.
   2. Se purgó la tabla \matches\ de SQLite en producción (\DELETE FROM matches;\) para forzar la re-descarga de partidas con el nuevo esquema de datos.
   3. Se rediseñó la UI en React eliminando la pestaña superior de ARAM y restaurando el filtro de cola lateral ("ARAM") en todos los componentes y temas.
+
+## 3. Caída del servidor por falta de espacio (No space left on device)
+* **El Problema:** El 24 de Septiembre, el disco del VPS (8.7GB) llegó al 100% de capacidad. La causa principal era la base de datos \ackend/database.sqlite\, que había crecido hasta 1.4GB cacheando miles de partidas, bloqueando operaciones de Nginx y NPM.
+* **La Solución:** Se purgó la caché oculta de NPM (\m -rf /root/.npm/*\) liberando ~500MB de urgencia para mantener el servidor operativo. 
+* **Acción requerida a futuro:** Ampliar el disco del VPS o implementar un *cronjob* que purgue partidas antiguas de SQLite.
