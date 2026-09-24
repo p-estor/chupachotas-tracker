@@ -770,37 +770,32 @@ app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
     const desc = `Check ${summoner.gameName}#${summoner.tagLine} match history and LoL Stats (Level ${summoner.summonerLevel}). Mira su historial, winrate y rango en League of Legends.`;
     const avatarUrl = `https://ddragon.leagueoflegends.com/cdn/14.11.1/img/profileicon/${summoner.profileIconId}.png`;
 
-    const html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>${title}</title>
-  <meta name="description" content="${desc}">
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${desc}">
-  <meta property="og:image" content="${avatarUrl}">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="${title}">
-  <meta name="twitter:description" content="${desc}">
-  <meta name="twitter:image" content="${avatarUrl}">
-  <link rel="canonical" href="https://tracker.chupachotas.es/${region}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}" />
-</head>
-<body>
-  <h1>${summoner.gameName}#${summoner.tagLine}</h1>
-  <p>${desc}</p>
-</body>
-</html>`;
+    const canonical = `https://tracker.chupachotas.es/${region}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}`;
+
+    const fs = require('fs');
+    let html = fs.readFileSync('/var/www/tracker/index.html', 'utf8');
+
+    html = html.replace(/<title>.*?<\/title>/i, `<title>${title}</title>`);
+    html = html.replace(/<meta name="description" content="[^"]*">/i, `<meta name="description" content="${desc}">`);
+    html = html.replace(/<meta property="og:title" content="[^"]*">/i, `<meta property="og:title" content="${title}">`);
+    html = html.replace(/<meta property="og:description" content="[^"]*">/i, `<meta property="og:description" content="${desc}">`);
+    
+    const injectedTags = `
+    <meta property="og:image" content="${avatarUrl}">
+    <meta name="twitter:image" content="${avatarUrl}">
+    <link rel="canonical" href="${canonical}" />
+  </head>`;
+    html = html.replace('</head>', injectedTags);
+
     res.send(html);
   } catch (error) {
-    res.send(`<!DOCTYPE html>
-<html lang="es">
-<head>
-  <title>Chupachotas Tracker</title>
-  <meta name="description" content="Estadísticas de League of Legends en tiempo real.">
-</head>
-<body></body>
-</html>`);
+    const fs = require('fs');
+    try {
+      const html = fs.readFileSync('/var/www/tracker/index.html', 'utf8');
+      res.send(html);
+    } catch (e) {
+      res.status(500).send('Error');
+    }
   }
 });
 
