@@ -135,7 +135,7 @@ const getQueueDisplayName = (match, t) => {
   const qId = match.queueId;
   if (qId === 420) return t('queues.solo');
   if (qId === 440) return t('queues.flex');
-  if (qId === 450) return t('queues.aram');
+  if ((qId === 450 || qId === 480)) return t('queues.aram');
   
   // Normal queues: 400 (5v5 Draft Pick), 430 (5v5 Blind Pick), 490 (Quickplay)
   if ([400, 430, 490].includes(qId)) return t('queues.normal');
@@ -1492,7 +1492,7 @@ export default function App() {
       // Queue filter
       if (championsQueueFilter === 'solo' && m.queueId !== 420) return;
       if (championsQueueFilter === 'flex' && m.queueId !== 440) return;
-      if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.gameMode !== 'ARAM') return;
+      if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.queueId !== 480 && m.gameMode !== 'ARAM') return;
 
       // Role filter
       const cleanRole = (stats.role || '').toUpperCase();
@@ -1577,8 +1577,8 @@ export default function App() {
       // Filtrar según queueFilter del sidebar
       if (queueFilter === 'ranked_solo' && m.queueId !== 420) return;
       if (queueFilter === 'ranked_flex' && m.queueId !== 440) return;
-      if (queueFilter === 'aram' && m.queueId !== 450 && m.gameMode !== 'ARAM') return;
-      if (queueFilter === 'normal' && (m.queueId === 420 || m.queueId === 440 || m.queueId === 450)) return;
+      if (queueFilter === 'aram' && m.queueId !== 450 && m.queueId !== 480 && m.gameMode !== 'ARAM') return;
+      if (queueFilter === 'normal' && (m.queueId === 420 || m.queueId === 440 || m.queueId === 450 || m.queueId === 480)) return;
 
       if (!champStats[champName]) {
         champStats[champName] = {
@@ -1642,7 +1642,7 @@ export default function App() {
       // Queue filter
       if (championsQueueFilter === 'solo' && m.queueId !== 420) return;
       if (championsQueueFilter === 'flex' && m.queueId !== 440) return;
-      if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.gameMode !== 'ARAM') return;
+      if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.queueId !== 480 && m.gameMode !== 'ARAM') return;
 
       const participants = m.participants || [];
       const targets = participants.filter(p => {
