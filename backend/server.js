@@ -409,42 +409,57 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
   const forceRefresh = req.query.refresh === 'true';
 
   try {
-    // Step A: Get match IDs from Riot API (chunked if count > 100)
-    let matchIds = [];
-    let currentStart = start;
-    let remaining = count;
+          // Step A: Get match IDs from Riot API
+      let matchIds = [];
 
-    while (remaining > 0) {
-      const fetchCount = Math.min(remaining, 100);
-      let matchIdsUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${currentStart}&count=${fetchCount}`;
-      
-      if (queue === 'ranked_solo') {
-        matchIdsUrl += '&queue=420';
-      } else if (queue === 'ranked_flex') {
-        matchIdsUrl += '&queue=440';
-      } else if (queue === 'aram') {
-        matchIdsUrl += '&queue=450';
-      } else if (queue === 'normal') {
-        matchIdsUrl += '&type=normal';
+      if (queue === 'aram') {
+        const url450 = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=100&queue=450`;
+        const url480 = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=100&queue=480`;
+        
+        const [res450, res480] = await Promise.all([
+          axios.get(url450, getRiotHeaders()).catch(() => ({ data: [] })),
+          axios.get(url480, getRiotHeaders()).catch(() => ({ data: [] }))
+        ]);
+        
+        let combined = [...res450.data, ...res480.data];
+        combined.sort((a, b) => {
+          const numA = parseInt(a.split('_')[1] || '0', 10);
+          const numB = parseInt(b.split('_')[1] || '0', 10);
+          return numB - numA;
+        });
+        
+        matchIds = combined.slice(start, start + count);
+      } else {
+        let currentStart = start;
+        let remaining = count;
+
+        while (remaining > 0) {
+          const fetchCount = Math.min(remaining, 100);
+          let matchIdsUrl = `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${currentStart}&count=${fetchCount}`;
+          
+          if (queue === 'ranked_solo') {
+            matchIdsUrl += '&queue=420';
+          } else if (queue === 'ranked_flex') {
+            matchIdsUrl += '&queue=440';
+          } else if (queue === 'normal') {
+            matchIdsUrl += '&type=normal';
+          }
+
+          console.log(`Calling Riot Matches API: ${matchIdsUrl}`);
+          const matchIdsResponse = await axios.get(matchIdsUrl, getRiotHeaders());
+          const chunk = matchIdsResponse.data;
+          
+          if (!chunk || chunk.length === 0) break;
+
+          matchIds = matchIds.concat(chunk);
+          if (chunk.length < fetchCount) break;
+          
+          currentStart += chunk.length;
+          remaining -= chunk.length;
+        }
       }
 
-      console.log(`Calling Riot Matches by PUUID API: ${matchIdsUrl}`);
-      const matchIdsResponse = await axios.get(matchIdsUrl, getRiotHeaders());
-      const chunk = matchIdsResponse.data;
-      
-      if (!chunk || chunk.length === 0) {
-        break;
-      }
-
-      matchIds = matchIds.concat(chunk);
-      if (chunk.length < fetchCount) {
-        break; // No more matches available from Riot
-      }
-      currentStart += chunk.length;
-      remaining -= chunk.length;
-    }
-
-    if (matchIds.length === 0) {
+      if (matchIds.length === 0) {
       return res.json([]);
     }
 
