@@ -677,7 +677,7 @@ export default function App() {
             {isWin ? t('match.victoryCap') : t('match.defeatCap')} ({teamId === 100 ? t('match.blueTeam') : t('match.redTeam')})
           </span>
           <span className="team-summary-stats mono">
-            {totalKills} / {totalDeaths} / {totalAssists} <span style={{ color: 'var(--text-muted)', margin: '0 0.5rem' }}>|</span> <span style={{ color: 'var(--text-secondary)' }}>{(totalGold / 1000).toFixed(1)}k Oro</span>
+            {totalKills} / {totalDeaths} / {totalAssists} <span style={{ color: 'var(--text-muted)', margin: '0 0.5rem' }}>|</span> <span style={{ color: 'var(--text-secondary)' }}>{(totalGold / 1000).toFixed(1)}k {t('match.gold') || 'Gold'}</span>
           </span>
         </div>
         
@@ -959,7 +959,7 @@ export default function App() {
             </svg>
             <div className="donut-label">
               <span className="winrate-percent">{winRate}%</span>
-              <span className="games-count">{wins}V {losses}D</span>
+              <span className="games-count">{wins}{t('profile.winLetter') || 'W'} {losses}{t('profile.lossLetter') || 'L'}</span>
             </div>
           </div>
           <div className="summary-title-col">
@@ -969,7 +969,7 @@ export default function App() {
         </div>
 
         <div className="summary-section kda-average-section">
-          <span className="section-title">KDA Promedio</span>
+          <span className="section-title">{t('profile.kdaAverage') || 'Average KDA'}</span>
           <div className="kda-num-row">
             <span>{avgKills}</span> / <span className="deaths-red">{avgDeaths}</span> / <span>{avgAssists}</span>
           </div>
@@ -980,11 +980,11 @@ export default function App() {
           }}>
             {avgKDA}:1 KDA
           </div>
-          <span className="summary-subtext">{avgCsPerMin} CS/min promedio</span>
+          <span className="summary-subtext">{avgCsPerMin} {t('profile.csPerMinAvg') || 'CS/min avg'}</span>
         </div>
 
         <div className="summary-section champs-played-section">
-          <span className="section-title">Campeones Usados</span>
+          <span className="section-title">{t('profile.championsUsed') || 'Champions Played'}</span>
           <div className="summary-champs-list">
             {sortedChamps.map(champ => {
               const champWinRate = Math.round((champ.wins / champ.games) * 100);
@@ -994,7 +994,7 @@ export default function App() {
                   <img src={getChampIcon(champ.name)} alt={champ.name} className="summary-champ-icon" />
                   <div className="summary-champ-info">
                     <span className="champ-name-text">{champ.name}</span>
-                    <span className="champ-winrate-text">{champWinRate}% WR ({champ.games} part.)</span>
+                    <span className="champ-winrate-text">{champWinRate}% WR ({champ.games} {t('profile.gamesShort') || 'games'})</span>
                   </div>
                   <span className="summary-champ-kda">{champKda} KDA</span>
                 </div>
@@ -1004,14 +1004,14 @@ export default function App() {
         </div>
 
         <div className="summary-section roles-played-section">
-          <span className="section-title">Preferencia de Roles</span>
+          <span className="section-title">{t('profile.rolePreference') || 'Role Preference'}</span>
           {rolesDist.length > 0 ? (
             <div className="summary-roles-list">
               {rolesDist.map(role => (
                 <div key={role.name} className="summary-role-row">
                   <div className="role-label-col">
                     <span className="role-name-text">{role.name}</span>
-                    <span className="role-count-text">{role.count} part.</span>
+                    <span className="role-count-text">{role.count} {t('profile.gamesShort') || 'games'}</span>
                   </div>
                   <div className="role-bar-wrapper">
                     <div className="role-bar-fill" style={{ width: `${role.percent}%` }}></div>
@@ -1022,7 +1022,7 @@ export default function App() {
             </div>
           ) : (
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem', fontStyle: 'italic' }}>
-              No disponible en ARAM / Modos Especiales
+              {t('profile.notAvailableAram') || 'Not available in ARAM / Special Modes'}
             </div>
           )}
         </div>

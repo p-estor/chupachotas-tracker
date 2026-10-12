@@ -63,7 +63,15 @@
     "loadingStats": "LOADING STATS...",
     "overview": "Overview",
     "champions": "Champions",
-    "loadingSubtitle": "This may take a few seconds while gathering data from Riot API."
+    "loadingSubtitle": "This may take a few seconds while gathering data from Riot API.",
+    "kdaAverage": "Average KDA",
+    "csPerMinAvg": "CS/min avg",
+    "championsUsed": "Champions Played",
+    "gamesShort": "games",
+    "rolePreference": "Role Preference",
+    "notAvailableAram": "Not available in ARAM / Special Modes",
+    "winLetter": "W",
+    "lossLetter": "L"
   },
   "match": {
     "win": "Victory",
@@ -81,7 +89,15 @@
     "victoryCap": "Victory",
     "defeatCap": "Defeat",
     "blueTeam": "Blue Team",
-    "redTeam": "Red Team"
+    "redTeam": "Red Team",
+    "gold": "Gold",
+    "champion": "Champion",
+    "summoner": "Summoner",
+    "kda": "KDA",
+    "damage": "Damage",
+    "cs": "CS",
+    "vision": "Vision",
+    "items": "Items"
   },
   "champions": {
     "winrate": "Winrate"
