@@ -18,7 +18,9 @@
     "emptyField": "El nombre o el tag no pueden estar vacíos.",
     "filterError": "Error al actualizar el filtro de partidas.",
     "apiLimit": "Límite de API Excedido",
-    "connectionError": "Error de Conexión / Búsqueda"
+    "connectionError": "Error de Conexión / Búsqueda",
+    "summonerNotFound": "Invocador no encontrado. Verifica que el nombre y el TAG sean correctos (ej: Faker#KR1).",
+    "searchFailed": "No se pudo encontrar el invocador. Verifica el nombre, tag y región."
   },
   "profile": {
     "loading": "Cargando perfil...",
@@ -71,7 +73,11 @@
     "rolePreference": "Preferencia de Roles",
     "notAvailableAram": "No disponible en ARAM / Modos Especiales",
     "winLetter": "V",
-    "lossLetter": "D"
+    "lossLetter": "D",
+    "lpTrend": "Tendencia de LP (Últimos 30 días)",
+    "calculatingAram": "Calculando estadísticas de ARAM...",
+    "analyzingRift": "Analizando la Grieta del Invocador...",
+    "noFilterRecords": "No se encontraron registros con los filtros actuales."
   },
   "match": {
     "win": "Victoria",

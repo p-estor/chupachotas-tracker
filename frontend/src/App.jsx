@@ -468,12 +468,12 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      let msg = 'No se pudo encontrar el invocador. Verifica el nombre, tag y región.';
+      let msg = t('errors.searchFailed') || 'Could not find summoner. Please check name, tag and region.';
       if (err.response) {
         if (err.response.status === 429) {
           msg = 'Se ha superado el límite de peticiones (API Rate Limit) de Riot Games. Por favor, espera un momento antes de volver a intentarlo.';
         } else if (err.response.status === 404) {
-          msg = 'Invocador no encontrado. Verifica que el nombre y el TAG sean correctos (ej: Faker#KR1).';
+          msg = t('errors.summonerNotFound') || 'Summoner not found. Please verify the name and TAG are correct (e.g., Faker#KR1).';
         } else if (err.response.data?.error) {
           msg = err.response.data.error;
         }
@@ -683,14 +683,14 @@ export default function App() {
         
         <div className="expanded-table-wrapper">
           <div className="expanded-table-header">
-            <span>Campeón</span>
-            <span>Invocador</span>
+            <span>{t('match.champion') || 'Champion'}</span>
+            <span>{t('match.summoner') || 'Summoner'}</span>
             <span>KDA</span>
-            <span>Daño</span>
-            <span>Oro</span>
-            <span>CS</span>
-            <span>Visión</span>
-            <span>Objetos</span>
+            <span>{t('match.damage') || 'Damage'}</span>
+            <span>{t('match.gold') || 'Gold'}</span>
+            <span>{t('match.cs') || 'CS'}</span>
+            <span>{t('match.vision') || 'Vision'}</span>
+            <span>{t('match.items') || 'Items'}</span>
           </div>
 
           <div className="expanded-table-rows">
@@ -1127,7 +1127,7 @@ export default function App() {
 
     return (
       <div className="lp-trend-container">
-        <span className="lp-trend-title">Tendencia de LP (Últimos 30 días)</span>
+        <span className="lp-trend-title">{t('profile.lpTrend') || 'LP Trend (Last 30 days)'}</span>
         <div className="lp-trend-chart-wrapper">
           <svg className="lp-trend-svg" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
             <defs>
@@ -1960,7 +1960,7 @@ export default function App() {
               ) : (
                 <tr>
                   <td colSpan="9" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                    No se encontraron registros con los filtros actuales.
+                    {t('profile.noFilterRecords') || 'No records found with current filters.'}
                   </td>
                 </tr>
               )}
@@ -2205,7 +2205,7 @@ export default function App() {
         {loadingAram && (
           <div className="loader dpm-loader" style={{ marginTop: '2rem' }}>
             <div className="spinner"></div>
-            <p>Calculando estadísticas de ARAM...</p>
+            <p>{t('profile.calculatingAram') || 'Calculating ARAM stats...'}</p>
           </div>
         )}
 
@@ -2717,7 +2717,7 @@ export default function App() {
         ) : (
           <div className="loader dpm-loader">
             <div className="spinner"></div>
-            <p>Analizando la Grieta del Invocador...</p>
+            <p>{t('profile.analyzingRift') || "Analyzing Summoner's Rift..."}</p>
           </div>
         )
       )}

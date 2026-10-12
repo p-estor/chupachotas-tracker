@@ -18,7 +18,9 @@
     "emptyField": "Name or tag cannot be empty.",
     "filterError": "Failed to update matches filter.",
     "apiLimit": "API Rate Limit Exceeded",
-    "connectionError": "Connection / Search Error"
+    "connectionError": "Connection / Search Error",
+    "summonerNotFound": "Summoner not found. Please verify the name and TAG are correct (e.g., Faker#KR1).",
+    "searchFailed": "Could not find summoner. Please check name, tag and region."
   },
   "profile": {
     "loading": "Loading profile...",
@@ -71,7 +73,11 @@
     "rolePreference": "Role Preference",
     "notAvailableAram": "Not available in ARAM / Special Modes",
     "winLetter": "W",
-    "lossLetter": "L"
+    "lossLetter": "L",
+    "lpTrend": "LP Trend (Last 30 days)",
+    "calculatingAram": "Calculating ARAM stats...",
+    "analyzingRift": "Analyzing Summoner's Rift...",
+    "noFilterRecords": "No records found with current filters."
   },
   "match": {
     "win": "Victory",
