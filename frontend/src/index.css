@@ -767,7 +767,7 @@ header p {
 /* Table Header */
 .expanded-table-header {
   display: grid;
-  grid-template-columns: 50px 150px 80px 110px 60px 60px 55px 190px;
+  grid-template-columns: 72px 145px 80px 110px 60px 60px 55px 185px;
   padding: 0.5rem 1.25rem;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid var(--border-color);
@@ -780,7 +780,7 @@ header p {
 /* Table Rows */
 .expanded-row {
   display: grid;
-  grid-template-columns: 50px 150px 80px 110px 60px 60px 55px 190px;
+  grid-template-columns: 72px 145px 80px 110px 60px 60px 55px 185px;
   padding: 0.65rem 1.25rem;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
