@@ -1,4 +1,4 @@
-﻿# Registro de Problemas y Soluciones SEO (Chupachotas Tracker)
+# Registro de Problemas y Soluciones SEO (Chupachotas Tracker)
 
 Este documento registra los problemas técnicos de posicionamiento (SEO) y rendimiento encontrados en el proyecto, así como la solución exacta que se implementó para cada uno.
 
@@ -27,3 +27,7 @@ Este documento registra los problemas técnicos de posicionamiento (SEO) y rendi
 ## 6. Error de GSC (Actualización): Validation Failed en "Duplicate sin canonical"
 * **El Problema:** La inyección de metadatos mediante React (desde el cliente) era demasiado lenta. Googlebot tomaba una "foto" del HTML antes de que la llamada a la API de Riot terminase, por lo que seguía viendo el título genérico.
 * **La Solución:** Se implementó *Server-Side Injection (SSI)*. Nginx ahora intercepta a Googlebot y lo envía a \/api/bot-seo\. El backend lee el \index.html\ real de React, inyecta las etiquetas SEO dinámicas directamente en el código fuente, y devuelve la app completa. Googlebot recibe los metadatos perfectos de forma instantánea.
+
+## 7. Error de GSC: "Duplicate without user-selected canonical" en perfiles inexistentes o eliminados (Soft 404)
+* **El Problema:** Googlebot rastreó URLs de invocadores antiguos que cambiaron de nombre o ya no existen en Riot (ej. `hygonskitten-kandi?match=...` o `Challengerina-EGO`). En `/api/bot-seo`, cuando la llamada a la API de Riot fallaba con 404, el bloque `catch` devolvía `index.html` con código HTTP `200 OK`, el `<title>` genérico de la home y sin etiqueta canonical. Googlebot interpretaba esto como un "Soft 404" (duplicado de la página de inicio sin canonical).
+* **La Solución:** En el bloque `catch` de `/api/bot-seo` en `backend/server.js`, ahora se inyecta `<meta name="robots" content="noindex, nofollow" />`, se modifica el título a "Invocador no encontrado - Chupachotas Tracker" y se devuelve un código de estado HTTP `404 Not Found`. De este modo, Googlebot descarta inmediatamente estas URLs muertas del índice sin considerarlas duplicados.

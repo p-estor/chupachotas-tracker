@@ -806,10 +806,14 @@ app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
   } catch (error) {
     const fs = require('fs');
     try {
-      const html = fs.readFileSync('/var/www/tracker/index.html', 'utf8');
-      res.send(html);
+      let html = fs.readFileSync('/var/www/tracker/index.html', 'utf8');
+      const notFoundTitle = 'Invocador no encontrado - Chupachotas Tracker';
+      html = html.replace(/<title>.*?<\/title>/i, '<title>' + notFoundTitle + '</title>');
+      const noindexTags = '\n    <meta name="robots" content="noindex, nofollow" />\n  </head>';
+      html = html.replace('</head>', noindexTags);
+      res.status(404).send(html);
     } catch (e) {
-      res.status(500).send('Error');
+      res.status(404).send('Not Found');
     }
   }
 });
