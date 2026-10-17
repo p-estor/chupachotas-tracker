@@ -403,10 +403,14 @@ function calculateAverageElo(participantsRanks) {
 app.get('/api/matches/:region/:puuid', async (req, res) => {
   const { region, puuid } = req.params;
   const { route } = getRegionSettings(region);
+  const ua = req.headers['user-agent'] || '';
+  const isBot = /googlebot|bingbot|yandexbot|duckduckbot|slurp|baiduspider|facebookexternalhit|twitterbot|discordbot|applebot|semrushbot|ahrefsbot/i.test(ua);
   const start = parseInt(req.query.start || 0, 10); // Support pagination start index
-  const count = parseInt(req.query.count || 8, 10); // Default to 8 matches for speed
+  const rawCount = parseInt(req.query.count || 8, 10); // Default to 8 matches for speed
+  // ponytail: bots only get up to 8 matches and never trigger deep 150-match Riot fetches that fill the 8.7GB VPS disk
+  const count = isBot ? Math.min(rawCount, 8) : rawCount;
   const queue = req.query.queue; // 'ranked_solo', 'ranked_flex', 'aram', 'normal', 'all'
-  const forceRefresh = req.query.refresh === 'true';
+  const forceRefresh = isBot ? false : (req.query.refresh === 'true');
 
   try {
           // Step A: Get match IDs from Riot API
@@ -479,7 +483,9 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
 
     // Step C: Fetch details for each match ID (either from SQLite or Riot API)
     const neutralMatches = [];
-    const missMatchIds = matchIds.filter(id => !cachedMatchesMap[id]);
+    const allMissMatchIds = matchIds.filter(id => !cachedMatchesMap[id]);
+    // ponytail: bots download at most 2 uncached matches to avoid 3-minute Riot API loops and Nginx 499 timeouts
+    const missMatchIds = isBot ? allMissMatchIds.slice(0, 2) : allMissMatchIds;
 
     // Primero agregamos todas las partidas que ya están en caché (para una respuesta rápida)
     matchIds.forEach(matchId => {
@@ -642,8 +648,14 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
 
     res.json(matchesWithPlayerStats);
 
-    // Index participants in background directory for autocompletion (do not await)
-    if (neutralMatches.length > 0) {
+    // Auto-prune old cache entries occasionally to prevent SQLite from filling the 8.7GB disk
+    if (missMatchIds.length > 0 && Math.random() < 0.1) {
+      db.run('DELETE FROM matches WHERE rowid NOT IN (SELECT rowid FROM matches ORDER BY rowid DESC LIMIT 25000)').catch(() => {});
+      db.run('DELETE FROM summoner_directory WHERE rowid NOT IN (SELECT rowid FROM summoner_directory ORDER BY rowid DESC LIMIT 60000)').catch(() => {});
+    }
+
+    // Index participants in background directory for autocompletion (do not await, skip for bots)
+    if (neutralMatches.length > 0 && !isBot) {
       const allParticipants = neutralMatches.flatMap(m => m.participants);
       indexParticipants(allParticipants, region).then(() => {
         console.log(`[Directory Index] Successfully indexed ${allParticipants.length} participants in the background.`);
