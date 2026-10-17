@@ -301,7 +301,7 @@ export default function App() {
     fetchAramMatches();
   }, [activeTab, summoner, region]);
 
-  // Fetch up to 150 matches for statistics calculation in the background when a summoner is loaded
+  // ponytail: Fetch up to 20 matches (OP.GG standard) instead of 150 to save Riot API quota and SQLite disk space
   useEffect(() => {
     if (!summoner || statsMatches !== null) return;
 
@@ -309,7 +309,7 @@ export default function App() {
       setLoadingStatsMatches(true);
       try {
         const res = await axios.get(
-          `${BACKEND_URL}/matches/${region}/${summoner.puuid}?count=150&queue=all`
+          `${BACKEND_URL}/matches/${region}/${summoner.puuid}?count=20&queue=all`
         );
         setStatsMatches(res.data);
       } catch (err) {
@@ -1756,7 +1756,7 @@ export default function App() {
               animation: 'pulse 1.5s infinite ease-in-out',
               marginBottom: '1rem'
             }}></div>
-            <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>{t('profile.loading150') || 'Loading and analyzing last 150 matches...'}</p>
+            <p style={{ fontSize: '1.1rem', fontWeight: '500' }}>{t('profile.loading150') || 'Loading and analyzing last 20 matches...'}</p>
             <span style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '0.5rem' }}>{t('profile.loadingSubtitle') || 'This may take a few seconds while gathering data from Riot.'}</span>
           </div>
         </div>
