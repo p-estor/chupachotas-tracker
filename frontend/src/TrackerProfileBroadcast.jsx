@@ -286,6 +286,34 @@ export default function TrackerProfileBroadcast({
               </div>
             )}
 
+            {/* RANKED 5S CARD */}
+            {summoner.ranks?.ranked5s && (
+              <div className="broadcast-card broadcast-rank-card" style={{ '--rank-glow-color': getRankBadgeColor(summoner.ranks.ranked5s.tier) }}>
+                <div className="broadcast-rank-header">Ranked 5s</div>
+                <div className="broadcast-rank-body-with-icon">
+                  <img 
+                    src={getRankBadgeIcon(summoner.ranks.ranked5s.tier)} 
+                    alt={summoner.ranks.ranked5s.tier} 
+                    className="broadcast-rank-badge-img" 
+                  />
+                  <div className="broadcast-rank-body">
+                    <div className="broadcast-rank-main">
+                      <span className="broadcast-rank-tier" style={{ color: getRankBadgeColor(summoner.ranks.ranked5s.tier) }}>
+                        {summoner.ranks.ranked5s.tier} {summoner.ranks.ranked5s.rank}
+                      </span>
+                      <span className="broadcast-rank-lp mono">{summoner.ranks.ranked5s.leaguePoints} LP</span>
+                    </div>
+                    <div className="broadcast-rank-wl mono">
+                      <span style={{ color: 'var(--win-color)' }}>{summoner.ranks.ranked5s.wins}W</span>
+                      <span> / </span>
+                      <span style={{ color: 'var(--loss-color)' }}>{summoner.ranks.ranked5s.losses}L</span>
+                      <span className="muted-ratio"> ({summoner.ranks.ranked5s.winRate}%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* QUEUE FILTERS */}
             <div className="broadcast-card broadcast-filter-card">
               <div className="broadcast-card-title">{t('profile.queueFilter')}</div>
@@ -294,6 +322,7 @@ export default function TrackerProfileBroadcast({
                   { id: 'all', label: t('profile.all') },
                   { id: 'ranked_solo', label: t('profile.soloq') },
                   { id: 'ranked_flex', label: t('profile.flex') },
+                  { id: 'ranked_5s', label: '5V5' },
                   { id: 'aram', label: 'ARAM' },
                   { id: 'normal', label: t('profile.normal') },
                 ].map(f => (

@@ -196,6 +196,7 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
 
     let soloRank = null;
     let flexRank = null;
+    let ranked5sRank = null;
 
     // Step C: Get League-v4 rank info using the PUUID directly (modern endpoint)
     const leagueUrl = `https://${platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
@@ -203,7 +204,7 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
     try {
       const leagueResponse = await axios.get(leagueUrl, getRiotHeaders());
       
-      // Parse queue types (Solo/Duo vs Flex)
+      // Parse queue types (Solo/Duo vs Flex vs Ranked 5s)
       leagueResponse.data.forEach(entry => {
         const rankInfo = {
           tier: entry.tier,
@@ -218,6 +219,8 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
           soloRank = rankInfo;
         } else if (entry.queueType === 'RANKED_FLEX_SR') {
           flexRank = rankInfo;
+        } else if (entry.queueType === 'RANKED_PREMADE_5x5' || entry.queueType === 'RANKED_TEAM_5x5') {
+          ranked5sRank = rankInfo;
         }
       });
     } catch (leagueErr) {
@@ -247,7 +250,8 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
       summonerLevel,
       ranks: {
         solo: soloRank,
-        flex: flexRank
+        flex: flexRank,
+        ranked5s: ranked5sRank
       },
       masteries
     };
@@ -520,6 +524,8 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
             matchIdsUrl += '&queue=420';
           } else if (queue === 'ranked_flex') {
             matchIdsUrl += '&queue=440';
+          } else if (queue === 'ranked_5s') {
+            matchIdsUrl += '&queue=710';
           } else if (queue === 'normal') {
             matchIdsUrl += '&type=normal';
           }

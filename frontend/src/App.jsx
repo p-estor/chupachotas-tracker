@@ -135,6 +135,7 @@ const getQueueDisplayName = (match, t) => {
   const qId = match.queueId;
   if (qId === 420) return t('queues.solo');
   if (qId === 440) return t('queues.flex');
+  if (qId === 710 || qId === 700 || qId === 720) return t('queues.ranked5s') || 'Ranked 5s';
   if ((qId === 450 || qId === 480)) return t('queues.aram');
   
   // Normal queues: 400 (5v5 Draft Pick), 430 (5v5 Blind Pick), 490 (Quickplay)
@@ -1241,8 +1242,8 @@ export default function App() {
 
     const currentLp = soloRank.leaguePoints || 0;
 
-    // Filter matches to find Ranked Solo games
-    const soloQMatches = matches ? matches.filter(m => m.queueId === 420 || (m.gameMode === 'CLASSIC' && m.queueId !== 440)) : [];
+    // Filter matches to find Ranked Solo games (ponytail: exclude Flex 440, Ranked 5s 710, and Normal queues)
+    const soloQMatches = matches ? matches.filter(m => m.queueId === 420) : [];
     
     // Reconstruct LP points dynamically
     let lpPoints = [currentLp];
@@ -1492,6 +1493,7 @@ export default function App() {
       // Queue filter
       if (championsQueueFilter === 'solo' && m.queueId !== 420) return;
       if (championsQueueFilter === 'flex' && m.queueId !== 440) return;
+      if (championsQueueFilter === 'ranked_5s' && m.queueId !== 710) return;
       if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.queueId !== 480 && m.gameMode !== 'ARAM') return;
 
       // Role filter
@@ -1577,8 +1579,9 @@ export default function App() {
       // Filtrar según queueFilter del sidebar
       if (queueFilter === 'ranked_solo' && m.queueId !== 420) return;
       if (queueFilter === 'ranked_flex' && m.queueId !== 440) return;
+      if (queueFilter === 'ranked_5s' && m.queueId !== 710) return;
       if (queueFilter === 'aram' && m.queueId !== 450 && m.queueId !== 480 && m.gameMode !== 'ARAM') return;
-      if (queueFilter === 'normal' && (m.queueId === 420 || m.queueId === 440 || m.queueId === 450 || m.queueId === 480)) return;
+      if (queueFilter === 'normal' && (m.queueId === 420 || m.queueId === 440 || m.queueId === 710 || m.queueId === 450 || m.queueId === 480)) return;
 
       if (!champStats[champName]) {
         champStats[champName] = {
@@ -1642,6 +1645,7 @@ export default function App() {
       // Queue filter
       if (championsQueueFilter === 'solo' && m.queueId !== 420) return;
       if (championsQueueFilter === 'flex' && m.queueId !== 440) return;
+      if (championsQueueFilter === 'ranked_5s' && m.queueId !== 710) return;
       if (championsQueueFilter === 'aram' && m.queueId !== 450 && m.queueId !== 480 && m.gameMode !== 'ARAM') return;
 
       const participants = m.participants || [];
@@ -1853,6 +1857,7 @@ export default function App() {
               { id: 'all', label: 'All' },
               { id: 'solo', label: 'Solo' },
               { id: 'flex', label: 'Flex' },
+              { id: 'ranked_5s', label: '5v5' },
               { id: 'aram', label: 'Aram' }
             ].map(q => (
               <button
@@ -2818,13 +2823,36 @@ export default function App() {
                 )}
               </div>
 
+              {/* Ranked 5s Card */}
+              {summoner.ranks.ranked5s && (
+                <div className="dpm-rank-card compact">
+                  <div className="dpm-rank-card-header">
+                    <span className="dpm-rank-card-type">Ranked 5s</span>
+                    <span className="dpm-rank-card-level">{summoner.ranks.ranked5s.tier} {summoner.ranks.ranked5s.rank}</span>
+                  </div>
+                  <div className="dpm-rank-card-body">
+                    <div className="dpm-rank-card-row">
+                      <img 
+                        src={getRankBadgeIcon(summoner.ranks.ranked5s.tier)} 
+                        alt={summoner.ranks.ranked5s.tier} 
+                        className="dpm-rank-badge-img" 
+                      />
+                      <div className="dpm-rank-stats-details">
+                        <span className="dpm-rank-lp">{summoner.ranks.ranked5s.leaguePoints} LP</span>
+                        <span className="dpm-rank-wl">{summoner.ranks.ranked5s.wins}V - {summoner.ranks.ranked5s.losses}D ({summoner.ranks.ranked5s.winRate}% WR)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Queue Filters */}
               <div className="dpm-sidebar-filters">
                 {[
                   { id: 'all', label: 'All' },
                   { id: 'ranked_solo', label: 'Solo' },
                   { id: 'ranked_flex', label: 'Flex' },
-                  
+                  { id: 'ranked_5s', label: '5v5' },
                   { id: 'aram', label: 'Aram' },
                   { id: 'normal', label: 'Normal' }
                 ].map(filter => (

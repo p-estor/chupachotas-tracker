@@ -60,6 +60,7 @@
     "all": "ALL",
     "soloq": "SOLOQ",
     "flex": "FLEX",
+    "ranked5s": "RANKED 5S",
     "normal": "NORMAL",
     "topChamps": "Top Champions",
     "loadingStats": "LOADING STATS...",
@@ -111,6 +112,7 @@
   "queues": {
     "solo": "Ranked Solo/Duo",
     "flex": "Ranked Flex",
+    "ranked5s": "Ranked 5s",
     "normal": "Normal",
     "aram": "ARAM"
   },

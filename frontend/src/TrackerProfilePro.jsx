@@ -97,6 +97,29 @@ export default function TrackerProfilePro({
           </div>
         )}
 
+        {summoner.ranks?.ranked5s && (
+          <div className="pro-terminal-panel">
+            <div className="pro-terminal-panel-title">RANKED_5S</div>
+            <div style={{ padding: '0.75rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>TIER</span>
+                <span className="mono" style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>
+                  {summoner.ranks.ranked5s.tier} {summoner.ranks.ranked5s.rank}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>W/L</span>
+                <span className="mono">
+                  <span style={{ color: 'var(--win-color)' }}>{summoner.ranks.ranked5s.wins}W</span>
+                  {' '}-{' '}
+                  <span style={{ color: 'var(--loss-color)' }}>{summoner.ranks.ranked5s.losses}L</span>
+                  {' '}({summoner.ranks.ranked5s.winRate}%)
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* QUEUE FILTERS */}
         <div className="pro-terminal-panel">
           <div className="pro-terminal-panel-title">QUEUE_FILTER</div>
@@ -105,6 +128,7 @@ export default function TrackerProfilePro({
               { id: 'all', label: t('profile.all') },
               { id: 'ranked_solo', label: 'SOLO' },
               { id: 'ranked_flex', label: t('profile.flex') },
+              { id: 'ranked_5s', label: '5V5' },
               { id: 'aram', label: 'ARAM' },
               { id: 'normal', label: 'NORM' },
             ].map(f => (
