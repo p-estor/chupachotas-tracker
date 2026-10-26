@@ -129,5 +129,21 @@
     "poorTeam": "Weak Team",
     "good": "Good Game",
     "poor": "Bad Game"
+  },
+  "multisearch": {
+    "navLink": "Multi-Search",
+    "homeLink": "Search",
+    "title": "Multi-Search · Team Scouting",
+    "subtitle": "Enter up to 5 summoners (one per line, comma-separated, or paste lobby chat) to compare ranks, roles, streaks and champion pools side-by-side.",
+    "placeholder": "xkai#uwu\nmaltroy#000\ndogka#guau\npablo el pedrolo#euw\nRottenBleu#RTT",
+    "searchBtn": "Search multiple summoners",
+    "copyLink": "Copy Draft Link",
+    "copied": "Link Copied!",
+    "winStreak": "{{count}} game win streak",
+    "lossStreak": "{{count}} game loss streak",
+    "recentChampions": "Recent Champions",
+    "noGames": "No recent matches",
+    "notFound": "Summoner not found",
+    "emptyHint": "Paste up to 5 Riot IDs above and click Search to scout your teammates or opponents for Draft."
   }
 }

@@ -151,6 +151,42 @@ const getQueueDisplayName = (match, t) => {
 };
 
 
+
+const ROLE_ICONS_MAP = {
+  TOP:     'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Top_icon.png',
+  JUNGLE:  'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Jungle_icon.png',
+  MID:     'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Middle_icon.png',
+  ADC:     'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Bottom_icon.png',
+  SUPPORT: 'https://wiki.leagueoflegends.com/en-us/Special:FilePath/Support_icon.png',
+};
+
+const parseMultiSearchInput = (rawText) => {
+  if (!rawText || typeof rawText !== 'string') return [];
+  // ponytail: strip Riot Client invisible bidi control chars pasted from lobby chat
+  const cleaned = rawText.replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g, '');
+  const segments = cleaned.split(/[\r\n,]+/);
+  const seen = new Set();
+  const result = [];
+
+  for (let seg of segments) {
+    seg = seg
+      .replace(/\s+(se ha unido a la sala|se uni[oó] a la sala|ha entrado en la sala|joined the lobby|has joined the lobby|a rejoint le salon).*$/i, '')
+      .trim();
+    if (!seg || !seg.includes('#')) continue;
+    const hashIdx = seg.lastIndexOf('#');
+    const gameName = seg.slice(0, hashIdx).trim();
+    const tagLine = seg.slice(hashIdx + 1).trim().split(/\s+/)[0];
+    if (!gameName || !tagLine) continue;
+    const key = `${gameName.toLowerCase()}#${tagLine.toLowerCase()}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push({ key, gameName, tagLine });
+      if (result.length >= 5) break;
+    }
+  }
+  return result;
+};
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const [search, setSearch] = useState('');
@@ -183,6 +219,12 @@ export default function App() {
   const [queueFilter, setQueueFilter] = useState('all');
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('broadcast');
+
+  // Multi-Search states
+  const [isMultiSearch, setIsMultiSearch] = useState(false);
+  const [multiSearchInput, setMultiSearchInput] = useState('');
+  const [multiSearchPlayers, setMultiSearchPlayers] = useState([]);
+  const [multiLinkCopied, setMultiLinkCopied] = useState(false);
 
   // Fetch champion list from DDragon on mount to resolve championIds to names
   useEffect(() => {
@@ -373,10 +415,40 @@ export default function App() {
     fetchChallengePlayers();
   }, []);
 
-  // Parse URL on mount to load summoner from path (e.g. /euw/Naysul-EUW)
+  // Parse URL on mount to load summoner from path (e.g. /euw/Naysul-EUW) or Multi-Search (/multi/euw?players=...)
   useEffect(() => {
     const path = window.location.pathname;
     const parts = path.split('/').filter(Boolean);
+
+    if (parts[0]?.toLowerCase() === 'multi') {
+      const pathRegion = parts[1]?.toLowerCase();
+      const activeRegion = REGIONS.some(r => r.key === pathRegion) ? pathRegion : 'euw';
+      setRegion(activeRegion);
+      setIsMultiSearch(true);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const rawPlayers = urlParams.get('players');
+      if (rawPlayers) {
+        const lines = rawPlayers
+          .split(',')
+          .map(token => {
+            const decoded = decodeURIComponent(token.trim());
+            const lastDash = decoded.lastIndexOf('-');
+            if (lastDash > 0) {
+              return `${decoded.slice(0, lastDash)}#${decoded.slice(lastDash + 1)}`;
+            }
+            return decoded;
+          })
+          .filter(Boolean);
+        const text = lines.join('\n');
+        setMultiSearchInput(text);
+        const parsed = parseMultiSearchInput(text);
+        if (parsed.length > 0) {
+          executeMultiSearch(parsed, activeRegion, false);
+        }
+      }
+      return;
+    }
     
     if (parts.length === 2) {
       const pathRegion = parts[0].toLowerCase();
@@ -401,6 +473,7 @@ export default function App() {
   }, []);
 
   const performSearch = async (gameName, tagLine, searchRegion, forceRefresh = false, autoExpandMatchId = null) => {
+    setIsMultiSearch(false);
     setLoading(true);
     setError('');
     // On hard refresh, we don't nullify summoner state immediately to prevent visual flashing, or we can, but let's keep UX smooth.
@@ -2484,6 +2557,442 @@ export default function App() {
     );
   };
 
+
+  const executeMultiSearch = async (parsedList, searchRegion = region, pushUrl = true) => {
+    if (!parsedList || parsedList.length === 0) return;
+    setIsMultiSearch(true);
+    setError('');
+
+    if (pushUrl) {
+      const encodedPlayers = parsedList
+        .map(p => `${encodeURIComponent(p.gameName)}-${encodeURIComponent(p.tagLine)}`)
+        .join(',');
+      window.history.pushState({}, '', `/multi/${searchRegion}?players=${encodedPlayers}`);
+    }
+
+    setMultiSearchPlayers(
+      parsedList.map(p => ({
+        ...p,
+        loading: true,
+        error: null,
+        summoner: null,
+        matches: []
+      }))
+    );
+
+    // ponytail: sequential fetch per summoner so shared premade matches hit SQLite cache on subsequent players and avoid Riot 429 bursts
+    for (let i = 0; i < parsedList.length; i++) {
+      const item = parsedList[i];
+      try {
+        const sumUrl = `${BACKEND_URL}/summoner/${searchRegion}/${encodeURIComponent(item.gameName)}/${encodeURIComponent(item.tagLine)}`;
+        const sumRes = await axios.get(sumUrl);
+        const sumData = sumRes.data;
+
+        const matchRes = await axios.get(
+          `${BACKEND_URL}/matches/${searchRegion}/${sumData.puuid}?count=20&queue=all`
+        );
+        const matchData = Array.isArray(matchRes.data) ? matchRes.data : [];
+
+        setMultiSearchPlayers(prev =>
+          prev.map((col, idx) =>
+            idx === i
+              ? { ...col, loading: false, summoner: sumData, matches: matchData }
+              : col
+          )
+        );
+      } catch (err) {
+        const status = err.response?.status;
+        const errMsg = status === 404
+          ? (t('multisearch.notFound') || 'Summoner not found')
+          : status === 429
+            ? 'Rate Limit (429)'
+            : (t('errors.connectionError') || 'Error');
+        setMultiSearchPlayers(prev =>
+          prev.map((col, idx) =>
+            idx === i ? { ...col, loading: false, error: errMsg } : col
+          )
+        );
+      }
+    }
+  };
+
+  const handleMultiSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    const parsed = parseMultiSearchInput(multiSearchInput);
+    if (parsed.length === 0) return;
+    executeMultiSearch(parsed, region, true);
+  };
+
+  const handleCopyMultiLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setMultiLinkCopied(true);
+    setTimeout(() => setMultiLinkCopied(false), 2000);
+  };
+
+  const renderMultiSearchView = () => {
+    const computeColumnAnalytics = (col) => {
+      const list = col.matches || [];
+      const sum = col.summoner;
+      if (!sum) return null;
+
+      // Primary rank priority: SoloQ ->Ranked 5s -> Flex
+      const primaryRank = sum.ranks?.solo || sum.ranks?.ranked5s || sum.ranks?.flex || null;
+
+      // Role distribution from classic matches
+      const roleMap = {
+        TOP: { name: 'TOP', games: 0, wins: 0 },
+        JUNGLE: { name: 'JUNGLE', games: 0, wins: 0 },
+        MID: { name: 'MID', games: 0, wins: 0 },
+        ADC: { name: 'ADC', games: 0, wins: 0 },
+        SUPPORT: { name: 'SUPPORT', games: 0, wins: 0 }
+      };
+      let roleTotal = 0;
+
+      // Champion stats across fetched matches
+      const champMap = {};
+
+      list.forEach(m => {
+        const ps = m.playerStats;
+        if (!ps) return;
+        const r = (ps.role || '').toUpperCase();
+        let normRole = null;
+        if (r.includes('TOP')) normRole = 'TOP';
+        else if (r.includes('JUG') || r.includes('JUNGLE')) normRole = 'JUNGLE';
+        else if (r.includes('MID') || r.includes('MIDDLE')) normRole = 'MID';
+        else if (r.includes('BOT') || r.includes('BOTTOM') || r.includes('ADC')) normRole = 'ADC';
+        else if (r.includes('UTILITY') || r.includes('SUP') || r.includes('SUPPORT')) normRole = 'SUPPORT';
+
+        if (normRole) {
+          roleMap[normRole].games++;
+          if (ps.win) roleMap[normRole].wins++;
+          roleTotal++;
+        }
+
+        const cName = ps.championName;
+        if (cName) {
+          if (!champMap[cName]) {
+            champMap[cName] = { name: cName, games: 0, wins: 0, kills: 0, deaths: 0, assists: 0 };
+          }
+          champMap[cName].games++;
+          if (ps.win) champMap[cName].wins++;
+          champMap[cName].kills += ps.kills || 0;
+          champMap[cName].deaths += ps.deaths || 0;
+          champMap[cName].assists += ps.assists || 0;
+        }
+      });
+
+      const topRoles = Object.values(roleMap)
+        .filter(r => r.games > 0)
+        .map(r => ({
+          ...r,
+          playRate: roleTotal > 0 ? Math.round((r.games / roleTotal) * 100) : 0,
+          winRate: Math.round((r.wins / r.games) * 100)
+        }))
+        .sort((a, b) => b.games - a.games)
+        .slice(0, 2);
+
+      // Consecutive streak from latest matches
+      let streakCount = 0;
+      let streakWin = null;
+      for (const m of list) {
+        if (!m.playerStats) continue;
+        if (streakWin === null) {
+          streakWin = !!m.playerStats.win;
+          streakCount = 1;
+        } else if (!!m.playerStats.win === streakWin) {
+          streakCount++;
+        } else {
+          break;
+        }
+      }
+
+      const topChamps = Object.values(champMap)
+        .map(c => {
+          const kdaVal = c.deaths === 0
+            ? (c.kills + c.assists).toFixed(2)
+            : ((c.kills + c.assists) / c.deaths).toFixed(2);
+          const wr = Math.round((c.wins / c.games) * 100);
+          return { ...c, kdaVal, wr };
+        })
+        .sort((a, b) => b.games - a.games)
+        .slice(0, 10);
+
+      return { primaryRank, topRoles, streakCount, streakWin, topChamps };
+    };
+
+    return (
+      <div className="ms-page-wrapper">
+        {/* Top Input Box (OP.GG style) */}
+        <div className="ms-input-card">
+          <div className="ms-input-header">
+            <div>
+              <h1 className="ms-title">{t('multisearch.title')}</h1>
+              <p className="ms-subtitle">{t('multisearch.subtitle')}</p>
+            </div>
+            {multiSearchPlayers.length > 0 && (
+              <button
+                type="button"
+                onClick={handleCopyMultiLink}
+                className="ms-copy-link-btn"
+              >
+                🔗 {multiLinkCopied ? t('multisearch.copied') : t('multisearch.copyLink')}
+              </button>
+            )}
+          </div>
+
+          <form onSubmit={handleMultiSearchSubmit} className="ms-form">
+            <textarea
+              className="ms-textarea"
+              rows={5}
+              value={multiSearchInput}
+              onChange={(e) => setMultiSearchInput(e.target.value)}
+              placeholder={t('multisearch.placeholder')}
+            />
+            <div className="ms-form-actions">
+              <select
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                className="ms-region-select"
+                aria-label={t('nav.regionAria')}
+              >
+                {REGIONS.map(r => (
+                  <option key={r.key} value={r.key}>
+                    {r.key.toUpperCase()} — {r.name}
+                  </option>
+                ))}
+              </select>
+
+              <button type="submit" className="ms-submit-btn">
+                {t('multisearch.searchBtn')}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* 5-Column Scouting Grid */}
+        {multiSearchPlayers.length === 0 ? (
+          <div className="ms-empty-state">
+            <span>🎯 {t('multisearch.emptyHint')}</span>
+          </div>
+        ) : (
+          <div className="ms-columns-grid">
+            {multiSearchPlayers.map((col) => {
+              if (col.loading) {
+                return (
+                  <div key={col.key} className="ms-player-col ms-col-loading">
+                    <div className="spinner" style={{ width: '28px', height: '28px', marginBottom: '0.75rem' }} />
+                    <span className="ms-col-loading-name">{col.gameName}#{col.tagLine}</span>
+                  </div>
+                );
+              }
+
+              if (col.error || !col.summoner) {
+                return (
+                  <div key={col.key} className="ms-player-col ms-col-error">
+                    <span className="ms-col-error-title">{col.gameName}#{col.tagLine}</span>
+                    <span className="ms-col-error-msg">{col.error || t('multisearch.notFound')}</span>
+                  </div>
+                );
+              }
+
+              const sum = col.summoner;
+              const analytics = computeColumnAnalytics(col);
+              const { primaryRank, topRoles, streakCount, streakWin, topChamps } = analytics;
+              const recent10 = (col.matches || []).slice(0, 10);
+
+              return (
+                <div key={col.key} className="ms-player-col">
+                  {/* Top Queue Pills */}
+                  <div className="ms-tier-pills">
+                    <span className="ms-year-pill">2026</span>
+                    {sum.ranks?.solo && (
+                      <span className="ms-queue-pill" title="Ranked Solo/Duo">
+                        Solo {sum.ranks.solo.tier} {sum.ranks.solo.rank}
+                      </span>
+                    )}
+                    {sum.ranks?.flex && (
+                      <span className="ms-queue-pill" title="Ranked Flex">
+                        Flex {sum.ranks.flex.tier} {sum.ranks.flex.rank}
+                      </span>
+                    )}
+                    {sum.ranks?.ranked5s && (
+                      <span className="ms-queue-pill ms-queue-pill-5s" title="Ranked 5s">
+                        5v5 {sum.ranks.ranked5s.tier} {sum.ranks.ranked5s.rank}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Rank Emblem & Summoner Identity */}
+                  <div className="ms-identity-block">
+                    {primaryRank ? (
+                      <img
+                        src={getRankBadgeIcon(primaryRank.tier)}
+                        alt={primaryRank.tier}
+                        className="ms-rank-crest"
+                      />
+                    ) : (
+                      <img
+                        src={getProfileIcon(sum.profileIconId)}
+                        alt={sum.gameName}
+                        className="ms-rank-crest ms-profile-fallback"
+                      />
+                    )}
+
+                    <a
+                      href={`/${region}/${encodeURIComponent(sum.gameName)}-${encodeURIComponent(sum.tagLine)}`}
+                      className="ms-player-name-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsMultiSearch(false);
+                        setSearch(`${sum.gameName}#${sum.tagLine}`);
+                        performSearch(sum.gameName, sum.tagLine, region);
+                      }}
+                    >
+                      <span className="ms-player-game-name">{sum.gameName}</span>
+                      <span className="ms-player-tag-line"> #{sum.tagLine}</span>
+                    </a>
+
+                    <div className="ms-player-rank-label" style={{ color: primaryRank ? getRankBadgeColor(primaryRank.tier) : 'var(--text-muted)' }}>
+                      {primaryRank
+                        ? `${primaryRank.tier} ${primaryRank.rank} (${primaryRank.leaguePoints} LP)`
+                        : `Level ${sum.summonerLevel}`}
+                    </div>
+                  </div>
+
+                  {/* Win / Loss Bar */}
+                  {primaryRank ? (
+                    <div className="ms-wl-row">
+                      <div className="ms-wl-bar">
+                        <div
+                          className="ms-wl-fill-win"
+                          style={{ width: `${primaryRank.winRate}%` }}
+                        >
+                          <span>{primaryRank.wins}W</span>
+                        </div>
+                        <div
+                          className="ms-wl-fill-loss"
+                          style={{ width: `${100 - primaryRank.winRate}%` }}
+                        >
+                          <span>{primaryRank.losses}L</span>
+                        </div>
+                      </div>
+                      <span
+                        className="ms-wl-percent mono"
+                        style={{ color: primaryRank.winRate >= 50 ? 'var(--loss-color)' : 'var(--text-secondary)' }}
+                      >
+                        {primaryRank.winRate}%
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="ms-wl-unranked">Unranked</div>
+                  )}
+
+                  {/* Top 2 Roles Breakdown */}
+                  {topRoles.length > 0 && (
+                    <div className="ms-roles-grid">
+                      {topRoles.map(r => (
+                        <div key={r.name} className="ms-role-item">
+                          <div className="ms-role-top">
+                            <img src={ROLE_ICONS_MAP[r.name]} alt={r.name} className="ms-role-icon" />
+                            <span
+                              className="ms-role-playrate mono"
+                              style={{ color: r.playRate >= 50 ? 'var(--loss-color)' : 'var(--text-secondary)' }}
+                            >
+                              {r.playRate}%
+                            </span>
+                          </div>
+                          <div className="ms-role-wr mono">
+                            W/R <strong>{r.winRate}%</strong>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Streak Badge */}
+                  {streakCount >= 2 && (
+                    <div className={`ms-streak-badge ${streakWin ? 'win' : 'loss'}`}>
+                      {streakWin
+                        ? t('multisearch.winStreak', { count: streakCount })
+                        : t('multisearch.lossStreak', { count: streakCount })}
+                    </div>
+                  )}
+
+                  {/* Recent 10 Games 2-Column Mini Grid */}
+                  <div className="ms-recent-matches-grid">
+                    {recent10.map(m => {
+                      const ps = m.playerStats;
+                      const ratings = getMatchPerformanceData(m);
+                      const badge = ratings[sum.puuid]?.badge;
+                      const isMvpOrAce = badge === 'MVP' || badge === 'ACE';
+                      return (
+                        <div key={m.matchId} className="ms-mini-match">
+                          <img
+                            src={getChampIcon(ps.championName)}
+                            alt={ps.championName}
+                            title={ps.championName}
+                            className="ms-mini-champ-img"
+                            loading="lazy"
+                          />
+                          <span className={`ms-mini-kda mono ${ps.win ? 'win' : 'loss'}`}>
+                            {ps.kills}/{ps.deaths}/{ps.assists}
+                          </span>
+                          {isMvpOrAce && (
+                            <span className={`ms-mini-badge ${badge.toLowerCase()}`} title={badge}>
+                              {badge === 'MVP' ? 'M' : 'A'}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Champion Pool Table (Bottom of Column) */}
+                  <div className="ms-champ-pool-section">
+                    <div className="ms-champ-pool-header">{t('multisearch.recentChampions')}</div>
+                    {topChamps.length === 0 ? (
+                      <div className="ms-no-games">{t('multisearch.noGames')}</div>
+                    ) : (
+                      <div className="ms-champ-pool-list">
+                        {topChamps.map(c => {
+                          const kdaFloat = parseFloat(c.kdaVal);
+                          const kdaColor = kdaFloat >= 4
+                            ? '#f1c40f'
+                            : kdaFloat >= 3
+                              ? '#2ecc71'
+                              : 'var(--text-secondary)';
+                          const wrColor = c.wr >= 60 ? 'var(--loss-color)' : 'var(--text-secondary)';
+                          return (
+                            <div key={c.name} className="ms-champ-pool-row">
+                              <img
+                                src={getChampIcon(c.name)}
+                                alt={c.name}
+                                title={c.name}
+                                className="ms-pool-champ-img"
+                                loading="lazy"
+                              />
+                              <span className="ms-pool-kda mono" style={{ color: kdaColor }}>
+                                {c.kdaVal}:1 KDA
+                              </span>
+                              <span className="ms-pool-games mono">{c.games}</span>
+                              <span className="ms-pool-wr mono" style={{ color: wrColor }}>
+                                {c.wr}%
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const groupedMatches = groupMatchesByDate(matches);
 
   return (
@@ -2504,7 +3013,7 @@ export default function App() {
       {/* Top Navbar */}
       <nav className="dpm-navbar">
         <div className="dpm-navbar-container">
-          <div className="dpm-logo" onClick={() => { setSummoner(null); setMatches([]); window.history.pushState({}, '', '/'); }}>
+          <div className="dpm-logo" onClick={() => { setIsMultiSearch(false); setSummoner(null); setMatches([]); window.history.pushState({}, '', '/'); }}>
             <svg viewBox="0 0 40 42" fill="none" xmlns="http://www.w3.org/2000/svg" className="logo-mark" aria-hidden="true" width="18" height="19">
               <polygon points="20,2 38,20 20,20 2,20" fill="var(--accent-cyan)"/>
               <polygon points="20,22 38,22 20,40 2,22" fill="var(--accent-purple)"/>
@@ -2512,8 +3021,34 @@ export default function App() {
             <span className="logo-accent">chupachotas</span>.tracker
           </div>
 
+          <div className="dpm-nav-links">
+            <a
+              href="/"
+              className={`dpm-nav-link ${!isMultiSearch ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsMultiSearch(false);
+                if (!summoner) window.history.pushState({}, '', '/');
+                else window.history.pushState({}, '', `/${region}/${encodeURIComponent(summoner.gameName)}-${encodeURIComponent(summoner.tagLine)}`);
+              }}
+            >
+              {t('multisearch.homeLink') || 'Buscador'}
+            </a>
+            <a
+              href={`/multi/${region}`}
+              className={`dpm-nav-link ${isMultiSearch ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsMultiSearch(true);
+                const query = window.location.pathname.startsWith('/multi') ? window.location.search : '';
+                window.history.pushState({}, '', `/multi/${region}${query}`);
+              }}
+            >
+              {t('multisearch.navLink') || 'Multi-Search'}
+            </a>
+          </div>
           
-          {summoner && (
+          {(summoner || isMultiSearch) && (
             <form onSubmit={handleSearch} className="dpm-nav-search">
               <div className="search-box-wrapper" style={{ position: 'relative', width: '260px' }}>
                 <input
@@ -2588,7 +3123,9 @@ export default function App() {
         </div>
       </nav>
 
-      {!summoner && !loading && (
+      {isMultiSearch && renderMultiSearchView()}
+
+      {!isMultiSearch && !summoner && !loading && (
         <div className="dpm-landing-grid">
           <div className="dpm-landing-left">
             <div className="dpm-landing-hero">
@@ -2728,7 +3265,7 @@ export default function App() {
       )}
 
       {/* Main dashboard view */}
-      {summoner && !loading && (
+      {!isMultiSearch && summoner && !loading && (
         <div className="dpm-dashboard">
           <div className="dpm-classic-wrapper">
             {/* Profile Header Banner */}

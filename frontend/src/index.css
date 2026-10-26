@@ -4354,3 +4354,534 @@ select:focus-visible,
 
 
 
+
+/* ==========================================================================
+   MULTI-SEARCH (OP.GG STYLE 5-COLUMN TEAM SCOUTING)
+   ========================================================================== */
+.dpm-nav-link {
+  text-decoration: none;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.dpm-nav-link.active {
+  color: var(--accent-cyan);
+  background: rgba(0, 210, 255, 0.08);
+}
+
+.ms-page-wrapper {
+  width: 100%;
+  max-width: 1280px;
+  margin: 1.75rem auto 4rem;
+  padding: 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ms-input-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-normal);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.ms-input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.ms-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.ms-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.ms-copy-link-btn {
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  color: var(--accent-cyan);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ms-copy-link-btn:hover {
+  background: rgba(0, 210, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.ms-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ms-textarea {
+  width: 100%;
+  min-height: 118px;
+  background: #0d111a;
+  border: 1px solid var(--border-normal);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.ms-textarea:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.15);
+}
+
+.ms-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ms-region-select {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-normal);
+  border-radius: 6px;
+  padding: 0.55rem 0.9rem;
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ms-submit-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1.4rem;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.ms-submit-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.ms-empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: rgba(18, 22, 34, 0.5);
+  border: 1px dashed var(--border-normal);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* 5-Column Grid */
+.ms-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.ms-player-col {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-normal);
+  border-radius: 8px;
+  padding: 0.9rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.ms-col-loading,
+.ms-col-error {
+  justify-content: center;
+  align-items: center;
+  min-height: 360px;
+  text-align: center;
+}
+
+.ms-col-loading-name,
+.ms-col-error-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.ms-col-error-msg {
+  font-size: 0.78rem;
+  color: var(--loss-color);
+}
+
+/* Top Tier Pills */
+.ms-tier-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.ms-year-pill {
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.12rem 0.38rem;
+  border-radius: 3px;
+}
+
+.ms-queue-pill {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.38rem;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+}
+
+.ms-queue-pill-5s {
+  background: rgba(46, 204, 113, 0.14);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+/* Identity Block */
+.ms-identity-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.2rem;
+  padding: 0.35rem 0;
+}
+
+.ms-rank-crest {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.ms-profile-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border-normal);
+}
+
+.ms-player-name-link {
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  line-height: 1.25;
+  word-break: break-word;
+  transition: color 0.15s ease;
+}
+
+.ms-player-name-link:hover .ms-player-game-name {
+  color: var(--accent-cyan);
+  text-decoration: underline;
+}
+
+.ms-player-game-name {
+  font-weight: 800;
+}
+
+.ms-player-tag-line {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.ms-player-rank-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* Win / Loss Bar */
+.ms-wl-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ms-wl-bar {
+  flex: 1;
+  height: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #fff;
+}
+
+.ms-wl-fill-win {
+  background: #3b82f6;
+  display: flex;
+  align-items: center;
+  padding-left: 0.35rem;
+  min-width: 34px;
+  white-space: nowrap;
+}
+
+.ms-wl-fill-loss {
+  background: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.35rem;
+  min-width: 34px;
+  white-space: nowrap;
+}
+
+.ms-wl-percent {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ms-wl-unranked {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.2rem 0;
+}
+
+/* Preferred Roles (Top 2) */
+.ms-roles-grid {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ms-role-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.ms-role-top {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.ms-role-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.ms-role-playrate {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ms-role-wr {
+  font-size: 0.68rem;
+  color: #60a5fa;
+}
+
+/* Streak Badge */
+.ms-streak-badge {
+  align-self: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.18rem 0.75rem;
+  border-radius: 999px;
+  text-align: center;
+}
+
+.ms-streak-badge.win {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.ms-streak-badge.loss {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+/* Recent 10 Games 2-Column Mini Grid */
+.ms-recent-matches-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem 0.35rem;
+}
+
+.ms-mini-match {
+  display: flex;
+  align-items: center;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.ms-mini-champ-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.ms-mini-kda {
+  flex: 1;
+  text-align: center;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 0.1rem 0.2rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ms-mini-kda.win {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+}
+
+.ms-mini-kda.loss {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+}
+
+.ms-mini-badge {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 0.55rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ms-mini-badge.mvp {
+  background: #f59e0b;
+  color: #000;
+}
+
+.ms-mini-badge.ace {
+  background: #8b5cf6;
+  color: #fff;
+}
+
+/* Champion Pool Section */
+.ms-champ-pool-section {
+  margin-top: 0.25rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ms-champ-pool-header {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-bottom: 0.15rem;
+}
+
+.ms-champ-pool-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ms-champ-pool-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 26px 36px;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+}
+
+.ms-pool-champ-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+.ms-pool-kda {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ms-pool-games {
+  text-align: right;
+  color: var(--text-muted);
+}
+
+.ms-pool-wr {
+  text-align: right;
+  font-weight: 700;
+}
+
+.ms-no-games {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.75rem 0;
+}
+
+@media (max-width: 1150px) {
+  .ms-columns-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ms-columns-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .ms-columns-grid {
+    grid-template-columns: 1fr;
+  }
+}

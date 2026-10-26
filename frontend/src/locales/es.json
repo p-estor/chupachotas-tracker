@@ -129,5 +129,21 @@
     "poorTeam": "Equipo flojo",
     "good": "Buen juego",
     "poor": "Mal juego"
+  },
+  "multisearch": {
+    "navLink": "Multi-Search",
+    "homeLink": "Buscador",
+    "title": "Multi-Search · Scouting de Equipos",
+    "subtitle": "Introduce hasta 5 invocadores (uno por línea, separados por coma o pegando el chat de sala) para comparar rangos, roles, rachas y champion pool en paralelo.",
+    "placeholder": "xkai#uwu\nmaltroy#000\ndogka#guau\npablo el pedrolo#euw\nRottenBleu#RTT",
+    "searchBtn": "Buscar múltiples invocadores",
+    "copyLink": "Copiar enlace de Draft",
+    "copied": "¡Enlace copiado!",
+    "winStreak": "Racha de {{count}} victorias",
+    "lossStreak": "Racha de {{count}} derrotas",
+    "recentChampions": "Campeones recientes",
+    "noGames": "Sin partidas recientes",
+    "notFound": "Invocador no encontrado",
+    "emptyHint": "Pega hasta 5 Riot IDs arriba y pulsa Buscar para analizar a tu equipo o al rival antes del Draft."
   }
 }
