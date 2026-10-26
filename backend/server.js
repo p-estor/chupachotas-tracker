@@ -67,6 +67,55 @@ const getRiotHeaders = () => ({
   }
 });
 
+const BOT_UA_REGEX = /googlebot|bingbot|yandexbot|duckduckbot|slurp|baiduspider|facebookexternalhit|twitterbot|discordbot|applebot|semrushbot|ahrefsbot|linkedinbot|whatsapp|skypeuripreview/i;
+function isBotRequest(req) {
+  return BOT_UA_REGEX.test(req.headers['user-agent'] || '');
+}
+
+async function getLocalSummonerFallback(region, gameName, tagLine) {
+  const normRegion = region.trim().toLowerCase();
+  const normName = gameName.trim().toLowerCase();
+  const normTag = tagLine.trim().toLowerCase();
+  const cacheKey = `${normRegion}:${normName}:${normTag}`;
+
+  // 1. Any cached summoner row (ignore TTL)
+  const cachedRow = await db.get('SELECT summoner_data FROM summoners WHERE riot_id = ?', [cacheKey]);
+  if (cachedRow && cachedRow.summoner_data) {
+    return JSON.parse(cachedRow.summoner_data);
+  }
+
+  // 2. Check summoner_directory + player_ranks
+  const dirRow = await db.get(
+    'SELECT game_name, tag_line, puuid, region, last_champ, last_kda, last_win, last_level FROM summoner_directory WHERE riot_id = ? OR (region = ? AND LOWER(game_name) = ? AND LOWER(tag_line) = ?)',
+    [cacheKey, normRegion, normName, normTag]
+  );
+  if (dirRow && dirRow.puuid) {
+    let soloRank = null;
+    try {
+      const rankRow = await db.get('SELECT solo_tier, solo_rank FROM player_ranks WHERE puuid = ?', [dirRow.puuid]);
+      if (rankRow && rankRow.solo_tier && rankRow.solo_tier !== 'UNRANKED') {
+        soloRank = { tier: rankRow.solo_tier, rank: rankRow.solo_rank, leaguePoints: 0, wins: 0, losses: 0, winRate: 50 };
+      }
+    } catch (e) {}
+
+    return {
+      puuid: dirRow.puuid,
+      gameName: dirRow.game_name || gameName,
+      tagLine: dirRow.tag_line || tagLine,
+      profileIconId: 29,
+      summonerLevel: dirRow.last_level || 30,
+      ranks: { solo: soloRank, flex: null },
+      masteries: [],
+      lastMatchSummary: dirRow.last_champ ? {
+        championName: dirRow.last_champ,
+        kda: dirRow.last_kda || '0/0/0',
+        win: dirRow.last_win === 1
+      } : null
+    };
+  }
+  return null;
+}
+
 // 1. Search Summoner (Account-v1 + Summoner-v4 + League-v4) - with 5 min Cache
 app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
   const { region, gameName, tagLine } = req.params;
@@ -78,11 +127,20 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
   const normalizedRegion = region.trim().toLowerCase();
   const cacheKey = `${normalizedRegion}:${normalizedGameName}:${normalizedTagLine}`;
 
+  const isBot = isBotRequest(req);
   try {
-    // Check SQLite cache
+    // ponytail: Bots always read from local SQLite first (ignoring TTL) so mass crawling never burns Riot API quota or triggers 429 Soft 404s
+    if (isBot) {
+      const localProfile = await getLocalSummonerFallback(region, gameName, tagLine);
+      if (localProfile) {
+        return res.json(localProfile);
+      }
+    }
+
+    // Check SQLite cache (30 min default TTL like OP.GG; user can click Update for ?refresh=true)
     if (!forceRefresh) {
       const cachedRow = await db.get('SELECT summoner_data, cached_at FROM summoners WHERE riot_id = ?', [cacheKey]);
-      const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+      const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
       if (cachedRow && (Date.now() - cachedRow.cached_at < CACHE_TTL)) {
         console.log(`[Cache Hit] Summoner data for ${cacheKey}`);
         return res.json(JSON.parse(cachedRow.summoner_data));
@@ -224,12 +282,22 @@ app.get('/api/summoner/:region/:gameName/:tagLine', async (req, res) => {
       console.error(`Message: ${error.message}`);
     }
     const status = error.response ? error.response.status : 500;
+    if (status === 404) {
+      // Remove renamed/deleted account from directory so it stops appearing in Sitemap
+      db.run('DELETE FROM summoner_directory WHERE riot_id = ?', [cacheKey]).catch(() => {});
+    } else {
+      // On 429 Rate Limit or 5xx, serve stale local data if we have any instead of failing with Soft 404
+      const fallback = await getLocalSummonerFallback(region, gameName, tagLine).catch(() => null);
+      if (fallback) {
+        return res.json(fallback);
+      }
+    }
     const message = error.response ? error.response.data.status?.message || 'Error communicating with Riot API' : error.message;
     res.status(status).json({ error: message });
   }
 });
 
-// Helper to index match participants into summoner_directory for autocompletion
+// Helper to index match participants into summoner_directory for autocompletion and zero-API SEO
 async function indexParticipants(participants, region) {
   if (!participants || !Array.isArray(participants)) return;
   const cleanRegion = region.toLowerCase();
@@ -237,9 +305,12 @@ async function indexParticipants(participants, region) {
   const promises = participants.map(p => {
     if (!p.gameName || !p.tagLine) return Promise.resolve();
     const cacheKey = `${cleanRegion}:${p.gameName.toLowerCase()}:${p.tagLine.toLowerCase()}`;
+    const kdaStr = `${p.kills || 0}/${p.deaths || 0}/${p.assists || 0} (${p.kda || '0.0'} KDA)`;
+    const winInt = p.win ? 1 : 0;
+    const champLvl = p.champLevel || 18;
     return db.run(
-      'INSERT OR IGNORE INTO summoner_directory (riot_id, game_name, tag_line, puuid, region) VALUES (?, ?, ?, ?, ?)',
-      [cacheKey, p.gameName, p.tagLine, p.puuid, cleanRegion]
+      'INSERT OR REPLACE INTO summoner_directory (riot_id, game_name, tag_line, puuid, region, last_champ, last_kda, last_win, last_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [cacheKey, p.gameName, p.tagLine, p.puuid, cleanRegion, p.championName || '', kdaStr, winInt, champLvl]
     ).catch(err => {
       console.error(`Failed to index participant ${p.gameName} in directory:`, err.message);
     });
@@ -413,6 +484,10 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
   const forceRefresh = isBot ? false : (req.query.refresh === 'true');
 
   try {
+    // ponytail: Bots never call Riot Match-V5 API; return empty or already cached matches immediately to prevent 429s and timeouts
+    if (isBot) {
+      return res.json([]);
+    }
           // Step A: Get match IDs from Riot API
       let matchIds = [];
 
@@ -651,7 +726,7 @@ app.get('/api/matches/:region/:puuid', async (req, res) => {
     // Auto-prune old cache entries occasionally to prevent SQLite from filling the 8.7GB disk
     if (missMatchIds.length > 0 && Math.random() < 0.1) {
       db.run('DELETE FROM matches WHERE rowid NOT IN (SELECT rowid FROM matches ORDER BY rowid DESC LIMIT 25000)').catch(() => {});
-      db.run('DELETE FROM summoner_directory WHERE rowid NOT IN (SELECT rowid FROM summoner_directory ORDER BY rowid DESC LIMIT 60000)').catch(() => {});
+      db.run('DELETE FROM summoner_directory WHERE rowid NOT IN (SELECT rowid FROM summoner_directory ORDER BY rowid DESC LIMIT 500000)').catch(() => {});
     }
 
     // Index participants in background directory for autocompletion (do not await, skip for bots)
@@ -693,23 +768,46 @@ app.get('/api/summoner-directory/search', async (req, res) => {
   }
 });
 
-// 4. Generate dynamic sitemap for SEO
+// 4. Generate dynamic scalable sitemap for SEO (supports ?page=N for >40,000 URLs)
 app.get('/api/sitemap.xml', async (req, res) => {
+  const PAGE_SIZE = 40000;
+  const pageParam = parseInt(req.query.page || '0', 10);
+
   try {
-    const rows = await db.all('SELECT game_name, tag_line, region FROM summoner_directory LIMIT 10000');
+    const countRow = await db.get('SELECT COUNT(1) as total FROM summoner_directory');
+    const total = countRow ? countRow.total : 0;
+
+    // If we have more than PAGE_SIZE entries and no ?page= param was passed, serve a Sitemap Index
+    if (total > PAGE_SIZE && !pageParam) {
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+      for (let p = 1; p <= totalPages; p++) {
+        indexXml += `  <sitemap>\n    <loc>https://tracker.chupachotas.es/api/sitemap.xml?page=${p}</loc>\n  </sitemap>\n`;
+      }
+      indexXml += `</sitemapindex>`;
+      res.header('Content-Type', 'application/xml');
+      return res.send(indexXml);
+    }
+
+    const currentPage = pageParam > 0 ? pageParam : 1;
+    const offset = (currentPage - 1) * PAGE_SIZE;
+    const rows = await db.all(
+      'SELECT game_name, tag_line, region FROM summoner_directory ORDER BY rowid DESC LIMIT ? OFFSET ?',
+      [PAGE_SIZE, offset]
+    );
     
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
     
-    // Add home page
-    xml += `  <url>\n    <loc>https://tracker.chupachotas.es/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+    if (currentPage === 1) {
+      xml += `  <url>\n    <loc>https://tracker.chupachotas.es/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+    }
     
-    // Add profile pages
     rows.forEach(row => {
       if (!row.game_name || !row.tag_line) return;
       const encodedName = encodeURIComponent(row.game_name);
       const encodedTag = encodeURIComponent(row.tag_line);
-      xml += `  <url>\n    <loc>https://tracker.chupachotas.es/${row.region}/${encodedName}-${encodedTag}</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+      xml += `  <url>\n    <loc>https://tracker.chupachotas.es/${row.region}/${encodedName}-${encodedTag}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
     });
     
     xml += `</urlset>`;
@@ -789,24 +887,43 @@ app.get('/api/challenge/players', async (req, res) => {
 
 app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
   const { region, gameName, tagLine } = req.params;
+  const cleanRegion = (region || 'euw').toLowerCase();
+  const fs = require('fs');
+
   try {
-    const summonerRes = await axios.get(`http://localhost:${PORT}/api/summoner/${region}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
-    const summoner = summonerRes.data;
+    // 1. Try local SQLite first (summoners table or summoner_directory + player_ranks) — 0 Riot API calls!
+    let summoner = await getLocalSummonerFallback(cleanRegion, gameName, tagLine);
 
-    const title = `${summoner.gameName} - LoL Stats, MMR & Estadísticas - Chupachotas Tracker`;
-    const desc = `Check ${summoner.gameName}#${summoner.tagLine} match history and LoL Stats (Level ${summoner.summonerLevel}). Mira su historial, winrate y rango en League of Legends.`;
-    const avatarUrl = `https://ddragon.leagueoflegends.com/cdn/14.11.1/img/profileicon/${summoner.profileIconId}.png`;
+    // 2. Only if completely unknown locally, query /api/summoner
+    if (!summoner) {
+      const summonerRes = await axios.get(`http://localhost:${PORT}/api/summoner/${cleanRegion}/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
+      summoner = summonerRes.data;
+    }
 
-    const canonical = `https://tracker.chupachotas.es/${region}/${encodeURIComponent(gameName)}-${encodeURIComponent(tagLine)}`;
+    const officialName = summoner.gameName || gameName;
+    const officialTag = summoner.tagLine || tagLine;
+    const level = summoner.summonerLevel || 30;
+    const solo = summoner.ranks?.solo;
+    const flex = summoner.ranks?.flex;
+    const rankText = solo
+      ? `${solo.tier} ${solo.rank} (${solo.leaguePoints || 0} LP, ${solo.wins || 0}W/${solo.losses || 0}L - ${solo.winRate || 50}% WR)`
+      : 'Unranked / Clasificatorias en curso';
+    const flexText = flex
+      ? `${flex.tier} ${flex.rank} (${flex.leaguePoints || 0} LP)`
+      : 'Unranked';
 
-    const fs = require('fs');
+    const title = `${officialName}#${officialTag} (${cleanRegion.toUpperCase()}) - LoL Stats, MMR & Historial - Chupachotas Tracker`;
+    const desc = `Consulta las estadísticas de ${officialName}#${officialTag} en League of Legends (${cleanRegion.toUpperCase()}, Nivel ${level}, Rango SoloQ: ${rankText}). Match history, KDA, winrate, campeones y MMR en tiempo real.`;
+    const avatarUrl = `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/profileicon/${summoner.profileIconId || 29}.png`;
+    const canonical = `https://tracker.chupachotas.es/${cleanRegion}/${encodeURIComponent(officialName)}-${encodeURIComponent(officialTag)}`;
+
     let html = fs.readFileSync('/var/www/tracker/index.html', 'utf8');
 
     html = html.replace(/<title>.*?<\/title>/i, `<title>${title}</title>`);
     html = html.replace(/<meta name="description" content="[^"]*">/i, `<meta name="description" content="${desc}">`);
     html = html.replace(/<meta property="og:title" content="[^"]*">/i, `<meta property="og:title" content="${title}">`);
     html = html.replace(/<meta property="og:description" content="[^"]*">/i, `<meta property="og:description" content="${desc}">`);
-    
+
     const injectedTags = `
     <meta property="og:image" content="${avatarUrl}">
     <meta name="twitter:image" content="${avatarUrl}">
@@ -814,18 +931,51 @@ app.get('/api/bot-seo/:region/:gameName/:tagLine', async (req, res) => {
   </head>`;
     html = html.replace('</head>', injectedTags);
 
+    const lastMatchHtml = summoner.lastMatchSummary
+      ? `<li><strong>Última partida registrada:</strong> ${summoner.lastMatchSummary.championName} (${summoner.lastMatchSummary.kda} - ${summoner.lastMatchSummary.win ? 'Victoria' : 'Derrota'})</li>`
+      : '';
+
+    // Inject semantic SSR profile summary inside <div id="root"> so Googlebot sees rich, unique content immediately (fixes "Crawled - currently not indexed")
+    const ssrBody = `<div id="root">
+      <main style="max-width:960px;margin:2rem auto;padding:1.5rem;color:#e2e8f0;font-family:sans-serif;">
+        <h1>${officialName}#${officialTag} - Estadísticas de League of Legends (${cleanRegion.toUpperCase()})</h1>
+        <p>${desc}</p>
+        <section>
+          <h2>Resumen de Perfil y Rango (LoL Stats &amp; MMR)</h2>
+          <ul>
+            <li><strong>Invocador (Riot ID):</strong> ${officialName}#${officialTag}</li>
+            <li><strong>Región:</strong> ${cleanRegion.toUpperCase()}</li>
+            <li><strong>Nivel de Invocador:</strong> ${level}</li>
+            <li><strong>Clasificatoria Solo/Dúo (Ranked SoloQ):</strong> ${rankText}</li>
+            <li><strong>Clasificatoria Flexible (Ranked Flex):</strong> ${flexText}</li>
+            ${lastMatchHtml}
+          </ul>
+        </section>
+        <section>
+          <h2>Historial de Partidas, Campeones, KDA y Rendimiento</h2>
+          <p>Análisis completo de partidas recientes, KDA promedio, CS por minuto, puntuación de visión, preferencia de roles y rendimiento con campeones de ${officialName}#${officialTag} en el servidor ${cleanRegion.toUpperCase()} de League of Legends.</p>
+        </section>
+      </main>
+    </div>`;
+    html = html.replace('<div id="root"></div>', ssrBody);
+
     res.send(html);
   } catch (error) {
-    const fs = require('fs');
+    const status = error.response ? error.response.status : 500;
     try {
       let html = fs.readFileSync('/var/www/tracker/index.html', 'utf8');
+      // If Riot API is rate-limited (429) or temporary error (5xx), return 503 with Retry-After so Googlebot retries later instead of marking Soft 404 / 404
+      if (status === 429 || status >= 500) {
+        res.set('Retry-After', '120');
+        return res.status(503).send(html);
+      }
       const notFoundTitle = 'Invocador no encontrado - Chupachotas Tracker';
       html = html.replace(/<title>.*?<\/title>/i, '<title>' + notFoundTitle + '</title>');
       const noindexTags = '\n    <meta name="robots" content="noindex, nofollow" />\n  </head>';
       html = html.replace('</head>', noindexTags);
       res.status(404).send(html);
     } catch (e) {
-      res.status(404).send('Not Found');
+      res.status(status === 404 ? 404 : 503).send('Unavailable');
     }
   }
 });

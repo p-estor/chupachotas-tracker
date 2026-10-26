@@ -31,16 +31,25 @@ db.serialize(() => {
     )
   `);
 
-  // 3. Summoner lightweight directory table for autocomplete
+  // 3. Summoner lightweight directory table for autocomplete and zero-API SEO profiles
   db.run(`
     CREATE TABLE IF NOT EXISTS summoner_directory (
       riot_id TEXT PRIMARY KEY,
       game_name TEXT,
       tag_line TEXT,
       puuid TEXT,
-      region TEXT
+      region TEXT,
+      last_champ TEXT,
+      last_kda TEXT,
+      last_win INTEGER,
+      last_level INTEGER
     )
   `);
+
+  // Safe migration for existing databases
+  ['last_champ TEXT', 'last_kda TEXT', 'last_win INTEGER', 'last_level INTEGER'].forEach(col => {
+    db.run(`ALTER TABLE summoner_directory ADD COLUMN ${col}`, () => {});
+  });
 
   // Index on game_name for faster wildcard searching
   db.run(`
